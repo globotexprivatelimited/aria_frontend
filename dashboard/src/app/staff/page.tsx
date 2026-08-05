@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { getActiveRequests, getHistory, getAnalytics, type Req as RequestRow } from "../_actions/requests";
 import { getMyDepartments, getMyRole, signOut } from "../../lib/auth";
 import StaffDashboardTab from "../../components/StaffDashboardTab";
+import MenuEditor from "../../components/MenuEditor";
+import DeptItemManager from "../../components/DeptItemManager";
 import { useBreakpoint } from "../../lib/useBreakpoint";
 
 const API = "http://localhost:4000";
-type Tab = "dashboard" | "requests" | "history";
+type Tab = "dashboard" | "requests" | "history" | "manage";
 
 const DEPT_CFG: Record<string, { label: string; type: "auto" | "accept"; staffNumber: string; icon: string }> = {
   fb: { label: "In-Room Dining", type: "auto", staffNumber: "+919000000003", icon: "M3 2v7c0 1.1.9 2 2 2h1v11h2V2M13 2v20h2V11h1a2 2 0 0 0 2-2V2" },
@@ -20,6 +22,7 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: "dashboard", label: "Dashboard", icon: "M3 13h8V3H3zM13 21h8V3h-8zM3 21h8v-6H3z" },
   { id: "requests", label: "Requests", icon: "M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" },
   { id: "history", label: "History", icon: "M3 3v5h5M3.05 13A9 9 0 1 0 6 5.3L3 8M12 7v5l4 2" },
+  { id: "manage", label: "Manage", icon: "M12 2l2 4 4 .5-3 3 .5 4-3.5-2-3.5 2 .5-4-3-3 4-.5z" },
 ];
 
 function timeAgo(iso: string): string {
@@ -358,7 +361,26 @@ export default function StaffDashboard() {
         ) : null}
 
         {/* HISTORY - resolved from DB */}
-        {tab === "history" ? (
+        {tab === "manage" ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+                {myDepts.length === 0 ? (
+                  <div style={{ padding: 40, textAlign: "center", color: "#9AA09A" }}>No departments assigned to you yet.</div>
+                ) : myDepts.map((dept) => (
+                  <div key={dept} style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, overflow: "hidden" }}>
+                    <div style={{ padding: "18px 22px", borderBottom: "1px solid #F0F0EA", background: "#FEFDFB" }}>
+                      <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", color: "#B08A4F" }}>{DEPT_CFG[dept]?.type === "auto" ? "Menu & inventory" : "Services & offerings"}</div>
+                      <h2 style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 600, color: "#1B2621", marginTop: 3 }}>{DEPT_CFG[dept]?.label ?? dept}</h2>
+                    </div>
+                    <div style={{ padding: 22 }}>
+                      {dept === "fb"
+                        ? <MenuEditor hotelId={hotelId as string} dept={dept} deptLabel={DEPT_CFG[dept]?.label ?? dept} />
+                        : <DeptItemManager hotelId={hotelId as string} dept={dept} deptLabel={DEPT_CFG[dept]?.label ?? dept} />}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            {tab === "history" ? (
           <div>
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", marginBottom: 8 }}>Completed</div>
