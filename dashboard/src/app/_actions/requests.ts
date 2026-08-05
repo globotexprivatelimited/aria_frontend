@@ -49,3 +49,11 @@ export async function getAllSince(days = 30): Promise<Req[]> {
     return res.ok && res.data ? res.data : [];
   } catch { return []; }
 }
+
+export async function getHotelSince(hotelId: string, days = 7): Promise<Req[]> {
+  if (!hotelId) return [];
+  try {
+    const res = await apiGet<{ ok: boolean; data?: Req[] }>("/api/requests/hotel-since?hotelId=" + encodeURIComponent(hotelId) + "&days=" + days);
+    return res.ok && res.data ? res.data : [];
+  } catch { return []; }
+}

@@ -14,6 +14,7 @@ const ITEMS = [
   { href: "/gm/guests", label: "Guests", icon: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" },
   { href: "/alerts", label: "Alerts", icon: "M12 2 2 20h20L12 2zM12 9v4M12 17v.5" },
   { href: "/gm/reception", label: "Reception", icon: "M3 21h18M4 21V8l8-5 8 5v13M9 21v-6h6v6" },
+  { href: "/gm/revenue", label: "Revenue", icon: "M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" },
 ];
 
 export default function GMSidebar() {
