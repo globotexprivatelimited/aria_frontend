@@ -40,3 +40,7 @@ export async function deleteMenuItem(hotelId: string, id: string): Promise<{ ok:
     return res.ok ? { ok: true } : { ok: false, message: res.error };
   } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "Could not delete." }; }
 }
+
+export async function setAvailability(hotelId: string, id: string, available: boolean): Promise<{ ok: boolean; message?: string }> {
+  return patchMenuItem(hotelId, id, { available });
+}

@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { getMenu, addMenuItem, patchMenuItem, deleteMenuItem, type MenuItem } from "../app/gm/departments/menu-actions";
+import { getMenu, addMenuItem, patchMenuItem, deleteMenuItem, type MenuItem , setAvailability } from "../app/gm/departments/menu-actions";
 
 const KINDS = [
   { v: "food", label: "Food" }, { v: "beverage", label: "Beverage" },
@@ -45,6 +45,8 @@ export default function MenuEditor({ hotelId, dept, deptLabel }: { hotelId: stri
 
   const set = (k: keyof typeof BLANK, v: string | boolean) => setF((p) => ({ ...p, [k]: v }));
   const flash = (m: string) => { setToast(m); setTimeout(() => setToast(null), 2400); };
+
+  async function toggleAvail(id: string, next: boolean) { await setAvailability(hotelId, id, next); await load(); }
 
   const load = useCallback(async () => {
     const res = await getMenu(hotelId, dept);

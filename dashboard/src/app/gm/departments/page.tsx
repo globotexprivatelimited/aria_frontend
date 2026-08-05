@@ -6,6 +6,7 @@ import { DEPARTMENTS } from "../../../lib/departments";
 import GMSidebar from "../../../components/GMSidebar";
 import { useMyHotel } from "../../../lib/useMyHotel";
 import MenuEditor from "../../../components/MenuEditor";
+import DeptItemManager from "../../../components/DeptItemManager";
 import SlotEditor from "../../../components/SlotEditor";
 import type { DeptConfig } from "../../../lib/departments";
 
@@ -81,14 +82,16 @@ export default function GMDepartments() {
             <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 760, background: "#F4F1EA", borderRadius: 18, boxShadow: "0 24px 70px rgba(0,0,0,.28)", overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", background: "#FEFDFB", borderBottom: "1px solid #E9E4D8" }}>
                 <div>
-                  <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#B08A4F" }}>{managing.type === "auto" ? "Menu & inventory" : "Bookable time slots"}</div>
+                  <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#B08A4F" }}>{managing.dept === "fb" ? "Menu & inventory" : (managing.dept === "housekeeping" || managing.dept === "spa" || managing.dept === "front_desk") ? "Services & offerings" : "Bookable time slots"}</div>
                   <h2 style={{ fontFamily: "Georgia, serif", fontSize: 23, fontWeight: 600, color: "#1B2621", marginTop: 3 }}>{managing.label}</h2>
                 </div>
                 <button onClick={() => setManaging(null)} aria-label="Close" style={{ width: 36, height: 36, borderRadius: 10, background: "#F5F1E8", border: "1px solid #E9E4D8", cursor: "pointer", color: "#6E756F", fontSize: 18, lineHeight: 1 }}>&times;</button>
               </div>
               <div style={{ padding: 24 }}>
-                {managing.type === "auto"
+                {managing.dept === "fb"
                   ? <MenuEditor hotelId={HOTEL_ID} dept={managing.dept} deptLabel={managing.label} />
+                  : (managing.dept === "housekeeping" || managing.dept === "spa" || managing.dept === "front_desk")
+                  ? <DeptItemManager hotelId={HOTEL_ID} dept={managing.dept} deptLabel={managing.label} />
                   : <SlotEditor hotelId={HOTEL_ID} dept={managing.dept} deptLabel={managing.label} />}
               </div>
             </div>
