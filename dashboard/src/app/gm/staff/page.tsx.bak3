@@ -30,7 +30,7 @@ export default function GMStaff() {
   async function saveDeptAccess(staffId: string, dept: string, currentlyOn: boolean) {
     // optimistic: update the row locally
     setRows((prev) => prev.map((r) => r.id === staffId ? { ...r, depts: currentlyOn ? r.depts.filter((x) => x !== dept) : [...r.depts, dept] } : r));
-    const res = await saveDeptAccessCall({ staffId, dept, active: !currentlyOn, hotelId: HOTEL_ID as string });
+    const res = await saveDeptAccessCall(staffId, dept, !currentlyOn);
     if (!res.ok) { setRows((prev) => prev.map((r) => r.id === staffId ? { ...r, depts: currentlyOn ? [...r.depts, dept] : r.depts.filter((x) => x !== dept) } : r)); flash(false, res.message ?? "Could not update access"); }
   }
 

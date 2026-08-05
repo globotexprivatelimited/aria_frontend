@@ -1,11 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { DEPARTMENTS } from "../../../lib/departments";
 import GMSidebar from "../../../components/GMSidebar";
 import { createStaff, getStaff, resetPassword } from "./actions";
 import { useMyHotel } from "../../../lib/useMyHotel";
-import { setStaffDeptAccess as saveDeptAccessCall } from "./staff-access-actions";
 
 type Row = { id: string; name: string; depts: string[]; email: string };
 
@@ -27,12 +26,6 @@ export default function GMStaff() {
   const deptLabel = (d: string) => DEPARTMENTS.find((x) => x.dept === d)?.label ?? d;
   function flash(ok: boolean, msg: string) { setToast({ ok, msg }); setTimeout(() => setToast(null), 3200); }
   function toggleDept(d: string) { setDepts((p) => p.includes(d) ? p.filter((x) => x !== d) : [...p, d]); }
-  async function saveDeptAccess(staffId: string, dept: string, currentlyOn: boolean) {
-    // optimistic: update the row locally
-    setRows((prev) => prev.map((r) => r.id === staffId ? { ...r, depts: currentlyOn ? r.depts.filter((x) => x !== dept) : [...r.depts, dept] } : r));
-    const res = await saveDeptAccessCall({ staffId, dept, active: !currentlyOn, hotelId: HOTEL_ID as string });
-    if (!res.ok) { setRows((prev) => prev.map((r) => r.id === staffId ? { ...r, depts: currentlyOn ? [...r.depts, dept] : r.depts.filter((x) => x !== dept) } : r)); flash(false, res.message ?? "Could not update access"); }
-  }
 
   useEffect(() => {
     if (!HOTEL_ID) return;
@@ -101,7 +94,7 @@ export default function GMStaff() {
                 <span style={{ fontWeight: 500, color: "#1B2621" }}>{s.name}</span>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {DEPARTMENTS.map((dp) => { const on = s.depts.includes(dp.dept); return <button key={dp.dept} onClick={() => saveDeptAccess(s.id, dp.dept, on)} style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 999, padding: "4px 10px 4px 8px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", background: on ? "#EAF2ED" : "#F5F5F0", color: on ? "#0F5F4C" : "#9AA09A", border: "1px solid " + (on ? "#CFE5DC" : "#E7E3D8") }}><span style={{ width: 22, height: 13, borderRadius: 999, background: on ? "#0F5F4C" : "#CDC8BC", position: "relative", flexShrink: 0 }}><span style={{ position: "absolute", top: 2, left: on ? 11 : 2, width: 9, height: 9, borderRadius: 999, background: "#fff" }} /></span>{dp.label}</button>; })}
+                {s.depts.map((d) => <span key={d} style={{ borderRadius: 999, padding: "3px 10px", fontSize: 12, fontWeight: 500, background: "#F1F6F2", color: "#0F5F4C", border: "1px solid #DCEBE1" }}>{deptLabel(d)}</span>)}
               </div>
               <span style={{ color: "#6E756F", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis" }}>{s.email || "\u2014"}</span>
               <div style={{ textAlign: "right" }}>
