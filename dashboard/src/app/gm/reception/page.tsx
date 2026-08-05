@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { getRooms, getRoomStats, checkInRoom, checkOutRoom, markRoomClean, setupRooms, type Room, type RoomStats } from "./rooms-actions";
+import { getRooms, getRoomStats, getRoomTarget, checkInRoom, checkOutRoom, markRoomClean, setupRooms, editRoom, deleteRoom, clearFloor, type Room, type RoomStats } from "./rooms-actions";
 import RoomSetup from "../../../components/RoomSetup";
 import RoomModal from "../../../components/RoomModal";
 import GMSidebar from "../../../components/GMSidebar";
@@ -35,12 +35,13 @@ export default function ReceptionBoard() {
   const [toast, setToast] = useState<string | null>(null);
   const [showSetup, setShowSetup] = useState(false);
   const [selected, setSelected] = useState<Room | null>(null);
+  const [target, setTarget] = useState(0);
   const flash = (m: string) => { setToast(m); setTimeout(() => setToast(null), 2200); };
 
   const load = useCallback(async () => {
     if (!HOTEL_ID) return;
-    const [r, s] = await Promise.all([getRooms(HOTEL_ID), getRoomStats(HOTEL_ID)]);
-    setRooms(r); setStats(s);
+    const [r, s, t] = await Promise.all([getRooms(HOTEL_ID), getRoomStats(HOTEL_ID), getRoomTarget(HOTEL_ID)]);
+    setRooms(r); setStats(s); setTarget(t.target);
   }, [HOTEL_ID]);
   useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 5000); return () => clearInterval(iv); }, [load, HOTEL_ID]);
 
@@ -59,6 +60,12 @@ export default function ReceptionBoard() {
   async function doCheckIn(rm: string, guestName: string, guestPhone: string, partySize: number, checkOut: string) { const r = await checkInRoom(HOTEL_ID!, rm, guestName, guestPhone, partySize, checkOut); if (r.ok) { flash("Checked in to Room " + rm); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doCheckout(rm: string) { const r = await checkOutRoom(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " checked out"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doClean(rm: string) { const r = await markRoomClean(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " ready"); load(); } else flash(r.message ?? "failed"); }
+  async function doEdit(rm: string, changes: { room_type?: string; floor?: number; newNumber?: string }) { const r = await editRoom(HOTEL_ID!, rm, changes); if (r.ok) { flash("Room updated"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
+  async function doDelete(rm: string) { const r = await deleteRoom(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " deleted"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
+  async function doClearFloor(fl: number) { if (!confirm("Clear all rooms on floor " + fl + "?")) return; const r = await clearFloor(HOTEL_ID!, fl); if (r.ok) { flash("Cleared " + r.deleted + " rooms from floor " + fl); load(); } else flash(r.message ?? "failed"); }
+  async function doEdit(rm: string, changes: { room_type?: string; floor?: number; newNumber?: string }) { const r = await editRoom(HOTEL_ID!, rm, changes); if (r.ok) { flash("Room updated"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
+  async function doDelete(rm: string) { const r = await deleteRoom(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " deleted"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
+  async function doClearFloor(fl: number) { if (!confirm("Clear all rooms on floor " + fl + "?")) return; const r = await clearFloor(HOTEL_ID!, fl); if (r.ok) { flash("Cleared " + r.deleted + " rooms from floor " + fl); load(); } else flash(r.message ?? "failed"); }
 
   const card = { background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 20 };
   const kpis = [
@@ -88,7 +95,7 @@ export default function ReceptionBoard() {
 
         {(showSetup || rooms.length === 0) ? (
           <div style={{ marginBottom: 18 }}>
-            <RoomSetup onSave={handleSetup} existingCount={rooms.length} />
+            <RoomSetup onSave={handleSetup} existingCount={rooms.length} target={target} />
           </div>
         ) : null}
 
@@ -126,6 +133,8 @@ export default function ReceptionBoard() {
                 <span style={{ fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 700, color: INK }}>Floor {floor}</span>
                 <span style={{ fontSize: 11, color: "#B4B9B3" }}>{fRooms.filter((r) => r.status === "occupied").length}/{fRooms.length} occupied</span>
                 <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,#E4DBC7,transparent)" }} />
+                <button onClick={() => doClearFloor(floor)} style={{ fontSize: 10.5, color: "#B0776A", background: "#FBEDE9", border: "1px solid #EED7D0", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Clear floor</button>
+                <button onClick={() => doClearFloor(floor)} style={{ fontSize: 10.5, color: "#B0776A", background: "#FBEDE9", border: "1px solid #EED7D0", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Clear floor</button>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(52px, 1fr))", gap: 8 }}>
                 {fRooms.map((r) => {
@@ -147,7 +156,7 @@ export default function ReceptionBoard() {
       </div>
 
       {/* room action modal */}
-      {selected ? <RoomModal room={selected} handlers={{ onCheckIn: doCheckIn, onCheckOut: doCheckout, onClean: doClean, onClose: () => setSelected(null) }} /> : null}
+      {selected ? <RoomModal room={selected} handlers={{ onCheckIn: doCheckIn, onCheckOut: doCheckout, onClean: doClean, onEdit: doEdit, onDelete: doDelete, onClose: () => setSelected(null) }} /> : null}
 
       {/* hover tooltip */}
       {hover ? (

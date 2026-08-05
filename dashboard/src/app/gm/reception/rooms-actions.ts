@@ -26,10 +26,20 @@ export async function checkOutRoom(hotelId: string, roomNumber: string): Promise
 export async function markRoomClean(hotelId: string, roomNumber: string): Promise<{ ok: boolean; message?: string }> {
   try { const r = await apiPost<{ ok: boolean; error?: string }>("/api/rooms/clean", { hotelId, roomNumber }); return r.ok ? { ok: true } : { ok: false, message: r.error }; } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "failed" }; }
 }
-
 export async function setupRooms(hotelId: string, floors: { floor: number; count: number; type: string; prefix: string }[]): Promise<{ ok: boolean; created?: number; message?: string }> {
-  try {
-    const r = await apiPost<{ ok: boolean; data?: { created: number }; error?: string }>("/api/rooms/setup", { hotelId, floors });
-    return r.ok ? { ok: true, created: r.data?.created } : { ok: false, message: r.error };
-  } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "failed" }; }
+  try { const r = await apiPost<{ ok: boolean; data?: { created: number }; error?: string }>("/api/rooms/setup", { hotelId, floors }); return r.ok ? { ok: true, created: r.data?.created } : { ok: false, message: r.error }; } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "failed" }; }
+}
+export async function editRoom(hotelId: string, roomNumber: string, changes: { room_type?: string; floor?: number; newNumber?: string }): Promise<{ ok: boolean; message?: string }> {
+  try { const r = await apiPost<{ ok: boolean; error?: string }>("/api/rooms/edit", { hotelId, roomNumber, ...changes }); return r.ok ? { ok: true } : { ok: false, message: r.error }; } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "failed" }; }
+}
+export async function deleteRoom(hotelId: string, roomNumber: string): Promise<{ ok: boolean; message?: string }> {
+  try { const r = await apiPost<{ ok: boolean; error?: string }>("/api/rooms/delete", { hotelId, roomNumber }); return r.ok ? { ok: true } : { ok: false, message: r.error }; } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "failed" }; }
+}
+export async function clearFloor(hotelId: string, floor: number): Promise<{ ok: boolean; deleted?: number; message?: string }> {
+  try { const r = await apiPost<{ ok: boolean; data?: { deleted: number }; error?: string }>("/api/rooms/clear-floor", { hotelId, floor }); return r.ok ? { ok: true, deleted: r.data?.deleted } : { ok: false, message: r.error }; } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "failed" }; }
+}
+
+export async function getRoomTarget(hotelId: string): Promise<{ target: number; created: number }> {
+  if (!hotelId) return { target: 0, created: 0 };
+  try { const r = await apiGet<{ ok: boolean; data?: { target: number; created: number } }>("/api/rooms/target?hotelId=" + encodeURIComponent(hotelId)); return r.ok && r.data ? r.data : { target: 0, created: 0 }; } catch { return { target: 0, created: 0 }; }
 }
