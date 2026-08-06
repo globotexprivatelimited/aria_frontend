@@ -148,7 +148,14 @@ export default function StaffDashboard() {
         body: JSON.stringify({ waId: cfg.staffNumber, text, type: "text", id: "ui-" + Date.now() }),
       });
     } catch { /* offline tolerant */ }
-    if (command === "DONE" || command === "REJECT") { setRows((prev) => prev.filter((r) => r.id !== id)); loadHistory(); } else load();
+    if (command === "DONE" || command === "REJECT") {
+      setRows((prev) => { const next = prev.filter((r) => r.id !== id); if (!next.some((x) => x.status === "received")) stop(); return next; });
+      loadHistory();
+    } else {
+      // ACCEPT / CLAIM: this one is handled now - silence at once if nothing else is waiting
+      setRows((prev) => { const next = prev.map((r) => r.id === id ? { ...r, status: "in_progress" } as typeof r : r); if (!next.some((x) => x.status === "received")) stop(); return next; });
+      load();
+    }
     if (command === "ACCEPT") flash("Accepted \u2014 guest notified");
     else if (command === "CLAIM") flash("Claimed \u2014 on the way");
     else if (command === "DONE") flash("Completed \u2014 guest notified");
