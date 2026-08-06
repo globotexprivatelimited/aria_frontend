@@ -8,7 +8,7 @@ import {
 } from "recharts";
 import type { Req as RequestRow } from "../app/_actions/requests";
 
-const DEPT_LABEL: Record<string, string> = { fb: "In-Room Dining", housekeeping: "Housekeeping", spa: "Spa", front_desk: "Front Desk" };
+const DEPT_LABEL: Record<string, string> = { fb: "In-Room Dining", housekeeping: "Housekeeping", spa: "Spa", front_desk: "Front Desk" , dining: "Dining", maintenance: "Maintenance" };
 const SERIES = ["#0F5F4C", "#B08A4F", "#3B9E7E", "#C0563E"];
 
 function greeting(): string {

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type { Req } from "../app/_actions/requests";
 import { DEPARTMENTS } from "../lib/departments";
 
-const DEPT_COLORS: Record<string, string> = { fb: "#0F5F4C", housekeeping: "#3A6EA5", spa: "#8E5AA8", front_desk: "#B08A4F" };
+const DEPT_COLORS: Record<string, string> = { fb: "#0F5F4C", housekeeping: "#3A6EA5", spa: "#8E5AA8", front_desk: "#B08A4F" , dining: "#B0763A", maintenance: "#7A6A55" };
 const INK = "#1B2621";
 
 function Spark({ data, color }: { data: number[]; color: string }) {

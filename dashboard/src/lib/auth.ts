@@ -1,4 +1,4 @@
-﻿const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
+const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
 const TOKEN_KEY = "aria_token";
 
 export type Role = "founder" | "gm" | "fb" | "housekeeping" | "spa" | "front_desk" | "staff";
@@ -21,7 +21,7 @@ export function setToken(token: string) {
   if (typeof window !== "undefined") window.localStorage.setItem(TOKEN_KEY, token);
 }
 
-type MeResponse = { ok: boolean; data?: { role: string; hotelId: string; fullName: string; hotelName: string; departments: string[] } };
+type MeResponse = { ok: boolean; data?: { role: string; hotelId: string; fullName: string; hotelName: string; departments: string[]; webhookToken?: string } };
 
 async function fetchMe(): Promise<MeResponse["data"] | null> {
   const token = getToken();
@@ -39,6 +39,11 @@ export async function getMyRole(): Promise<{ role: string; hotelId: string; full
   const me = await fetchMe();
   if (!me) return null;
   return { role: me.role, hotelId: me.hotelId, fullName: me.fullName };
+}
+
+export async function getWebhookToken(): Promise<string> {
+  const me = await fetchMe();
+  return me?.webhookToken ?? "";
 }
 
 export async function getMyDepartments(): Promise<string[]> {

@@ -8,6 +8,8 @@ import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
 import MenuEditor from "../../../components/MenuEditor";
 import DeptItemManager from "../../../components/DeptItemManager";
+import MaintenanceManager from "../../../components/MaintenanceManager";
+import DiningManager from "../../../components/DiningManager";
 import SlotEditor from "../../../components/SlotEditor";
 import type { DeptConfig } from "../../../lib/departments";
 
@@ -90,7 +92,11 @@ export default function GMDepartments() {
                 <button onClick={() => setManaging(null)} aria-label="Close" style={{ width: 36, height: 36, borderRadius: 10, background: "#F5F1E8", border: "1px solid #E9E4D8", cursor: "pointer", color: "#6E756F", fontSize: 18, lineHeight: 1 }}>&times;</button>
               </div>
               <div style={{ padding: 24 }}>
-                {managing.dept === "fb"
+                {managing.dept === "dining"
+                  ? <DiningManager hotelId={HOTEL_ID} dept={managing.dept} deptLabel={managing.label} />
+                  : managing.dept === "maintenance"
+                  ? <MaintenanceManager hotelId={HOTEL_ID} dept={managing.dept} deptLabel={managing.label} />
+                  : managing.dept === "fb"
                   ? <MenuEditor hotelId={HOTEL_ID} dept={managing.dept} deptLabel={managing.label} />
                   : (managing.dept === "housekeeping" || managing.dept === "spa" || managing.dept === "front_desk")
                   ? <DeptItemManager hotelId={HOTEL_ID} dept={managing.dept} deptLabel={managing.label} />

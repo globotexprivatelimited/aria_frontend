@@ -17,6 +17,13 @@ const DEPT_KINDS: Record<string, { kind: string; label: string; hasStock: boolea
   front_desk: [
     { kind: "service", label: "Services", hasStock: false, hasPrice: true, hasDuration: false },
   ],
+  dining: [
+    { kind: "table", label: "Tables & Seating", hasStock: true, hasPrice: false, hasDuration: false },
+    { kind: "menu", label: "Restaurant Menu", hasStock: false, hasPrice: true, hasDuration: false },
+  ],
+  maintenance: [
+    { kind: "service", label: "Services", hasStock: false, hasPrice: true, hasDuration: true },
+  ],
 };
 
 export default function DeptItemManager({ hotelId, dept, deptLabel }: { hotelId: string; dept: string; deptLabel: string }) {

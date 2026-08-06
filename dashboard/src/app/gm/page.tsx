@@ -20,7 +20,7 @@ const GREEN = "#0F5F4C";
 const GOLD = "#B08A4F";
 const INK = "#1B2621";
 const RED = "#B23A2A";
-const DEPT_COLORS: Record<string, string> = { fb: "#0F5F4C", housekeeping: "#3A6EA5", spa: "#8E5AA8", front_desk: "#B08A4F" };
+const DEPT_COLORS: Record<string, string> = { fb: "#0F5F4C", housekeeping: "#3A6EA5", spa: "#8E5AA8", front_desk: "#B08A4F" , dining: "#B0763A", maintenance: "#7A6A55" };
 
 function timeAgo(iso: string): string {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);

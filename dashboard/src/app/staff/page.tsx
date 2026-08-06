@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getActiveRequests, getHistory, getAnalytics, type Req as RequestRow } from "../_actions/requests";
-import { getMyDepartments, getMyRole, signOut } from "../../lib/auth";
+import { getMyDepartments, getMyRole, signOut, getWebhookToken } from "../../lib/auth";
 import StaffDashboardTab from "../../components/StaffDashboardTab";
 import MenuEditor from "../../components/MenuEditor";
 import DeptItemManager from "../../components/DeptItemManager";
+import MaintenanceManager from "../../components/MaintenanceManager";
+import DiningManager from "../../components/DiningManager";
 import { useBreakpoint } from "../../lib/useBreakpoint";
 
 const API = "http://localhost:4000";
@@ -17,6 +19,8 @@ const DEPT_CFG: Record<string, { label: string; type: "auto" | "accept"; staffNu
   housekeeping: { label: "Housekeeping", type: "auto", staffNumber: "+919000000002", icon: "M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z" },
   spa: { label: "Spa", type: "accept", staffNumber: "+919000000005", icon: "M12 2c1 4 4 6 4 10a4 4 0 0 1-8 0c0-4 3-6 4-10z" },
   front_desk: { label: "Front Desk", type: "accept", staffNumber: "+919000000001", icon: "M3 21h18M4 21V8l8-5 8 5v13M9 21v-6h6v6" },
+  dining: { label: "Dining", type: "accept", staffNumber: "+919000000006", icon: "M5 3v18M5 8h6a3 3 0 0 0 0-6H5M15 3c2 3 4 5 4 8a4 4 0 0 1-8 0c0-3 2-5 4-8z" },
+  maintenance: { label: "Maintenance", type: "accept", staffNumber: "+919000000007", icon: "M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4z" },
 };
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: "dashboard", label: "Dashboard", icon: "M3 13h8V3H3zM13 21h8V3h-8zM3 21h8v-6H3z" },
@@ -55,6 +59,7 @@ export default function StaffDashboard() {
   const [checking, setChecking] = useState(true);
   const [myDepts, setMyDepts] = useState<string[]>([]);
   const [hotelId, setHotelId] = useState<string | null>(null);
+  const [hotelToken, setHotelToken] = useState<string>("");
   const [myName, setMyName] = useState<string>("");
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [history, setHistory] = useState<RequestRow[]>([]);
@@ -78,7 +83,7 @@ export default function StaffDashboard() {
       const depts = await getMyDepartments();
       if (!alive) return;
       setMyDepts(depts.filter((d) => DEPT_CFG[d]));
-      setHotelId(me.hotelId);
+      setHotelId(me.hotelId); getWebhookToken().then(setHotelToken);
       setMyName(me.fullName ?? "Team member");
       setChecking(false);
     })();
@@ -143,9 +148,10 @@ export default function StaffDashboard() {
     const ref = id.slice(0, 8);
     const text = option ? command + " " + ref + " " + option : command + " " + ref;
     try {
-      await fetch(API + "/webhooks/admin/demo-token-123", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ waId: cfg.staffNumber, text, type: "text", id: "ui-" + Date.now() }),
+      await fetch(API + "/api/staff/request-action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", authorization: "Bearer " + (typeof window !== "undefined" ? window.localStorage.getItem("aria_token") ?? "" : "") },
+        body: JSON.stringify({ requestId: id, command }),
       });
     } catch { /* offline tolerant */ }
     if (command === "DONE" || command === "REJECT") {
@@ -389,7 +395,11 @@ export default function StaffDashboard() {
                       <h2 style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 600, color: "#1B2621", marginTop: 3 }}>{DEPT_CFG[dept]?.label ?? dept}</h2>
                     </div>
                     <div style={{ padding: 22 }}>
-                      {dept === "fb"
+                      {dept === "dining"
+                        ? <DiningManager hotelId={hotelId as string} dept={dept} deptLabel={DEPT_CFG[dept]?.label ?? dept} />
+                        : dept === "maintenance"
+                        ? <MaintenanceManager hotelId={hotelId as string} dept={dept} deptLabel={DEPT_CFG[dept]?.label ?? dept} />
+                        : dept === "fb"
                         ? <MenuEditor hotelId={hotelId as string} dept={dept} deptLabel={DEPT_CFG[dept]?.label ?? dept} />
                         : <DeptItemManager hotelId={hotelId as string} dept={dept} deptLabel={DEPT_CFG[dept]?.label ?? dept} />}
                     </div>

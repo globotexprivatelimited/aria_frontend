@@ -5,7 +5,7 @@ import { DEPARTMENTS } from "../lib/departments";
 const GREEN = "#0F5F4C", GOLD = "#B08A4F", INK = "#1B2621";
 const rupee = "\u20B9";
 const fmt = (n: number) => rupee + n.toLocaleString("en-IN");
-const DEPT_COLORS: Record<string, string> = { fb: "#0F5F4C", housekeeping: "#3A6EA5", spa: "#8E5AA8", front_desk: "#B08A4F" };
+const DEPT_COLORS: Record<string, string> = { fb: "#0F5F4C", housekeeping: "#3A6EA5", spa: "#8E5AA8", front_desk: "#B08A4F" , dining: "#B0763A", maintenance: "#7A6A55" };
 const deptLabel = (d: string) => DEPARTMENTS.find((x) => x.dept === d)?.label ?? d;
 
 export default function RevenueDeep({ byDept, byHour, byRoom }: { byDept: RevDept[]; byHour: RevHour[]; byRoom: RevRoom[] }) {
