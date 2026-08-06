@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useMemo } from "react";
 import type { Req } from "../app/_actions/requests";
 
@@ -28,7 +28,7 @@ export default function GMFloorGrid({ active }: { active: Req[] }) {
     <div style={card}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".09em", color: "#9AA09A", fontWeight: 600 }}>Rooms with activity</div>
-        <div style={{ display: "flex", gap: 12, fontSize: 10.5, color: "#9AA09A" }}>
+        <div style={{ display: "flex", gap: 12, fontSize: 10, color: "#9AA09A" }}>
           <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: RED }} />Urgent</span>
           <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: GREEN }} />New</span>
           <span style={{ display: "flex", alignItems: "center", gap: 4 }}><span style={{ width: 8, height: 8, borderRadius: 2, background: GOLD }} />Working</span>

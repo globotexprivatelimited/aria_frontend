@@ -148,7 +148,7 @@ export default function GMDashboard() {
           {kpis.map((k) => (
             <div key={k.label} style={{ ...card, padding: 18, position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: -8, right: -4, fontSize: 54, opacity: 0.06, color: k.color, fontWeight: 700 }}>{k.glyph}</div>
-              <div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>
+              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>
               <div style={{ fontFamily: "Georgia, serif", fontSize: 34, fontWeight: 700, color: k.color, lineHeight: 1.1, marginTop: 6 }}>{k.value}</div>
               <div style={{ fontSize: 11, color: "#B4B9B3", marginTop: 2 }}>{k.sub}</div>
             </div>
@@ -263,12 +263,12 @@ export default function GMDashboard() {
                 <div key={r.id} style={{ display: "flex", gap: 10, alignItems: "flex-start", paddingBottom: 9, borderBottom: "1px solid #F3F3ED" }}>
                   <span style={{ width: 7, height: 7, borderRadius: 999, background: DEPT_COLORS[r.department] ?? GOLD, marginTop: 5, flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12.5, color: INK, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.requestDetail}</div>
-                    <div style={{ fontSize: 10.5, color: "#9AA09A", marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: INK, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.requestDetail}</div>
+                    <div style={{ fontSize: 10, color: "#9AA09A", marginTop: 2 }}>
                       {r.roomNumber ? "Room " + r.roomNumber + " \u00B7 " : ""}{deptLabel(r.department)} &middot; {timeAgo(r.createdAt)}
                     </div>
                   </div>
-                  <span style={{ fontSize: 9.5, fontWeight: 600, color: statusColor(r.status), background: statusColor(r.status) + "18", borderRadius: 5, padding: "2px 7px", whiteSpace: "nowrap" }}>{statusLabel(r.status)}</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: statusColor(r.status), background: statusColor(r.status) + "18", borderRadius: 5, padding: "2px 7px", whiteSpace: "nowrap" }}>{statusLabel(r.status)}</span>
                 </div>
               ))}
             </div>

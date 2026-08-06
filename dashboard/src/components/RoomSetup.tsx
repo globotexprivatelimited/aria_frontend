@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 
 const GREEN = "#0F5F4C", GOLD = "#B08A4F", RED = "#B23A2A", INK = "#1B2621";
@@ -73,7 +73,7 @@ export default function RoomSetup({ onSave, existingCount, target }: { onSave: (
             <input type="number" value={f.count} onChange={(e) => update(i, "count", parseInt(e.target.value) || 0)} style={field} />
             <select value={f.type} onChange={(e) => update(i, "type", e.target.value)} style={{ ...field, cursor: "pointer" }}>{TYPES.map((t) => <option key={t} value={t}>{t}</option>)}</select>
             <input value={f.prefix} onChange={(e) => update(i, "prefix", e.target.value)} placeholder={String(f.floor)} style={field} />
-            <span style={{ fontSize: 11.5, color: "#8A8577", fontFamily: "monospace" }}>{preview(f)}</span>
+            <span style={{ fontSize: 12, color: "#8A8577", fontFamily: "monospace" }}>{preview(f)}</span>
             <button onClick={() => removeFloor(i)} disabled={floors.length === 1} aria-label="Remove floor" style={{ width: 28, height: 28, borderRadius: 7, border: "1px solid #EED7D0", background: floors.length === 1 ? "#F5F5F0" : "#fff", cursor: floors.length === 1 ? "not-allowed" : "pointer", color: floors.length === 1 ? "#CCC" : "#C0563E", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>&times;</button>
           </div>
         ))}

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import type { RevDept, RevHour, RevRoom } from "../app/gm/revenue/revenue-actions";
 import { DEPARTMENTS } from "../lib/departments";
 
@@ -68,7 +68,7 @@ export default function RevenueDeep({ byDept, byHour, byRoom }: { byDept: RevDep
                       <div style={{ width: (r.revenue / maxRoom) * 100 + "%", height: "100%", background: GREEN, borderRadius: 999 }} />
                     </div>
                   </div>
-                  <span style={{ fontSize: 12.5, fontWeight: 600, color: INK, fontFamily: "Georgia, serif", whiteSpace: "nowrap" }}>{fmt(r.revenue)}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: INK, fontFamily: "Georgia, serif", whiteSpace: "nowrap" }}>{fmt(r.revenue)}</span>
                 </div>
               ))}
             </div>

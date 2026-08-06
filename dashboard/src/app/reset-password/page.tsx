@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -49,7 +49,7 @@ function ResetInner() {
           <div style={{ width: 42, height: 42, borderRadius: 11, background: GREEN, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 700 }}>A</div>
           <div>
             <div style={{ fontFamily: "Georgia, serif", fontSize: 19, fontWeight: 700, color: INK, lineHeight: 1 }}>Aria</div>
-            <div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD, marginTop: 2 }}>Manager</div>
+            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD, marginTop: 2 }}>Manager</div>
           </div>
         </div>
 
@@ -61,21 +61,21 @@ function ResetInner() {
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
             </div>
             <h1 style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 700, color: INK, margin: 0 }}>Password updated</h1>
-            <p style={{ fontSize: 14.5, color: "#6E756F", marginTop: 10 }}>Redirecting you to sign in&hellip;</p>
+            <p style={{ fontSize: 14, color: "#6E756F", marginTop: 10 }}>Redirecting you to sign in&hellip;</p>
           </div>
         ) : !valid ? (
           <div>
             <h1 style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 700, color: INK, margin: 0 }}>Link expired</h1>
-            <p style={{ fontSize: 14.5, color: "#6E756F", marginTop: 10, lineHeight: 1.6 }}>This reset link is invalid or has expired. Request a new one.</p>
+            <p style={{ fontSize: 14, color: "#6E756F", marginTop: 10, lineHeight: 1.6 }}>This reset link is invalid or has expired. Request a new one.</p>
             <Link href="/forgot-password" style={{ display: "inline-block", marginTop: 22, color: GREEN, fontSize: 14, fontWeight: 600, textDecoration: "none" }}>Request a new link &rarr;</Link>
           </div>
         ) : (
           <div>
             <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 700, color: INK, margin: 0, letterSpacing: "-0.4px" }}>Set new password</h1>
-            <p style={{ fontSize: 14.5, color: "#6E756F", marginTop: 10 }}>Choose a strong password for your manager account.</p>
+            <p style={{ fontSize: 14, color: "#6E756F", marginTop: 10 }}>Choose a strong password for your manager account.</p>
 
             {error ? (
-              <div style={{ marginTop: 18, borderRadius: 12, padding: "12px 15px", fontSize: 13.5, background: "#FBEDE9", color: "#B23A2A", border: "1px solid #EED7D0" }}>{error}</div>
+              <div style={{ marginTop: 18, borderRadius: 12, padding: "12px 15px", fontSize: 14, background: "#FBEDE9", color: "#B23A2A", border: "1px solid #EED7D0" }}>{error}</div>
             ) : null}
 
             <div style={{ marginTop: 20, marginBottom: 16 }}>

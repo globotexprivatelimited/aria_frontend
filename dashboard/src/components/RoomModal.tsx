@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import type { Room } from "../app/gm/reception/rooms-actions";
 
@@ -77,9 +77,9 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
         <div style={{ padding: "22px 24px", borderBottom: "1px solid #F0F0EA", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
             <div style={{ fontFamily: "Georgia, serif", fontSize: 28, fontWeight: 700, color: INK }}>Room {room.room_number}</div>
-            <div style={{ fontSize: 12.5, color: "#8A8577", marginTop: 2 }}>{room.room_type} &middot; Floor {room.floor}</div>
+            <div style={{ fontSize: 12, color: "#8A8577", marginTop: 2 }}>{room.room_type} &middot; Floor {room.floor}</div>
           </div>
-          <span style={{ fontSize: 11.5, fontWeight: 600, color: statusColor, background: statusBg, borderRadius: 8, padding: "5px 11px" }}>{statusLabel}</span>
+          <span style={{ fontSize: 12, fontWeight: 600, color: statusColor, background: statusBg, borderRadius: 8, padding: "5px 11px" }}>{statusLabel}</span>
         </div>
 
         <div style={{ padding: "20px 24px" }}>
@@ -107,7 +107,7 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
               <div style={{ marginBottom: 12 }}>
                 <label style={lbl}>WhatsApp number</label>
                 <input value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)} placeholder="+91 90000 00000" style={field} />
-                <div style={{ fontSize: 10.5, color: "#B4B9B3", marginTop: 4 }}>Guest texts this number to reach Aria for dining, spa &amp; requests</div>
+                <div style={{ fontSize: 10, color: "#B4B9B3", marginTop: 4 }}>Guest texts this number to reach Aria for dining, spa &amp; requests</div>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12, marginBottom: 18 }}>
                 <div><label style={lbl}>Guests</label><input type="number" min={1} value={partySize} onChange={(e) => setPartySize(parseInt(e.target.value) || 1)} style={field} /></div>
@@ -120,15 +120,15 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
               <div style={{ background: "#FBFAF5", borderRadius: 12, padding: 16, marginBottom: 16 }}>
                 <div style={{ fontSize: 17, fontWeight: 600, color: INK }}>{room.guest_name || "Guest"}</div>
                 {room.guest_phone ? <div style={{ fontSize: 12, color: GREEN, marginTop: 2 }}>{room.guest_phone}</div> : null}
-                {room.party_size ? <div style={{ fontSize: 12.5, color: "#8A8577", marginTop: 2 }}>{room.party_size} guest{room.party_size === 1 ? "" : "s"}</div> : null}
-                <div style={{ fontSize: 12.5, color: "#6E756F", marginTop: 10 }}>Checkout: {fmtTime(room.check_out)}</div>
-                {(() => { const h = hoursLeft(room.check_out); return h.text ? <div style={{ fontSize: 13.5, fontWeight: 700, color: h.urgent ? RED : GREEN, marginTop: 3 }}>{h.text}</div> : null; })()}
+                {room.party_size ? <div style={{ fontSize: 12, color: "#8A8577", marginTop: 2 }}>{room.party_size} guest{room.party_size === 1 ? "" : "s"}</div> : null}
+                <div style={{ fontSize: 12, color: "#6E756F", marginTop: 10 }}>Checkout: {fmtTime(room.check_out)}</div>
+                {(() => { const h = hoursLeft(room.check_out); return h.text ? <div style={{ fontSize: 14, fontWeight: 700, color: h.urgent ? RED : GREEN, marginTop: 3 }}>{h.text}</div> : null; })()}
               </div>
               <button onClick={() => act(() => handlers.onCheckOut(room.room_number))} disabled={busy} style={{ width: "100%", borderRadius: 11, padding: "13px", fontSize: 15, fontWeight: 600, color: "#fff", background: RED, border: 0, cursor: "pointer", opacity: busy ? 0.6 : 1 }}>{busy ? "..." : "Check out guest"}</button>
             </>
           ) : (
             <>
-              <div style={{ fontSize: 13.5, color: "#8A8577", marginBottom: 16, textAlign: "center", padding: "8px 0" }}>This room is being cleaned. Mark it ready once housekeeping is done.</div>
+              <div style={{ fontSize: 14, color: "#8A8577", marginBottom: 16, textAlign: "center", padding: "8px 0" }}>This room is being cleaned. Mark it ready once housekeeping is done.</div>
               <button onClick={() => act(() => handlers.onClean(room.room_number))} disabled={busy} style={{ width: "100%", borderRadius: 11, padding: "13px", fontSize: 15, fontWeight: 600, color: "#fff", background: GREEN, border: 0, cursor: "pointer", opacity: busy ? 0.6 : 1 }}>{busy ? "..." : "Mark as ready"}</button>
             </>
           )}

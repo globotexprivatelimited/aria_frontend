@@ -72,7 +72,7 @@ export default function GMSidebar() {
         <div style={{ width: 40, height: 40, borderRadius: 999, background: "linear-gradient(135deg,#B08A4F,#96733C)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, flexShrink: 0 }}>GM</div>
         {!iconsOnly ? (
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 13.5, fontWeight: 600, color: "#1B2621" }}>General Manager</div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#1B2621" }}>General Manager</div>
             <button onClick={handleSignOut} style={{ fontSize: 12, color: "#A8A395", background: "transparent", border: 0, padding: 0, cursor: "pointer" }}>Sign out</button>
           </div>
         ) : null}

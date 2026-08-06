@@ -101,7 +101,7 @@ export default function GMStaff() {
                 <span style={{ fontWeight: 500, color: "#1B2621" }}>{s.name}</span>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {DEPARTMENTS.map((dp) => { const on = s.depts.includes(dp.dept); return <button key={dp.dept} onClick={() => saveDeptAccess(s.id, dp.dept, on)} style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 999, padding: "4px 10px 4px 8px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", background: on ? "#EAF2ED" : "#F5F5F0", color: on ? "#0F5F4C" : "#9AA09A", border: "1px solid " + (on ? "#CFE5DC" : "#E7E3D8") }}><span style={{ width: 22, height: 13, borderRadius: 999, background: on ? "#0F5F4C" : "#CDC8BC", position: "relative", flexShrink: 0 }}><span style={{ position: "absolute", top: 2, left: on ? 11 : 2, width: 9, height: 9, borderRadius: 999, background: "#fff" }} /></span>{dp.label}</button>; })}
+                {DEPARTMENTS.map((dp) => { const on = s.depts.includes(dp.dept); return <button key={dp.dept} onClick={() => saveDeptAccess(s.id, dp.dept, on)} style={{ display: "inline-flex", alignItems: "center", gap: 6, borderRadius: 999, padding: "4px 10px 4px 8px", fontSize: 12, fontWeight: 600, cursor: "pointer", background: on ? "#EAF2ED" : "#F5F5F0", color: on ? "#0F5F4C" : "#9AA09A", border: "1px solid " + (on ? "#CFE5DC" : "#E7E3D8") }}><span style={{ width: 22, height: 13, borderRadius: 999, background: on ? "#0F5F4C" : "#CDC8BC", position: "relative", flexShrink: 0 }}><span style={{ position: "absolute", top: 2, left: on ? 11 : 2, width: 9, height: 9, borderRadius: 999, background: "#fff" }} /></span>{dp.label}</button>; })}
               </div>
               <span style={{ color: "#6E756F", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis" }}>{s.email || "\u2014"}</span>
               <div style={{ textAlign: "right" }}>
@@ -130,7 +130,7 @@ export default function GMStaff() {
                     <button key={d.dept} type="button" onClick={() => toggleDept(d.dept)}
                       style={{ display: "flex", alignItems: "center", gap: 9, textAlign: "left", borderRadius: 10, padding: "11px 12px", cursor: "pointer", border: "1.5px solid " + (on ? "#0F5F4C" : "#E3E3DC"), background: on ? "#F1F6F2" : "#fff" }}>
                       <span style={{ width: 20, height: 20, flexShrink: 0, borderRadius: 6, border: "1.5px solid " + (on ? "#0F5F4C" : "#CFCFC7"), background: on ? "#0F5F4C" : "#fff", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12 }}>{on ? "\u2713" : ""}</span>
-                      <span style={{ fontSize: 13.5, fontWeight: 500, color: "#1B2621" }}>{d.label}</span>
+                      <span style={{ fontSize: 14, fontWeight: 500, color: "#1B2621" }}>{d.label}</span>
                     </button>
                   );
                 })}

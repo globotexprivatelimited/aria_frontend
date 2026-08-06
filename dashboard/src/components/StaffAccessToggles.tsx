@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { setStaffDeptAccess, type StaffDept } from "../app/gm/staff/staff-access-actions";
 
@@ -29,7 +29,7 @@ export default function StaffAccessToggles({ hotelId, staffId, departments, onCh
         <button key={d.dept} onClick={() => toggle(d.dept, d.active)} disabled={busy === d.dept}
           style={{
             display: "flex", alignItems: "center", gap: 8, borderRadius: 999, padding: "6px 12px 6px 10px",
-            fontSize: 12.5, fontWeight: 600, cursor: busy === d.dept ? "wait" : "pointer",
+            fontSize: 12, fontWeight: 600, cursor: busy === d.dept ? "wait" : "pointer",
             border: "1px solid " + (d.active ? "#CFE5DC" : "#E3DECF"),
             background: d.active ? "#EAF2ED" : "#F5F5F0",
             color: d.active ? GREEN : "#8A8577", opacity: busy === d.dept ? 0.6 : 1, transition: "all .15s",

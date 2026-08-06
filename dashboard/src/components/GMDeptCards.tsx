@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useMemo } from "react";
 import type { Req } from "../app/_actions/requests";
 import { DEPARTMENTS } from "../lib/departments";
@@ -42,7 +42,7 @@ export default function GMDeptCards({ active, week }: { active: Req[]; week: Req
                 <span style={{ width: 10, height: 10, borderRadius: 3, background: c.color }} />
                 <span style={{ fontSize: 13, fontWeight: 600, color: INK }}>{c.label}</span>
               </div>
-              {c.openCount > 0 ? <span style={{ fontSize: 10.5, fontWeight: 600, color: c.color, background: c.color + "16", borderRadius: 999, padding: "2px 8px" }}>{c.openCount} open</span> : <span style={{ fontSize: 10.5, color: "#B4B9B3" }}>clear</span>}
+              {c.openCount > 0 ? <span style={{ fontSize: 10, fontWeight: 600, color: c.color, background: c.color + "16", borderRadius: 999, padding: "2px 8px" }}>{c.openCount} open</span> : <span style={{ fontSize: 10, color: "#B4B9B3" }}>clear</span>}
             </div>
             <Spark data={c.series} color={c.color} />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 10, fontSize: 11, color: "#9AA09A" }}>

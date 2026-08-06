@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState } from "react";
 import type { Req } from "../app/_actions/requests";
 
@@ -25,7 +25,7 @@ function Ring({ pct, color, label, sub, size = 120 }: { pct: number; color: stri
       </div>
       <div style={{ textAlign: "center" }}>
         <div style={{ fontSize: 12, fontWeight: 600, color: INK }}>{label}</div>
-        <div style={{ fontSize: 10.5, color: "#9AA09A" }}>{sub}</div>
+        <div style={{ fontSize: 10, color: "#9AA09A" }}>{sub}</div>
       </div>
     </div>
   );

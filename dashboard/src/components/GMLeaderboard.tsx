@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useMemo } from "react";
 import type { Req } from "../app/_actions/requests";
 
@@ -23,7 +23,7 @@ export default function GMLeaderboard({ week }: { week: Req[] }) {
             <div key={label} style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ width: 20, fontFamily: "Georgia, serif", fontSize: 15, fontWeight: 700, color: i === 0 ? GREEN : "#C7C2B4" }}>{i + 1}</span>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12.5, color: INK, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{label}</div>
+                <div style={{ fontSize: 12, color: INK, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{label}</div>
                 <div style={{ height: 6, background: "#F0F0EA", borderRadius: 999, overflow: "hidden" }}>
                   <div style={{ width: (count / max) * 100 + "%", height: "100%", background: GREEN, borderRadius: 999, transition: "width .6s" }} />
                 </div>

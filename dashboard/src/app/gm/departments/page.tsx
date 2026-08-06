@@ -67,7 +67,7 @@ export default function GMDepartments() {
                   <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: "#B08A4F" }}>{s.inProgress}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>in progress</div></div>
                   <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: "#9AA09A" }}>{s.resolved}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>resolved</div></div>
                 </div>
-                <button onClick={() => setManaging(d)} style={{ marginTop: 16, width: "100%", borderRadius: 10, padding: "10px", fontSize: 13.5, fontWeight: 600, color: "#0F5F4C", background: "#F1F6F2", border: "1px solid #DCEBE1", cursor: "pointer" }}>{d.type === "auto" ? "Manage menu & stock" : "Manage time slots"}</button>
+                <button onClick={() => setManaging(d)} style={{ marginTop: 16, width: "100%", borderRadius: 10, padding: "10px", fontSize: 14, fontWeight: 600, color: "#0F5F4C", background: "#F1F6F2", border: "1px solid #DCEBE1", cursor: "pointer" }}>{d.type === "auto" ? "Manage menu & stock" : "Manage time slots"}</button>
               </div>
             );
           })}

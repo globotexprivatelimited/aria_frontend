@@ -187,7 +187,7 @@ export default function StaffDashboard() {
         <div style={{ padding: "18px 20px 18px 24px" }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
             <div>
-              <div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".12em", color: "#B08A4F", marginBottom: 2 }}>Room</div>
+              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".12em", color: "#B08A4F", marginBottom: 2 }}>Room</div>
               <div style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 700, color: "#1B2621", lineHeight: 1 }}>{r.roomNumber ?? "\u2014"}</div>
             </div>
             <div style={{ textAlign: "right" }}>
@@ -196,7 +196,7 @@ export default function StaffDashboard() {
               {urgent ? <div style={{ marginTop: 6, display: "inline-block", borderRadius: 999, padding: "2px 10px", fontSize: 11, fontWeight: 600, background: "#FBEAE4", color: "#C0563E" }}>Urgent</div> : null}
             </div>
           </div>
-          <p style={{ marginTop: 14, fontSize: 14.5, lineHeight: 1.55, color: "#2C332D" }}>{r.requestDetail}</p>
+          <p style={{ marginTop: 14, fontSize: 14, lineHeight: 1.55, color: "#2C332D" }}>{r.requestDetail}</p>
           {proposing ? (
             <div style={{ marginTop: 16 }}>
               <input value={proposeText} onChange={(e) => setProposeText(e.target.value)} placeholder="Suggest a time, e.g. 6:30pm" autoFocus style={{ width: "100%", borderRadius: 10, borderWidth: 1, borderStyle: "solid", borderColor: "#E3DECF", background: "#FBFAF5", padding: "10px 12px", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
@@ -271,7 +271,7 @@ export default function StaffDashboard() {
                 onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = "transparent"; }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={active ? "#fff" : "#8A8577"} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d={t.icon} /></svg>
                 <span style={{ flex: 1, fontSize: 14, fontWeight: active ? 600 : 500, color: active ? "#fff" : "#3A413B" }}>{t.label}</span>
-                {badge > 0 ? <span style={{ borderRadius: 999, minWidth: 20, textAlign: "center", padding: "1px 7px", fontSize: 11.5, fontWeight: 700, background: active ? "rgba(255,255,255,.22)" : "#E8F1ED", color: active ? "#fff" : "#0F5F4C" }}>{badge}</span> : null}
+                {badge > 0 ? <span style={{ borderRadius: 999, minWidth: 20, textAlign: "center", padding: "1px 7px", fontSize: 12, fontWeight: 700, background: active ? "rgba(255,255,255,.22)" : "#E8F1ED", color: active ? "#fff" : "#0F5F4C" }}>{badge}</span> : null}
               </button>
             );
           })}
@@ -295,7 +295,7 @@ export default function StaffDashboard() {
         <div style={{ borderTop: "1px solid #EDE8DC", padding: 16, display: "flex", alignItems: "center", justifyContent: iconsOnly ? "center" : "flex-start", gap: 12 }}>
           <div style={{ width: 40, height: 40, borderRadius: 999, background: "linear-gradient(135deg,#B08A4F,#96733C)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, flexShrink: 0 }}>{initials || "ME"}</div>
           <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 13.5, fontWeight: 600, color: "#1B2621", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{myName}</div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#1B2621", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{myName}</div>
             <button onClick={async () => { await signOut(); window.location.href = "/login"; }} style={{ fontSize: 12, color: "#A8A395", background: "transparent", border: 0, padding: 0, cursor: "pointer" }}>Sign out</button>
           </div>
         </div>
@@ -306,8 +306,8 @@ export default function StaffDashboard() {
         {toast ? <div style={{ marginBottom: 18, borderRadius: 12, padding: "13px 18px", fontSize: 14, fontWeight: 500, background: "#EAF2ED", color: "#0F5F4C", border: "1px solid #CFE5DC" }}>{toast}</div> : null}
         {alarm && tab !== "history" ? (
           <button onClick={stop} style={{ marginBottom: 18, width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", borderRadius: 14, padding: "14px 22px", border: "1px solid #E3B4A5", background: "linear-gradient(180deg,#FBEEE9,#F9E6DF)", cursor: "pointer" }}>
-            <span style={{ fontSize: 14.5, fontWeight: 600, color: "#A0432E" }}>A new request just arrived</span>
-            <span style={{ borderRadius: 9, padding: "5px 14px", fontSize: 12.5, fontWeight: 600, color: "#fff", background: "#C0563E" }}>Acknowledge</span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#A0432E" }}>A new request just arrived</span>
+            <span style={{ borderRadius: 9, padding: "5px 14px", fontSize: 12, fontWeight: 600, color: "#fff", background: "#C0563E" }}>Acknowledge</span>
           </button>
         ) : null}
 
@@ -398,8 +398,8 @@ export default function StaffDashboard() {
                   <div key={r.id} style={{ display: "grid", gridTemplateColumns: "80px 1.4fr 2fr 140px", minWidth: isMobile ? 560 : "auto", padding: "16px 24px", borderBottom: "1px solid #F4F0E7", fontSize: 14, alignItems: "center" }}>
                     <span style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 700, color: "#1B2621" }}>{r.roomNumber ?? "\u2014"}</span>
                     <span><span style={{ borderRadius: 999, padding: "3px 11px", fontSize: 12, fontWeight: 500, background: "#F1F6F2", color: "#0F5F4C", border: "1px solid #DCEBE1" }}>{DEPT_CFG[r.department]?.label ?? r.department}</span></span>
-                    <span style={{ color: "#3A413B", fontSize: 13.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.requestDetail}</span>
-                    <span style={{ textAlign: "right", color: "#A8A395", fontSize: 12.5 }}>{when(r.createdAt)}</span>
+                    <span style={{ color: "#3A413B", fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.requestDetail}</span>
+                    <span style={{ textAlign: "right", color: "#A8A395", fontSize: 12 }}>{when(r.createdAt)}</span>
                   </div>
                 ))}
               </div>

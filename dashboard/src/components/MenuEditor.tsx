@@ -174,10 +174,10 @@ export default function MenuEditor({ hotelId, dept, deptLabel }: { hotelId: stri
                         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap" }}>
                             <DietDot diet={it.diet} />
-                            <span style={{ fontWeight: 600, color: "#1B2621", fontSize: 14.5 }}>{it.name}</span>
-                            {it.is_signature ? <span style={{ borderRadius: 5, padding: "1px 7px", fontSize: 10.5, fontWeight: 600, background: "#F6EEDD", color: "#96733C" }}>Signature</span> : null}
-                            {it.is_bestseller ? <span style={{ borderRadius: 5, padding: "1px 7px", fontSize: 10.5, fontWeight: 600, background: "#EAF1F7", color: "#3A6EA5" }}>Bestseller</span> : null}
-                            {it.age_restricted ? <span style={{ borderRadius: 5, padding: "1px 7px", fontSize: 10.5, fontWeight: 600, background: "#FBEDE9", color: "#B23A2A" }}>18+</span> : null}
+                            <span style={{ fontWeight: 600, color: "#1B2621", fontSize: 14 }}>{it.name}</span>
+                            {it.is_signature ? <span style={{ borderRadius: 5, padding: "1px 7px", fontSize: 10, fontWeight: 600, background: "#F6EEDD", color: "#96733C" }}>Signature</span> : null}
+                            {it.is_bestseller ? <span style={{ borderRadius: 5, padding: "1px 7px", fontSize: 10, fontWeight: 600, background: "#EAF1F7", color: "#3A6EA5" }}>Bestseller</span> : null}
+                            {it.age_restricted ? <span style={{ borderRadius: 5, padding: "1px 7px", fontSize: 10, fontWeight: 600, background: "#FBEDE9", color: "#B23A2A" }}>18+</span> : null}
                           </div>
                           <span style={{ fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 700, color: "#1B2621", whiteSpace: "nowrap" }}>{rupee}{Number(it.price).toFixed(0)}</span>
                         </div>
@@ -194,7 +194,7 @@ export default function MenuEditor({ hotelId, dept, deptLabel }: { hotelId: stri
                           {it.tax_pct > 0 ? <span>+{Number(it.tax_pct)}% tax</span> : null}
                         </div>
                         {(it.allergens || it.is_jain || it.is_halal || it.gluten_free) ? (
-                          <div style={{ fontSize: 10.5, marginTop: 5, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+                          <div style={{ fontSize: 10, marginTop: 5, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
                             {it.is_jain ? <span style={{ background: "#F1F6F2", color: "#0F5F4C", borderRadius: 4, padding: "1px 6px", fontWeight: 600 }}>Jain</span> : null}
                             {it.is_halal ? <span style={{ background: "#F1F6F2", color: "#0F5F4C", borderRadius: 4, padding: "1px 6px", fontWeight: 600 }}>Halal</span> : null}
                             {it.gluten_free ? <span style={{ background: "#F1F6F2", color: "#0F5F4C", borderRadius: 4, padding: "1px 6px", fontWeight: 600 }}>Gluten-free</span> : null}
@@ -206,10 +206,10 @@ export default function MenuEditor({ hotelId, dept, deptLabel }: { hotelId: stri
                             <button onClick={() => patch(it.id, { stock: Math.max(0, it.stock - 1) })} style={{ width: 24, height: 24, borderRadius: 6, border: "1px solid #DED8C8", background: "#fff", cursor: "pointer", fontSize: 15, lineHeight: 1, color: "#6E756F" }}>&minus;</button>
                             <span style={{ minWidth: 26, textAlign: "center", fontWeight: 600, fontSize: 13, color: out ? "#C0563E" : low ? "#96733C" : "#1B2621" }}>{it.stock}</span>
                             <button onClick={() => patch(it.id, { stock: it.stock + 1 })} style={{ width: 24, height: 24, borderRadius: 6, border: "1px solid #DED8C8", background: "#fff", cursor: "pointer", fontSize: 15, lineHeight: 1, color: "#6E756F" }}>+</button>
-                            {out ? <span style={{ fontSize: 10.5, fontWeight: 600, color: "#C0563E", marginLeft: 2 }}>OUT</span> : low ? <span style={{ fontSize: 10.5, fontWeight: 600, color: "#96733C", marginLeft: 2 }}>LOW</span> : null}
+                            {out ? <span style={{ fontSize: 10, fontWeight: 600, color: "#C0563E", marginLeft: 2 }}>OUT</span> : low ? <span style={{ fontSize: 10, fontWeight: 600, color: "#96733C", marginLeft: 2 }}>LOW</span> : null}
                           </span>
                           <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <button onClick={() => patch(it.id, { available: !it.available })} style={{ borderRadius: 999, padding: "3px 10px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", border: "1px solid " + (it.available ? "#CFE5DC" : "#E5D6BD"), background: it.available ? "#EAF2ED" : "#F6EEDD", color: it.available ? "#0F5F4C" : "#96733C" }}>{it.available ? "On" : "Off"}</button>
+                            <button onClick={() => patch(it.id, { available: !it.available })} style={{ borderRadius: 999, padding: "3px 10px", fontSize: 12, fontWeight: 600, cursor: "pointer", border: "1px solid " + (it.available ? "#CFE5DC" : "#E5D6BD"), background: it.available ? "#EAF2ED" : "#F6EEDD", color: it.available ? "#0F5F4C" : "#96733C" }}>{it.available ? "On" : "Off"}</button>
                             <button onClick={() => remove(it.id)} aria-label="Delete" style={{ width: 26, height: 26, borderRadius: 7, border: "1px solid #EED7D0", background: "#fff", cursor: "pointer", color: "#C0563E", display: "flex", alignItems: "center", justifyContent: "center" }}>
                               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" /></svg>
                             </button>

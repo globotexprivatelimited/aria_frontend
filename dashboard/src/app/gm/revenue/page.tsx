@@ -70,7 +70,7 @@ export default function RevenuePage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 16 }}>
           {kpis.map((k) => (
             <div key={k.label} style={card}>
-              <div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>
+              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>
               <div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 700, color: k.color, marginTop: 6 }}>{fmt(k.value)}</div>
             </div>
           ))}
@@ -133,7 +133,7 @@ export default function RevenuePage() {
                   <span style={{ width: 20, fontFamily: "Georgia, serif", fontSize: 15, fontWeight: 700, color: i === 0 ? GREEN : "#C7C2B4" }}>{i + 1}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                      <span style={{ fontSize: 12.5, color: INK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.name}</span>
+                      <span style={{ fontSize: 12, color: INK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.name}</span>
                       <span style={{ fontSize: 11, color: "#9AA09A", marginLeft: 8, whiteSpace: "nowrap" }}>{it.qty} sold</span>
                     </div>
                     <div style={{ height: 6, background: "#F0F0EA", borderRadius: 999, overflow: "hidden" }}>

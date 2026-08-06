@@ -102,7 +102,7 @@ export default function ReceptionBoard() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 18 }}>
           {kpis.map((k) => (
             <div key={k.label} style={{ ...card, padding: 18 }}>
-              <div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>
+              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>
               <div style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 700, color: k.color, marginTop: 6 }}>{k.value}</div>
             </div>
           ))}
@@ -133,8 +133,8 @@ export default function ReceptionBoard() {
                 <span style={{ fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 700, color: INK }}>Floor {floor}</span>
                 <span style={{ fontSize: 11, color: "#B4B9B3" }}>{fRooms.filter((r) => r.status === "occupied").length}/{fRooms.length} occupied</span>
                 <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,#E4DBC7,transparent)" }} />
-                <button onClick={() => doClearFloor(floor)} style={{ fontSize: 10.5, color: "#B0776A", background: "#FBEDE9", border: "1px solid #EED7D0", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Clear floor</button>
-                <button onClick={() => doClearFloor(floor)} style={{ fontSize: 10.5, color: "#B0776A", background: "#FBEDE9", border: "1px solid #EED7D0", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Clear floor</button>
+                <button onClick={() => doClearFloor(floor)} style={{ fontSize: 10, color: "#B0776A", background: "#FBEDE9", border: "1px solid #EED7D0", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Clear floor</button>
+                <button onClick={() => doClearFloor(floor)} style={{ fontSize: 10, color: "#B0776A", background: "#FBEDE9", border: "1px solid #EED7D0", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Clear floor</button>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(52px, 1fr))", gap: 8 }}>
                 {fRooms.map((r) => {
@@ -163,20 +163,20 @@ export default function ReceptionBoard() {
         <div style={{ position: "fixed", left: Math.min(pos.x + 16, (typeof window !== "undefined" ? window.innerWidth : 1200) - 240), top: pos.y + 16, zIndex: 100, width: 220, background: "#fff", border: "1px solid #E4DECF", borderRadius: 12, boxShadow: "0 12px 32px rgba(30,40,33,.16)", padding: 14, pointerEvents: "none" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <span style={{ fontFamily: "Georgia, serif", fontSize: 20, fontWeight: 700, color: INK }}>{hover.room_number}</span>
-            <span style={{ fontSize: 10.5, fontWeight: 600, color: (STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).c, background: (STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).bg, borderRadius: 6, padding: "2px 8px" }}>{(STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).label}</span>
+            <span style={{ fontSize: 10, fontWeight: 600, color: (STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).c, background: (STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).bg, borderRadius: 6, padding: "2px 8px" }}>{(STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).label}</span>
           </div>
-          <div style={{ fontSize: 11.5, color: "#8A8577", marginBottom: hover.status === "occupied" ? 8 : 0 }}>{hover.room_type} &middot; Floor {hover.floor}</div>
+          <div style={{ fontSize: 12, color: "#8A8577", marginBottom: hover.status === "occupied" ? 8 : 0 }}>{hover.room_type} &middot; Floor {hover.floor}</div>
           {hover.status === "occupied" ? (
             <div style={{ borderTop: "1px solid #F0F0EA", paddingTop: 8 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: INK }}>{hover.guest_name || "Guest"}</div>
               {hover.party_size ? <div style={{ fontSize: 11, color: "#8A8577", marginTop: 1 }}>{hover.party_size} guest{hover.party_size === 1 ? "" : "s"}</div> : null}
-              <div style={{ fontSize: 11.5, color: "#6E756F", marginTop: 6 }}>Checkout: {fmtTime(hover.check_out)}</div>
+              <div style={{ fontSize: 12, color: "#6E756F", marginTop: 6 }}>Checkout: {fmtTime(hover.check_out)}</div>
               {(() => { const h = hoursLeft(hover.check_out); return h.text ? <div style={{ fontSize: 12, fontWeight: 700, color: h.urgent ? RED : GREEN, marginTop: 2 }}>{h.text}</div> : null; })()}
             </div>
           ) : hover.status === "cleaning" ? (
-            <div style={{ fontSize: 11.5, color: AMBER, marginTop: 4 }}>Being cleaned</div>
+            <div style={{ fontSize: 12, color: AMBER, marginTop: 4 }}>Being cleaned</div>
           ) : (
-            <div style={{ fontSize: 11.5, color: GREEN, marginTop: 4 }}>Ready to book</div>
+            <div style={{ fontSize: 12, color: GREEN, marginTop: 4 }}>Ready to book</div>
           )}
         </div>
       ) : null}

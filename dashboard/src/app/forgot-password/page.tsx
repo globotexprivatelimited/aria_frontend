@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -39,18 +39,18 @@ export default function ForgotPasswordPage() {
             <div style={{ width: 46, height: 46, borderRadius: 12, background: "rgba(255,255,255,0.16)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Georgia, serif", fontSize: 24, fontWeight: 700, color: "#fff" }}>A</div>
             <div>
               <div style={{ fontFamily: "Georgia, serif", fontSize: 21, fontWeight: 700, lineHeight: 1 }}>Aria</div>
-              <div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".18em", color: "rgba(255,255,255,0.7)", marginTop: 3 }}>Hotel Intelligence</div>
+              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".18em", color: "rgba(255,255,255,0.7)", marginTop: 3 }}>Hotel Intelligence</div>
             </div>
           </div>
           <div style={{ display: "inline-block", width: "fit-content", fontSize: 11, textTransform: "uppercase", letterSpacing: ".2em", color: GOLD, marginBottom: 16, padding: "5px 13px", borderRadius: 999, background: "rgba(176,138,79,0.18)", border: "1px solid rgba(176,138,79,0.3)" }}>Account recovery</div>
           <h1 style={{ fontFamily: "Georgia, serif", fontSize: 40, fontWeight: 700, margin: 0, lineHeight: 1.1, letterSpacing: "-0.6px" }}>You can reset your password here.</h1>
-          <p style={{ fontSize: 15.5, color: "rgba(255,255,255,0.78)", marginTop: 16, lineHeight: 1.65, maxWidth: 380 }}>Enter the manager email for your hotel and we&apos;ll send a secure reset link to your hotel&apos;s contact inbox. The link stays valid for one hour.</p>
+          <p style={{ fontSize: 16, color: "rgba(255,255,255,0.78)", marginTop: 16, lineHeight: 1.65, maxWidth: 380 }}>Enter the manager email for your hotel and we&apos;ll send a secure reset link to your hotel&apos;s contact inbox. The link stays valid for one hour.</p>
           <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, color: "rgba(255,255,255,0.7)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "rgba(255,255,255,0.7)" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
               Secure, time-limited reset link
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, color: "rgba(255,255,255,0.7)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "rgba(255,255,255,0.7)" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
               Sent to your hotel&apos;s contact email
             </div>
@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={GREEN} strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
               </div>
               <h2 style={{ fontFamily: "Georgia, serif", fontSize: 25, fontWeight: 700, color: INK, margin: 0 }}>Check the hotel inbox</h2>
-              <p style={{ fontSize: 14.5, color: "#6E756F", marginTop: 10, lineHeight: 1.6 }}>If a manager account exists for that email, a reset link has been sent to the hotel&apos;s contact email. It expires in 1 hour.</p>
+              <p style={{ fontSize: 14, color: "#6E756F", marginTop: 10, lineHeight: 1.6 }}>If a manager account exists for that email, a reset link has been sent to the hotel&apos;s contact email. It expires in 1 hour.</p>
               <Link href="/login" style={{ display: "inline-block", marginTop: 22, color: GREEN, fontSize: 14, fontWeight: 600, textDecoration: "none" }}>&larr; Back to sign in</Link>
             </div>
           ) : (
@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
               <p style={{ fontSize: 14, color: "#6E756F", marginTop: 8 }}>We&apos;ll email you a secure link.</p>
 
               {error ? (
-                <div style={{ marginTop: 18, borderRadius: 12, padding: "12px 15px", fontSize: 13.5, background: "#FBEDE9", color: "#B23A2A", border: "1px solid #EED7D0" }}>{error}</div>
+                <div style={{ marginTop: 18, borderRadius: 12, padding: "12px 15px", fontSize: 14, background: "#FBEDE9", color: "#B23A2A", border: "1px solid #EED7D0" }}>{error}</div>
               ) : null}
 
               <div style={{ marginTop: 22, marginBottom: 22 }}>
@@ -87,7 +87,7 @@ export default function ForgotPasswordPage() {
               </button>
 
               <div style={{ marginTop: 18, textAlign: "center" }}>
-                <Link href="/login" style={{ color: "#6E756F", fontSize: 13.5, textDecoration: "none" }}>&larr; Back to sign in</Link>
+                <Link href="/login" style={{ color: "#6E756F", fontSize: 14, textDecoration: "none" }}>&larr; Back to sign in</Link>
               </div>
             </div>
           )}

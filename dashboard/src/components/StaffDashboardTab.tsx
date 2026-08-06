@@ -29,7 +29,7 @@ function Counter({ value, color, suffix }: { value: number; color: string; suffi
 function Tip({ active, payload, label }: any) {
   if (!active || !payload || !payload.length) return null;
   return (
-    <div style={{ background: "#1B2621", color: "#fff", borderRadius: 9, padding: "8px 12px", fontSize: 12.5, boxShadow: "0 8px 20px rgba(0,0,0,.2)" }}>
+    <div style={{ background: "#1B2621", color: "#fff", borderRadius: 9, padding: "8px 12px", fontSize: 12, boxShadow: "0 8px 20px rgba(0,0,0,.2)" }}>
       <div style={{ opacity: .7, marginBottom: 2 }}>{label}</div>
       <div style={{ fontWeight: 600 }}>{payload[0].value} request{payload[0].value === 1 ? "" : "s"}</div>
     </div>
@@ -162,8 +162,8 @@ export default function StaffDashboardTab({ analytics, rows, myDepts, myName }: 
             {byDept.map((d) => (
               <div key={d.name} style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6 }}>
                 <span style={{ width: 9, height: 9, borderRadius: 3, background: d.fill, flexShrink: 0 }} />
-                <span style={{ fontSize: 12.5, color: "#4A514A", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.name}</span>
-                <span style={{ fontSize: 12.5, fontWeight: 600, color: "#1B2621" }}>{d.value}</span>
+                <span style={{ fontSize: 12, color: "#4A514A", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.name}</span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "#1B2621" }}>{d.value}</span>
               </div>
             ))}
           </div>
@@ -172,7 +172,7 @@ export default function StaffDashboardTab({ analytics, rows, myDepts, myName }: 
         <motion.div variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }} style={{ ...card, padding: "22px 24px" }}>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 8 }}>
             <div style={eyebrow}>When guests reach out</div>
-            {weekTotal > 0 ? <div style={{ fontSize: 12.5, color: "#9A968B" }}>Busiest around <b style={{ color: "#1B2621" }}>{peakHour.label.replace("a", " AM").replace("p", " PM")}</b></div> : null}
+            {weekTotal > 0 ? <div style={{ fontSize: 12, color: "#9A968B" }}>Busiest around <b style={{ color: "#1B2621" }}>{peakHour.label.replace("a", " AM").replace("p", " PM")}</b></div> : null}
           </div>
           <div style={{ height: 150 }}>
             <ResponsiveContainer width="100%" height="100%">

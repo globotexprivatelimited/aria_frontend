@@ -62,7 +62,7 @@ export default function LoginPage() {
           <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(255,255,255,0.14)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Georgia, serif", fontSize: 23, fontWeight: 700, color: "#fff" }}>A</div>
           <div style={{ color: "#fff" }}>
             <div style={{ fontFamily: "Georgia, serif", fontSize: 20, fontWeight: 700, lineHeight: 1 }}>Aria</div>
-            <div style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".18em", color: "rgba(255,255,255,0.7)", marginTop: 3 }}>Hotel Intelligence</div>
+            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".18em", color: "rgba(255,255,255,0.7)", marginTop: 3 }}>Hotel Intelligence</div>
           </div>
         </div>
 
@@ -82,7 +82,7 @@ export default function LoginPage() {
           </div>
 
           {error ? (
-            <div style={{ marginBottom: 20, borderRadius: 12, padding: "12px 15px", fontSize: 13.5, background: "#FBEDE9", color: "#B23A2A", border: "1px solid #EED7D0", display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ marginBottom: 20, borderRadius: 12, padding: "12px 15px", fontSize: 14, background: "#FBEDE9", color: "#B23A2A", border: "1px solid #EED7D0", display: "flex", alignItems: "center", gap: 8 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
               {error}
             </div>
@@ -114,11 +114,11 @@ export default function LoginPage() {
           <div style={{ textAlign: "right", marginBottom: 18, marginTop: -8 }}>
             <Link href="/forgot-password" style={{ fontSize: 13, color: GREEN, textDecoration: "none", fontWeight: 500 }}>Forgot password?</Link>
           </div>
-          <button onClick={submit} disabled={busy || !email || !password} className="signin-btn" style={{ width: "100%", borderRadius: 13, padding: "16px", fontSize: 15.5, fontWeight: 600, color: "#fff", border: 0, cursor: busy || !email || !password ? "not-allowed" : "pointer", background: "linear-gradient(100deg, " + GREEN + " 0%, #157A5F 60%, " + GOLD + " 200%)", opacity: busy || !email || !password ? 0.55 : 1, boxShadow: "0 8px 22px rgba(15,95,76,0.32)", transition: "transform .15s, box-shadow .15s", letterSpacing: ".01em" }}>
+          <button onClick={submit} disabled={busy || !email || !password} className="signin-btn" style={{ width: "100%", borderRadius: 13, padding: "16px", fontSize: 16, fontWeight: 600, color: "#fff", border: 0, cursor: busy || !email || !password ? "not-allowed" : "pointer", background: "linear-gradient(100deg, " + GREEN + " 0%, #157A5F 60%, " + GOLD + " 200%)", opacity: busy || !email || !password ? 0.55 : 1, boxShadow: "0 8px 22px rgba(15,95,76,0.32)", transition: "transform .15s, box-shadow .15s", letterSpacing: ".01em" }}>
             {busy ? "Signing in\u2026" : "Sign in"}
           </button>
 
-          <div style={{ marginTop: 24, textAlign: "center", fontSize: 12.5, color: "#A8A395" }}>
+          <div style={{ marginTop: 24, textAlign: "center", fontSize: 12, color: "#A8A395" }}>
             Protected by Aria security
           </div>
         </div>

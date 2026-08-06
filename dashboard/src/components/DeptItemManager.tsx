@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState, useCallback } from "react";
 import { getDeptItems, createDeptItem, updateDeptItem, deleteDeptItem, type DeptItem } from "../app/gm/departments/deptitem-actions";
 
@@ -96,7 +96,7 @@ export default function DeptItemManager({ hotelId, dept, deptLabel }: { hotelId:
                 <div style={{ fontSize: 14, fontWeight: 600, color: INK }}>{it.name}
                   {it.duration_min ? <span style={{ fontSize: 11, color: GOLD, marginLeft: 8 }}>{it.duration_min} min</span> : null}
                 </div>
-                {it.description ? <div style={{ fontSize: 11.5, color: "#8A8577", marginTop: 1 }}>{it.description}</div> : null}
+                {it.description ? <div style={{ fontSize: 12, color: "#8A8577", marginTop: 1 }}>{it.description}</div> : null}
               </div>
               {it.price != null ? <span style={{ fontSize: 14, fontWeight: 600, color: INK, fontFamily: "Georgia, serif" }}>{rupee}{it.price}{it.unit ? <span style={{ fontSize: 10, color: "#B4B9B3" }}> {it.unit}</span> : null}</span> : null}
               {cfg.hasStock ? (
