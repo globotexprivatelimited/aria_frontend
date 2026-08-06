@@ -4,6 +4,7 @@ import { getRooms, getRoomStats, getRoomTarget, checkInRoom, checkOutRoom, markR
 import RoomSetup from "../../../components/RoomSetup";
 import RoomModal from "../../../components/RoomModal";
 import GMSidebar from "../../../components/GMSidebar";
+import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
 
 const GREEN = "#0F5F4C", RED = "#B23A2A", AMBER = "#B08A4F", INK = "#1B2621";
@@ -26,6 +27,7 @@ function fmtTime(iso: string | null): string {
 }
 
 export default function ReceptionBoard() {
+  const { isMobile, isTablet } = useBreakpoint();
   const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [stats, setStats] = useState<RoomStats>({ total: 0, available: 0, occupied: 0, cleaning: 0, occupancyPct: 0 });
@@ -77,9 +79,9 @@ export default function ReceptionBoard() {
   ];
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }} onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}>
+    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }} onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, padding: "30px 34px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "30px 34px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 22 }}>
           <div>
             <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: AMBER, marginBottom: 4 }}>Reception &middot; Room Board</div>
@@ -99,7 +101,7 @@ export default function ReceptionBoard() {
           </div>
         ) : null}
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 18 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : isTablet ? "repeat(3, minmax(0, 1fr))" : "repeat(5, 1fr)", gap: 14, marginBottom: 18 }}>
           {kpis.map((k) => (
             <div key={k.label} style={{ ...card, padding: 18 }}>
               <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getHotelActive, type Req as RequestRow } from "../../_actions/requests";
 import { DEPARTMENTS } from "../../../lib/departments";
 import GMSidebar from "../../../components/GMSidebar";
+import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
 import MenuEditor from "../../../components/MenuEditor";
 import DeptItemManager from "../../../components/DeptItemManager";
@@ -12,6 +13,7 @@ import type { DeptConfig } from "../../../lib/departments";
 
 
 export default function GMDepartments() {
+  const { isMobile, isTablet } = useBreakpoint();
   const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [connected, setConnected] = useState(false);
@@ -41,16 +43,16 @@ export default function GMDepartments() {
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#F6F7F4" }}>
+    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "#F6F7F4" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, padding: "32px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "32px" }}>
         <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Departments</h1>
         <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>
           <span style={{ display: "inline-block", height: 8, width: 8, borderRadius: 999, marginRight: 6, background: connected ? "#34D399" : "#F0B429" }} />
           {connected ? "Live" : "Connecting..."} &middot; a live overview of every department
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1fr 1fr", gap: 16, marginTop: 24 }}>
           {DEPARTMENTS.map((d) => {
             const s = statFor(d.dept);
             return (
@@ -62,7 +64,7 @@ export default function GMDepartments() {
                   </div>
                   {s.urgent > 0 ? <span style={{ borderRadius: 999, padding: "2px 10px", fontSize: 12, fontWeight: 600, background: "#FBEDE9", color: "#B23A2A" }}>{s.urgent} urgent</span> : null}
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginTop: 18 }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : isTablet ? "repeat(2, minmax(0, 1fr))" : "repeat(3, minmax(0, 1fr))", gap: 12, marginTop: 18 }}>
                   <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: s.open > 0 ? "#0F5F4C" : "#C4C9C2" }}>{s.open}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>open</div></div>
                   <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: "#B08A4F" }}>{s.inProgress}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>in progress</div></div>
                   <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: "#9AA09A" }}>{s.resolved}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>resolved</div></div>

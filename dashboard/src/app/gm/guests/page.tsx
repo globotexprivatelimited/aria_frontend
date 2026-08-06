@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { getHotelActive, type Req as RequestRow } from "../../_actions/requests";
 import GMSidebar from "../../../components/GMSidebar";
+import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
 
 
@@ -18,6 +19,7 @@ function timeAgo(iso: string): string {
 type Guest = { room: string; phone: string; lastDetail: string; lastAt: string; openCount: number };
 
 export default function GMGuests() {
+  const { isMobile, isTablet } = useBreakpoint();
   const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [connected, setConnected] = useState(false);
@@ -45,24 +47,24 @@ export default function GMGuests() {
   const guests = Object.values(byRoom).sort((a, b) => new Date(b.lastAt).getTime() - new Date(a.lastAt).getTime());
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#F6F7F4" }}>
+    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "#F6F7F4" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, padding: "32px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "32px" }}>
         <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Guests</h1>
         <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>
           <span style={{ display: "inline-block", height: 8, width: 8, borderRadius: 999, marginRight: 6, background: connected ? "#34D399" : "#F0B429" }} />
           {connected ? "Live" : "Connecting..."} &middot; {guests.length} rooms with activity &middot; click a guest to read their chat
         </p>
 
-        <div style={{ marginTop: 24, background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, overflow: "hidden" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 3fr 1fr 1fr", padding: "14px 24px", borderBottom: "1px solid #EAEAE4", fontSize: 11, textTransform: "uppercase", letterSpacing: ".06em", color: "#9AA09A" }}>
+        <div style={{ marginTop: 24, background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, overflow: isMobile ? "auto" : "hidden" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 3fr 1fr 1fr", minWidth: isMobile ? 520 : "auto", padding: "14px 24px", borderBottom: "1px solid #EAEAE4", fontSize: 11, textTransform: "uppercase", letterSpacing: ".06em", color: "#9AA09A" }}>
             <span>Room</span><span>Last request</span><span>Open</span><span>Last seen</span>
           </div>
           {guests.length === 0 ? (
             <div style={{ padding: 40, textAlign: "center", color: "#9AA09A", fontSize: 14 }}>No guest activity yet.</div>
           ) : guests.map((g) => (
             <Link key={g.room} href={"/conversations/" + encodeURIComponent(g.phone)}
-              style={{ display: "grid", gridTemplateColumns: "1fr 3fr 1fr 1fr", padding: "16px 24px", borderBottom: "1px solid #F4F4F1", fontSize: 14, alignItems: "center", textDecoration: "none", cursor: "pointer" }}>
+              style={{ display: "grid", gridTemplateColumns: "1fr 3fr 1fr 1fr", minWidth: isMobile ? 520 : "auto", padding: "16px 24px", borderBottom: "1px solid #F4F4F1", fontSize: 14, alignItems: "center", textDecoration: "none", cursor: "pointer" }}>
               <span style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 600, color: "#1B2621" }}>{g.room}</span>
               <span style={{ color: "#3A413B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{g.lastDetail}</span>
               <span>{g.openCount > 0 ? <span style={{ borderRadius: 999, padding: "2px 10px", fontSize: 12, fontWeight: 600, background: "#E8F1ED", color: "#0F5F4C" }}>{g.openCount}</span> : <span style={{ color: "#C4C9C2" }}>&mdash;</span>}</span>

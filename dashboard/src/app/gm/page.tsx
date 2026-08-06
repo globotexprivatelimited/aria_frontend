@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { getHotelActive, getHotelSince, type Req as RequestRow } from "../_actions/requests";
 import { DEPARTMENTS } from "../../lib/departments";
 import GMSidebar from "../../components/GMSidebar";
+import { useBreakpoint } from "../../lib/useBreakpoint";
 import GMRings from "../../components/GMRings";
 import GMDeptCards from "../../components/GMDeptCards";
 import GMLeaderboard from "../../components/GMLeaderboard";
@@ -40,6 +41,7 @@ function useCountUp(target: number): number {
 }
 
 export default function GMDashboard() {
+  const { isMobile, isTablet } = useBreakpoint();
   const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [history, setHistory] = useState<RequestRow[]>([]);
@@ -128,9 +130,9 @@ export default function GMDashboard() {
   const cardTitle = { fontSize: 11, textTransform: "uppercase" as const, letterSpacing: ".09em", color: "#9AA09A", fontWeight: 600 as const, marginBottom: 14 };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }}>
+    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, padding: "30px 34px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "18px 14px" : "30px 34px" }}>
         {/* Header */}
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
           <div>
@@ -144,7 +146,7 @@ export default function GMDashboard() {
         </div>
 
         {/* KPI hero tiles */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, marginBottom: 18, transition: "box-shadow .4s", boxShadow: pulse ? "0 0 0 3px rgba(46,204,113,.25)" : "none", borderRadius: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : isTablet ? "repeat(3, minmax(0, 1fr))" : "repeat(5, minmax(0, 1fr))", gap: 14, marginBottom: 18, transition: "box-shadow .4s", boxShadow: pulse ? "0 0 0 3px rgba(46,204,113,.25)" : "none", borderRadius: 16 }}>
           {kpis.map((k) => (
             <div key={k.label} style={{ ...card, padding: 18, position: "relative", overflow: "hidden" }}>
               <div style={{ position: "absolute", top: -8, right: -4, fontSize: 54, opacity: 0.06, color: k.color, fontWeight: 700 }}>{k.glyph}</div>
@@ -156,7 +158,7 @@ export default function GMDashboard() {
         </div>
 
         {/* Row: area chart + donut */}
-        <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 16, marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.6fr minmax(0, 1fr)", gap: 16, marginBottom: 16 }}>
           <div style={card}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
               <div style={cardTitle}>Requests &middot; last 7 days</div>
@@ -216,7 +218,7 @@ export default function GMDashboard() {
         </div>
 
         {/* Row: rings + leaderboard */}
-        <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 16, marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.6fr minmax(0, 1fr)", gap: 16, marginBottom: 16 }}>
           <GMRings active={rows} week={history} />
           <GMLeaderboard week={history} />
         </div>
@@ -237,7 +239,7 @@ export default function GMDashboard() {
         </div>
 
         {/* Row: peak hours + live feed */}
-        <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.6fr minmax(0, 1fr)", gap: 16 }}>
           <div style={card}>
             <div style={cardTitle}>Peak hours &middot; this week</div>
             <ResponsiveContainer width="100%" height={170}>

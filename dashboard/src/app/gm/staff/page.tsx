@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { DEPARTMENTS } from "../../../lib/departments";
 import GMSidebar from "../../../components/GMSidebar";
+import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { createStaff, getStaff, resetPassword } from "./actions";
 import { useMyHotel } from "../../../lib/useMyHotel";
 import { setStaffDeptAccess as saveDeptAccessCall } from "./staff-access-actions";
@@ -10,6 +11,7 @@ import { setStaffDeptAccess as saveDeptAccessCall } from "./staff-access-actions
 type Row = { id: string; name: string; depts: string[]; email: string };
 
 export default function GMStaff() {
+  const { isMobile, isTablet } = useBreakpoint();
   const { hotelId: HOTEL_ID } = useMyHotel();
   const [open, setOpen] = useState(false);
   const [depts, setDepts] = useState<string[]>([]);
@@ -71,9 +73,9 @@ export default function GMStaff() {
   const label = { fontSize: 12, fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: ".04em", color: "#6E756F" };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#F6F7F4" }}>
+    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "#F6F7F4" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, padding: "32px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "32px" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20 }}>
           <div>
             <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Staff</h1>
@@ -88,14 +90,14 @@ export default function GMStaff() {
           <div style={{ marginBottom: 16, borderRadius: 10, padding: "12px 16px", fontSize: 14, fontWeight: 500, background: toast.ok ? "#E8F1ED" : "#FBEDE9", color: toast.ok ? "#0F5F4C" : "#B23A2A", border: "1px solid " + (toast.ok ? "#CFE5DC" : "#F0D5CD") }}>{toast.msg}</div>
         ) : null}
 
-        <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, overflow: "hidden" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1.6fr 2fr 2fr 1.4fr", padding: "14px 24px", borderBottom: "1px solid #EAEAE4", fontSize: 11, textTransform: "uppercase", letterSpacing: ".06em", color: "#9AA09A" }}>
+        <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, overflow: isMobile ? "auto" : "hidden" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1.6fr 2fr 2fr 1.4fr", minWidth: isMobile ? 640 : "auto", padding: "14px 24px", borderBottom: "1px solid #EAEAE4", fontSize: 11, textTransform: "uppercase", letterSpacing: ".06em", color: "#9AA09A" }}>
             <span>Name</span><span>Departments</span><span>Login email</span><span style={{ textAlign: "right" }}>Actions</span>
           </div>
           {rows.length === 0 ? (
             <div style={{ padding: 40, textAlign: "center", color: "#9AA09A", fontSize: 14 }}>No staff added yet. Click &ldquo;Add Staff&rdquo; to create a login.</div>
           ) : rows.map((s) => (
-            <div key={s.id} style={{ display: "grid", gridTemplateColumns: "1.6fr 2fr 2fr 1.4fr", padding: "16px 24px", borderBottom: "1px solid #F4F4F1", fontSize: 14, alignItems: "center" }}>
+            <div key={s.id} style={{ display: "grid", gridTemplateColumns: "1.6fr 2fr 2fr 1.4fr", minWidth: isMobile ? 640 : "auto", padding: "16px 24px", borderBottom: "1px solid #F4F4F1", fontSize: 14, alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ width: 34, height: 34, borderRadius: 999, background: "#E8F1ED", color: "#0F5F4C", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600 }}>{s.name.split(" ").map((p) => p[0]).slice(0, 2).join("")}</div>
                 <span style={{ fontWeight: 500, color: "#1B2621" }}>{s.name}</span>
@@ -123,7 +125,7 @@ export default function GMStaff() {
             <p style={{ fontSize: 13, color: "#9AA09A", marginTop: 4 }}>Assign one or more departments. They see a live board for each.</p>
             <div style={{ marginTop: 20 }}>
               <label style={label}>Departments</label>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 8 }}>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1fr 1fr", gap: 10, marginTop: 8 }}>
                 {DEPARTMENTS.map((d) => {
                   const on = depts.includes(d.dept);
                   return (

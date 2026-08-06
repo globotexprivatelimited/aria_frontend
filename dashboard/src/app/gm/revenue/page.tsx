@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getRevenueSummary, getByChannel, getTimeseries, getTopItems, getByDept, getByHour, getByRoom, type RevSummary, type RevChannel, type RevPoint, type RevItem, type RevDept, type RevHour, type RevRoom } from "./revenue-actions";
 import RevenueDeep from "../../../components/RevenueDeep";
 import GMSidebar from "../../../components/GMSidebar";
+import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 
@@ -21,6 +22,7 @@ function useCountUp(target: number): number {
 }
 
 export default function RevenuePage() {
+  const { isMobile, isTablet } = useBreakpoint();
   const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
   const [sum, setSum] = useState<RevSummary>({ total: 0, today: 0, week: 0, month: 0, transactions: 0, avgOrder: 0 });
   const [channels, setChannels] = useState<RevChannel[]>([]);
@@ -50,9 +52,9 @@ export default function RevenuePage() {
   ];
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }}>
+    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, padding: "30px 34px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "30px 34px" }}>
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD, marginBottom: 4 }}>Revenue</div>
           <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 700, color: INK, margin: 0 }}>{hotelName || "Your Hotel"} &middot; Earnings</h1>
@@ -67,7 +69,7 @@ export default function RevenuePage() {
         </div>
 
         {/* KPI row */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : isTablet ? "repeat(2, minmax(0, 1fr))" : "repeat(4, 1fr)", gap: 14, marginBottom: 16 }}>
           {kpis.map((k) => (
             <div key={k.label} style={card}>
               <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>
@@ -77,7 +79,7 @@ export default function RevenuePage() {
         </div>
 
         {/* Area chart + channel donut */}
-        <div style={{ display: "grid", gridTemplateColumns: "1.7fr 1fr", gap: 16, marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.7fr 1fr", gap: 16, marginBottom: 16 }}>
           <div style={card}>
             <div style={cardTitle}>Revenue &middot; last 30 days</div>
             <ResponsiveContainer width="100%" height={230}>

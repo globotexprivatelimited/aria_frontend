@@ -94,7 +94,7 @@ export default function GMSidebar() {
           </button>
         </div>
         {drawerOpen ? <div onClick={() => setDrawerOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(20,25,22,.45)", zIndex: 85 }} /> : null}
-        <aside style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 280, maxWidth: "82vw", zIndex: 90, background: "#FEFDFB", borderRight: "1px solid #E9E4D8", display: "flex", flexDirection: "column", transform: drawerOpen ? "translateX(0)" : "translateX(-100%)", transition: "transform .26s cubic-bezier(.4,0,.2,1)", boxShadow: drawerOpen ? "0 0 40px rgba(0,0,0,.25)" : "none" }}>
+        <aside style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 280, maxWidth: "82vw", zIndex: 90, background: "#FEFDFB", borderRight: "1px solid #E9E4D8", display: "flex", flexDirection: "column", transform: drawerOpen ? "translateX(0)" : "translateX(-100%)", visibility: drawerOpen ? "visible" : "hidden", transition: "transform .26s cubic-bezier(.4,0,.2,1), visibility .26s", boxShadow: drawerOpen ? "0 0 40px rgba(0,0,0,.25)" : "none" }}>
           {inner}
         </aside>
       </>
