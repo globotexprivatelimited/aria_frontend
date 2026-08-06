@@ -319,7 +319,7 @@ export default function StaffDashboard() {
       </aside>
 
       {/* CONTENT */}
-      <div style={{ flex: 1, minWidth: 0, padding: isMobile ? "20px 16px 48px" : isTablet ? "28px 28px 56px" : "36px 44px 60px", maxWidth: 1280, width: "100%" }}>
+      <div style={{ flex: 1, minWidth: 0, padding: isMobile ? "28px 16px 48px" : isTablet ? "40px 32px 56px" : "56px 56px 72px", maxWidth: 1280, width: "100%", margin: "0 auto" }}>
         {toast ? <div style={{ marginBottom: 18, borderRadius: 12, padding: "13px 18px", fontSize: 14, fontWeight: 500, background: "#EAF2ED", color: "#0F5F4C", border: "1px solid #CFE5DC" }}>{toast}</div> : null}
         {alarm && tab !== "history" ? (
           <button onClick={stop} style={{ marginBottom: 18, width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", borderRadius: 14, padding: "14px 22px", border: "1px solid #E3B4A5", background: "linear-gradient(180deg,#FBEEE9,#F9E6DF)", cursor: "pointer" }}>
