@@ -103,7 +103,7 @@ export default function GMSidebar() {
 
   // DESKTOP / TABLET
   return (
-    <aside style={{ width: iconsOnly ? 78 : 264, flexShrink: 0, background: "#FEFDFB", borderRight: "1px solid #E9E4D8", display: "flex", flexDirection: "column", position: "sticky", top: 0, height: "100vh", transition: "width .22s cubic-bezier(.4,0,.2,1)" }}>
+    <aside style={{ width: iconsOnly ? 78 : 264, flexShrink: 0, background: "#FEFDFB", borderRight: "1px solid #E9E4D8", display: "flex", flexDirection: "column", position: "sticky", top: 0, alignSelf: "flex-start", height: "100vh", overflowY: "auto", overflowX: "hidden", transition: "width .22s cubic-bezier(.4,0,.2,1)" }}>
       {inner}
     </aside>
   );
