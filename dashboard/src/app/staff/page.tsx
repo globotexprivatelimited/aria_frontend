@@ -104,13 +104,11 @@ export default function StaffDashboard() {
   useEffect(() => {
     if (checking || !hotelId || myDepts.length === 0) return;
     load();
-    let prevActive = 0;
     const tick = async () => {
-      const before = prevActive;
       await load();
       loadAnalytics();
       // alarm when the active count grows
-      setRows((cur) => { if (cur.length > before) ring(); prevActive = cur.length; return cur; });
+      setRows((cur) => { if (cur.some((r) => r.status === "received")) ring(); else stop(); return cur; });
     };
     tick();
     const iv = setInterval(tick, 4000);
@@ -123,8 +121,20 @@ export default function StaffDashboard() {
   // load analytics on mount and when dashboard is viewed
   useEffect(() => { if (!checking) loadAnalytics(); }, [checking, tab, loadAnalytics]);
 
-  function ring() { setAlarm(true); if (timer.current) return; const b = () => audioRef.current?.play().catch(() => {}); b(); timer.current = setInterval(b, 3000); }
-  function stop() { setAlarm(false); if (timer.current) { clearInterval(timer.current); timer.current = null; } }
+  function ring() {
+    setAlarm(true);
+    const a = audioRef.current;
+    if (a) { a.loop = true; a.play().catch(() => {}); }
+    if (timer.current) return;
+    // retry in case autoplay was blocked until the first user interaction
+    timer.current = setInterval(() => { const el = audioRef.current; if (el && el.paused) el.play().catch(() => {}); }, 3000);
+  }
+  function stop() {
+    setAlarm(false);
+    const a = audioRef.current;
+    if (a) { a.pause(); a.currentTime = 0; }
+    if (timer.current) { clearInterval(timer.current); timer.current = null; }
+  }
   function flash(m: string) { setToast(m); setTimeout(() => setToast(null), 2600); }
 
   async function send(dept: string, id: string, command: string, option?: string) {
