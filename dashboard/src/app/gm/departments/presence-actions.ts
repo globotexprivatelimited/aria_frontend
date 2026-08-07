@@ -1,7 +1,7 @@
-﻿"use server";
+"use server";
 import { apiGet } from "@/lib/api";
 
-export type DeptPresence = { dept: string; online: boolean; staff: { name: string; lastSeen: string | null }[] };
+export type DeptPresence = { dept: string; online: boolean; assignedCount: number; staff: { name: string; lastSeen: string | null }[] };
 
 export async function getDepartmentPresence(hotelId: string): Promise<DeptPresence[]> {
   if (!hotelId) return [];

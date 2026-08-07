@@ -50,13 +50,43 @@ export default function GMDepartments() {
   return (
     <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "#F6F7F4" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "32px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "32px" }}>
         <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Departments</h1>
         <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>
           <span style={{ display: "inline-block", height: 8, width: 8, borderRadius: 999, marginRight: 6, background: connected ? "#34D399" : "#F0B429" }} />
           {connected ? "Live" : "Connecting..."} &middot; a live overview of every department
         </p>
 
+        {(() => {
+          const label = (k: string) => DEPARTMENTS.find((x) => x.dept === k)?.label ?? k;
+          const unattended = presence.filter((p) => p.assignedCount > 0 && !p.online).map((p) => label(p.dept));
+          const unstaffed = presence.filter((p) => p.assignedCount === 0).map((p) => label(p.dept));
+          if (presence.length === 0) return null;
+          if (unattended.length === 0 && unstaffed.length === 0) {
+            return (
+              <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 16, borderRadius: 12, padding: "11px 16px", background: "#EAF2ED", border: "1px solid #CFE5DC", color: "#0F5F4C", fontSize: 13.5, fontWeight: 500 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M20 6L9 17l-5-5" /></svg>
+                Every department is staffed right now.
+              </div>
+            );
+          }
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+              {unattended.length > 0 ? (
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, borderRadius: 12, padding: "12px 16px", background: "#FBF3E6", border: "1px solid #EDD9B4", color: "#8A6420", fontSize: 13.5 }}>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+                  <span><b>{unattended.length} department{unattended.length === 1 ? "" : "s"} unattended</b> &mdash; {unattended.join(", ")} {unattended.length === 1 ? "has" : "have"} staff assigned but no one is on duty.</span>
+                </div>
+              ) : null}
+              {unstaffed.length > 0 ? (
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, borderRadius: 12, padding: "12px 16px", background: "#F5F5F0", border: "1px solid #E7E3D8", color: "#6E756F", fontSize: 13.5 }}>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
+                  <span><b>{unstaffed.join(", ")}</b> {unstaffed.length === 1 ? "has" : "have"} no staff assigned yet. Assign someone from the Staff page.</span>
+                </div>
+              ) : null}
+            </div>
+          );
+        })()}
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1fr 1fr", gap: 16, marginTop: 24 }}>
           {DEPARTMENTS.map((d) => {
             const s = statFor(d.dept);
