@@ -41,7 +41,7 @@ export default function GMGuests() {
   for (const r of rows) {
     const room = r.roomNumber ?? "";
     if (!room) continue;
-    if (!byRoom[room]) byRoom[room] = { room, phone: r.guestPhone, lastDetail: r.requestDetail ?? "", lastAt: r.createdAt, openCount: 0 };
+    if (!byRoom[room]) byRoom[room] = { room, phone: r.guestPhone ?? "", lastDetail: r.requestDetail ?? "", lastAt: r.createdAt, openCount: 0 };
     if (r.status !== "resolved") byRoom[room].openCount += 1;
   }
   const guests = Object.values(byRoom).sort((a, b) => new Date(b.lastAt).getTime() - new Date(a.lastAt).getTime());
@@ -49,7 +49,7 @@ export default function GMGuests() {
   return (
     <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "#F6F7F4" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "32px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "32px" }}>
         <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Guests</h1>
         <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>
           <span style={{ display: "inline-block", height: 8, width: 8, borderRadius: 999, marginRight: 6, background: connected ? "#34D399" : "#F0B429" }} />

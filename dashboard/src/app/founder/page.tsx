@@ -40,7 +40,7 @@ export default function FounderDashboard() {
     return () => { clearInterval(iv); };
   }, [load]);
 
-  const num = (v: number | string | null) => (v == null ? 0 : typeof v === "string" ? parseFloat(v) || 0 : v);
+  const num = (v: number | string | null | undefined) => (v == null ? 0 : typeof v === "string" ? parseFloat(v) || 0 : v);
 
   const filtered = useMemo(() => {
     const start = windowStart(win);
@@ -55,7 +55,7 @@ export default function FounderDashboard() {
   const revenue = filtered.reduce((sum, r) => sum + num(r.revenueGenerated), 0);
   const resolutionRate = filtered.length > 0 ? Math.round((resolved / filtered.length) * 100) : 0;
 
-  const allHotels = useMemo(() => Array.from(new Set(rows.map((r) => r.hotelId))).sort(), [rows]);
+  const allHotels = useMemo(() => Array.from(new Set(rows.map((r) => r.hotelId).filter((x): x is string => !!x))).sort(), [rows]);
 
   const byDept: Record<string, number> = {};
   for (const r of filtered) { if (r.status !== "resolved") byDept[r.department ?? "?"] = (byDept[r.department ?? "?"] ?? 0) + 1; }

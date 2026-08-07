@@ -1,10 +1,10 @@
-﻿"use server";
+"use server";
 
 import { apiGet } from "@/lib/api";
 
 export type Req = {
   id: string; roomNumber: string | null; requestDetail: string; department: string;
-  priority: string; status: string; createdAt: string; claimedBy?: string | null;
+  priority: string; status: string; createdAt: string; claimedBy?: string | null; hotelId: string; revenueGenerated: string | number | null; guestPhone?: string | null;
 };
 
 function deptsParam(depts: string[]): string { return depts.join(","); }

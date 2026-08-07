@@ -56,7 +56,7 @@ export default function RevenuePage() {
   return (
     <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "30px 34px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "30px 34px" }}>
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD, marginBottom: 4 }}>Revenue</div>
           <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 700, color: INK, margin: 0 }}>{hotelName || "Your Hotel"} &middot; Earnings</h1>
@@ -75,7 +75,7 @@ export default function RevenuePage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#EFEFE9" vertical={false} />
                 <XAxis dataKey="label" tick={{ fontSize: 10, fill: "#9AA09A" }} axisLine={false} tickLine={false} interval={4} />
                 <YAxis tick={{ fontSize: 10, fill: "#9AA09A" }} axisLine={false} tickLine={false} width={44} tickFormatter={(v) => rupee + v} />
-                <Tooltip contentStyle={{ borderRadius: 10, border: "1px solid #EAEAE4", fontSize: 12 }} formatter={(v: number) => [fmt(v), "Revenue"]} />
+                <Tooltip contentStyle={{ borderRadius: 10, border: "1px solid #EAEAE4", fontSize: 12 }} formatter={(v) => [fmt(Number(v)), "Revenue"] as [string, string]} />
                 <Area type="monotone" dataKey="revenue" stroke={GREEN} strokeWidth={2.5} fill="url(#rev)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -93,7 +93,7 @@ export default function RevenuePage() {
                     <Pie data={channels} dataKey="value" nameKey="channel" cx="50%" cy="50%" innerRadius={44} outerRadius={72} paddingAngle={2} stroke="none">
                       {channels.map((c, i) => <Cell key={i} fill={c.color} />)}
                     </Pie>
-                    <Tooltip formatter={(v: number) => fmt(v)} contentStyle={{ borderRadius: 10, border: "1px solid #EAEAE4", fontSize: 12 }} />
+                    <Tooltip formatter={(v) => fmt(Number(v))} contentStyle={{ borderRadius: 10, border: "1px solid #EAEAE4", fontSize: 12 }} />
                   </PieChart>
                 </ResponsiveContainer>
                 <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 8 }}>

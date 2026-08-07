@@ -66,9 +66,6 @@ export default function ReceptionBoard() {
   async function doEdit(rm: string, changes: { room_type?: string; floor?: number; newNumber?: string }) { const r = await editRoom(HOTEL_ID!, rm, changes); if (r.ok) { flash("Room updated"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doDelete(rm: string) { const r = await deleteRoom(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " deleted"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doClearFloor(fl: number) { if (!confirm("Clear all rooms on floor " + fl + "?")) return; const r = await clearFloor(HOTEL_ID!, fl); if (r.ok) { flash("Cleared " + r.deleted + " rooms from floor " + fl); load(); } else flash(r.message ?? "failed"); }
-  async function doEdit(rm: string, changes: { room_type?: string; floor?: number; newNumber?: string }) { const r = await editRoom(HOTEL_ID!, rm, changes); if (r.ok) { flash("Room updated"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
-  async function doDelete(rm: string) { const r = await deleteRoom(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " deleted"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
-  async function doClearFloor(fl: number) { if (!confirm("Clear all rooms on floor " + fl + "?")) return; const r = await clearFloor(HOTEL_ID!, fl); if (r.ok) { flash("Cleared " + r.deleted + " rooms from floor " + fl); load(); } else flash(r.message ?? "failed"); }
 
   const card = { background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 20 };
   const kpis = [
@@ -82,7 +79,7 @@ export default function ReceptionBoard() {
   return (
     <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }} onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "30px 34px" }}>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "30px 34px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 22 }}>
           <div>
             <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: AMBER, marginBottom: 4 }}>Reception &middot; Room Board</div>

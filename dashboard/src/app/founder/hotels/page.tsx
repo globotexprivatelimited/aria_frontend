@@ -21,6 +21,7 @@ export default function HotelsPage() {
 
   const byHotel: Record<string, { open: number; inProgress: number; total: number }> = {};
   for (const r of rows) {
+    if (!r.hotelId) continue;
     if (!byHotel[r.hotelId]) byHotel[r.hotelId] = { open: 0, inProgress: 0, total: 0 };
     byHotel[r.hotelId].total += 1;
     if (r.status === "received") byHotel[r.hotelId].open += 1;
