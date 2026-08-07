@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { getDeptItems, createDeptItem, updateDeptItem, deleteDeptItem, type DeptItem } from "../app/gm/departments/deptitem-actions";
+import SlotBooking from "./SlotBooking";
 
 const GREEN = "#0F5F4C", GOLD = "#B08A4F", RED = "#B23A2A", INK = "#1B2621";
 const rupee = "\u20B9";
@@ -98,7 +99,8 @@ export default function DeptItemManager({ hotelId, dept, deptLabel }: { hotelId:
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {shown.map((it) => (
-            <div key={it.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: "#fff", border: "1px solid #EEE", borderRadius: 10, opacity: it.available ? 1 : 0.55 }}>
+            <div key={it.id} style={{ background: "#fff", border: "1px solid #EFEBE2", borderRadius: 10, padding: "12px 14px", marginBottom: 7 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 0, background: "transparent", border: "1px solid #EEE", borderRadius: 10, opacity: it.available ? 1 : 0.55 }}>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: INK }}>{it.name}
                   {it.duration_min ? <span style={{ fontSize: 11, color: GOLD, marginLeft: 8 }}>{it.duration_min} min</span> : null}
@@ -115,6 +117,8 @@ export default function DeptItemManager({ hotelId, dept, deptLabel }: { hotelId:
               ) : null}
               <button onClick={() => toggle(it)} title={it.available ? "Hide from guests" : "Show to guests"} style={{ borderRadius: 999, padding: "4px 11px", fontSize: 11, fontWeight: 600, cursor: "pointer", border: "1px solid " + (it.available ? "#CFE5DC" : "#E3DECF"), background: it.available ? "#EAF2ED" : "#F5F5F0", color: it.available ? GREEN : "#8A8577" }}>{it.available ? "Active" : "Hidden"}</button>
               <button onClick={() => del(it)} style={{ width: 26, height: 26, borderRadius: 6, border: "1px solid #EED7D0", background: "#FBEDE9", cursor: "pointer", color: RED, fontSize: 15 }}>&times;</button>
+            </div>
+              {dept === "spa" ? <SlotBooking dept={dept} itemId={it.id} itemName={it.name} /> : null}
             </div>
           ))}
         </div>
