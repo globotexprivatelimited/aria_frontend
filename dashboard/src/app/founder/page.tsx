@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getPortfolio, type Portfolio, type HotelSummary } from "./portfolio-actions";
+import { getInsights, type Insights } from "./insights-actions";
+import FounderInsights from "../../components/FounderInsights";
 
 
 const INK = "#1B2621", GREEN = "#0F5F4C", GOLD = "#B08A4F", RED = "#B23A2A";
@@ -32,6 +34,7 @@ const ago = (iso: string | null) => {
 export default function FounderPage() {
   const router = useRouter();
   const [data, setData] = useState<Portfolio | null>(null);
+  const [ins, setIns] = useState<Insights | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -39,6 +42,7 @@ export default function FounderPage() {
     if (!tk) return;
     const p = await getPortfolio(tk);
     setData(p); setLoading(false);
+    setIns(await getInsights(tk, 30));
   }, []);
   useEffect(() => { load(); const iv = setInterval(load, 8000); return () => clearInterval(iv); }, [load]);
 
@@ -153,6 +157,7 @@ export default function FounderPage() {
                 );
               })}
             </div>
+            {ins ? <FounderInsights ins={ins} /> : null}
           </>
         ) : null}
 
