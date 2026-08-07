@@ -10,6 +10,7 @@ import MenuEditor from "../../../components/MenuEditor";
 import DeptItemManager from "../../../components/DeptItemManager";
 import MaintenanceManager from "../../../components/MaintenanceManager";
 import { getDepartmentPresence, type DeptPresence } from "./presence-actions";
+import { getDeptModes, setDeptMode, type DeptMode, type DeptModeRow } from "./mode-actions";
 import DiningManager from "../../../components/DiningManager";
 import SlotEditor from "../../../components/SlotEditor";
 import type { DeptConfig } from "../../../lib/departments";
@@ -22,11 +23,13 @@ export default function GMDepartments() {
   const [connected, setConnected] = useState(false);
   const [managing, setManaging] = useState<DeptConfig | null>(null);
   const [presence, setPresence] = useState<DeptPresence[]>([]);
+  const [modes, setModes] = useState<DeptModeRow[]>([]);
 
   const load = useCallback(async () => {
     if (!HOTEL_ID) return;
     setRows(await getHotelActive(HOTEL_ID));
     setPresence(await getDepartmentPresence(HOTEL_ID));
+    setModes(await getDeptModes(HOTEL_ID));
   }, [HOTEL_ID]);
 
   useEffect(() => {
@@ -110,7 +113,29 @@ export default function GMDepartments() {
                         );
                       })()}
                     </div>
-                    <div style={{ fontSize: 12, color: "#9AA09A", marginTop: 4 }}>{d.type === "auto" ? "Auto \u00b7 Claim / Done" : "Accept / Decline"}</div>
+                    <div style={{ display: "flex", gap: 4, marginTop: 6 }}>
+                      {([
+                        { k: "auto", label: "Auto", hint: "Guest is promised instantly; staff claim and deliver" },
+                        { k: "accept_decline", label: "Accept / Decline", hint: "A human approves before the guest is told yes" },
+                        { k: "maintenance", label: "Tracked", hint: "Acknowledged, never declined, always tracked" },
+                      ] as { k: DeptMode; label: string; hint: string }[]).map((m) => {
+                        const current = (modes.find((x) => x.dept === d.dept)?.mode ?? d.type) as string;
+                        const on = current === m.k;
+                        return (
+                          <button key={m.k} title={m.hint}
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              setModes((prev) => { const next = prev.filter((x) => x.dept !== d.dept); return [...next, { dept: d.dept, mode: m.k }]; });
+                              const res = await setDeptMode({ hotelId: HOTEL_ID as string, dept: d.dept, mode: m.k });
+                              if (!res.ok) setModes(await getDeptModes(HOTEL_ID as string));
+                            }}
+                            style={{ borderRadius: 999, padding: "3px 10px", fontSize: 10.5, fontWeight: 600, cursor: "pointer",
+                              border: "1px solid " + (on ? "#0F5F4C" : "#E7E3D8"),
+                              background: on ? "#EAF2ED" : "#fff",
+                              color: on ? "#0F5F4C" : "#A8A395" }}>{m.label}</button>
+                        );
+                      })}
+                    </div>
                   </div>
                   {s.urgent > 0 ? <span style={{ borderRadius: 999, padding: "2px 10px", fontSize: 12, fontWeight: 600, background: "#FBEDE9", color: "#B23A2A" }}>{s.urgent} urgent</span> : null}
                 </div>
