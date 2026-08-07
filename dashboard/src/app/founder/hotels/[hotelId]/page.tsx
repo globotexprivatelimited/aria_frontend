@@ -58,7 +58,7 @@ export default function FounderHotelPage() {
   ] as const;
 
   return (
-    <div style={{ padding: "30px 30px 60px", maxWidth: 1240 }}>
+    <div style={{ padding: "30px 30px 60px", maxWidth: 1240, margin: "0 auto" }}>
       <button onClick={() => router.push("/founder")} style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "transparent", border: 0, cursor: "pointer", color: "#9AA09A", fontSize: 12.5, padding: 0, marginBottom: 12 }}>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M15 18l-6-6 6-6" /></svg> Portfolio
       </button>

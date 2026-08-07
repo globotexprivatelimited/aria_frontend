@@ -42,7 +42,7 @@ export default function FounderPeoplePage() {
   const chip = (on: boolean) => ({ borderRadius: 999, padding: "5px 13px", fontSize: 12, fontWeight: 600, cursor: "pointer", border: "1px solid " + (on ? GREEN : "#E3DECF"), background: on ? "#EAF2ED" : "#fff", color: on ? GREEN : "#6E756F" });
 
   return (
-    <div style={{ padding: "34px 30px 60px", maxWidth: 1240 }}>
+    <div style={{ padding: "34px 30px 60px", maxWidth: 1240, margin: "0 auto" }}>
       <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD }}>Everyone, everywhere</div>
       <h1 style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 600, color: INK, marginTop: 4, letterSpacing: "-.5px" }}>People</h1>
 

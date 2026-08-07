@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getOnboarding, setStep, setBlocker, type OnboardingRow } from "./onboarding-actions";
@@ -44,7 +44,7 @@ export default function OnboardingPage() {
   const lbl = { fontSize: 10, textTransform: "uppercase" as const, letterSpacing: ".1em", color: "#A8A395" };
 
   return (
-    <div style={{ padding: "34px 30px 60px", maxWidth: 1240 }}>
+    <div style={{ padding: "34px 30px 60px", maxWidth: 1240, margin: "0 auto" }}>
       <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD }}>Getting properties live</div>
       <h1 style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 600, color: INK, marginTop: 4, letterSpacing: "-.5px" }}>Onboarding</h1>
 

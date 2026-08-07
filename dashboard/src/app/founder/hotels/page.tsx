@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getPortfolio, type Portfolio, type HotelSummary } from "../portfolio-actions";
@@ -47,7 +47,7 @@ export default function FounderHotelsPage() {
   const cell = { padding: "13px 12px", fontSize: 13.5, color: INK } as const;
 
   return (
-    <div style={{ padding: "34px 30px 60px", maxWidth: 1240 }}>
+    <div style={{ padding: "34px 30px 60px", maxWidth: 1240, margin: "0 auto" }}>
       <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD }}>Every property</div>
       <h1 style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 600, color: INK, marginTop: 4, letterSpacing: "-.5px" }}>Hotels</h1>
 

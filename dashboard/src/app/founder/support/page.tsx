@@ -46,7 +46,7 @@ export default function SupportPage() {
   const act = { borderRadius: 7, padding: "5px 11px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", border: "1px solid #E3DECF", background: "#fff", color: "#6E756F" };
 
   return (
-    <div style={{ padding: "34px 30px 60px", maxWidth: 1100 }}>
+    <div style={{ padding: "34px 30px 60px", maxWidth: 1100, margin: "0 auto" }}>
       <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD }}>Raised by hotels</div>
       <h1 style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 600, color: INK, marginTop: 4, letterSpacing: "-.5px" }}>Support</h1>
 

@@ -33,7 +33,7 @@ export default function ReceptionBoard() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [stats, setStats] = useState<RoomStats>({ total: 0, available: 0, occupied: 0, cleaning: 0, occupancyPct: 0 });
   const [hover, setHover] = useState<Room | null>(null);
-  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [pos, setPos] = useState({ x: 0, y: 0, bottom: 0 });
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [toast, setToast] = useState<string | null>(null);
   const [showSetup, setShowSetup] = useState(false);
@@ -77,7 +77,7 @@ export default function ReceptionBoard() {
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }} onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}>
+    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }}>
       <GMSidebar />
       <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "30px 34px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 22 }}>
@@ -144,7 +144,7 @@ export default function ReceptionBoard() {
                   const st = STATUS[r.status as keyof typeof STATUS] ?? STATUS.available;
                   return (
                     <div key={r.id}
-                      onMouseEnter={() => setHover(r)} onMouseLeave={() => setHover(null)}
+                      onMouseEnter={(e) => { const b = e.currentTarget.getBoundingClientRect(); setPos({ x: b.left + b.width / 2, y: b.top, bottom: b.bottom }); setHover(r); }} onMouseLeave={() => setHover(null)}
                       onClick={() => { setHover(null); setSelected(r); }}
                       style={{ aspectRatio: "1", borderRadius: 10, background: st.bg, border: "1.5px solid " + st.c, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "transform .1s", position: "relative" }}
                       onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.08)")} onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}>
@@ -163,7 +163,7 @@ export default function ReceptionBoard() {
 
       {/* hover tooltip */}
       {hover ? (
-        <div style={{ position: "fixed", left: Math.min(pos.x + 16, (typeof window !== "undefined" ? window.innerWidth : 1200) - 240), top: pos.y + 16, zIndex: 100, width: 220, background: "#fff", border: "1px solid #E4DECF", borderRadius: 12, boxShadow: "0 12px 32px rgba(30,40,33,.16)", padding: 14, pointerEvents: "none" }}>
+        <div style={{ position: "fixed", ...(() => { const vw = typeof window !== "undefined" ? window.innerWidth : 1200; const vh = typeof window !== "undefined" ? window.innerHeight : 800; const up = pos.bottom > vh - 250; return { left: Math.max(118, Math.min(pos.x, vw - 118)), top: up ? pos.y - 12 : pos.bottom + 12, transform: up ? "translate(-50%,-100%)" : "translate(-50%,0)" }; })(), zIndex: 100, width: 220, background: "#fff", border: "1px solid #E4DECF", borderRadius: 12, boxShadow: "0 12px 32px rgba(30,40,33,.16)", padding: 14, pointerEvents: "none" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <span style={{ fontFamily: "Georgia, serif", fontSize: 20, fontWeight: 700, color: INK }}>{hover.room_number}</span>
             <span style={{ fontSize: 10, fontWeight: 600, color: (STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).c, background: (STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).bg, borderRadius: 6, padding: "2px 8px" }}>{(STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).label}</span>
