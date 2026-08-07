@@ -6,6 +6,7 @@ import GMSidebar from "../../../components/GMSidebar";
 import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import MissedRevenuePanel from "../../../components/MissedRevenuePanel";
 
 const GREEN = "#0F5F4C", GOLD = "#B08A4F", INK = "#1B2621";
 const rupee = "\u20B9";
@@ -153,6 +154,8 @@ export default function RevenuePage() {
         <div style={{ marginTop: 16 }}>
           <RevenueDeep byDept={byDept} byHour={byHour} byRoom={byRoom} />
         </div>
+
+          <MissedRevenuePanel hotelId={HOTEL_ID as string} />
       </div>
     </div>
   );
