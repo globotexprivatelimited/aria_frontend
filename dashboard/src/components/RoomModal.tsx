@@ -113,10 +113,10 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
               <CountryPicker options={DIAL_CODES} value={dial} onChange={setDial} width={112} gap={0} />
               <input value={guestPhone} onChange={(e) => setGuestPhone(e.target.value.replace(/[^0-9]/g, ""))} placeholder="Number only" inputMode="numeric" style={{ ...field, flex: 1 }} />
             </div>
-                <div style={{ fontSize: 10, color: "#B4B9B3", marginTop: 4 }}>Guest texts this number to reach Aria for dining, spa &amp; requests</div>
+                
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12, marginBottom: 18 }}>
-                <div><label style={lbl}>Guests</label><input type="number" min={1} value={partySize} onChange={(e) => setPartySize(parseInt(e.target.value) || 1)} style={field} /></div>
+
                 <div><label style={lbl}>Checkout</label><input type="datetime-local" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} style={field} /></div>
               </div>
               <button onClick={checkIn} disabled={busy || !guestName.trim()} style={{ width: "100%", borderRadius: 11, padding: "13px", fontSize: 15, fontWeight: 600, color: "#fff", background: GREEN, border: 0, cursor: "pointer", opacity: busy || !guestName.trim() ? 0.6 : 1 }}>{busy ? "Checking in..." : "Check in guest"}</button>
