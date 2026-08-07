@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import type { DeptConfig } from "../lib/departments";
 import type { DeptPresence } from "../app/gm/departments/presence-actions";
 import type { DeptMode, DeptModeRow } from "../app/gm/departments/mode-actions";
@@ -19,7 +19,6 @@ const skinOf = (d: string) => DEPT_SKIN[d] ?? DEPT_SKIN.front_desk;
 const MODES: { k: DeptMode; label: string; hint: string }[] = [
   { k: "auto", label: "Auto", hint: "Guest is promised instantly; staff claim and deliver" },
   { k: "accept_decline", label: "Approve", hint: "A person approves before the guest is told yes" },
-  { k: "maintenance", label: "Always on", hint: "Acknowledged, never declined, tracked to completion" },
 ];
 
 type Stats = { open: number; inProgress: number; resolved: number; urgent: number };
