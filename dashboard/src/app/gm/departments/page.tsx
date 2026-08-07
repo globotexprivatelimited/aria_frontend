@@ -144,7 +144,7 @@ export default function GMDepartments() {
           </div>
         ) : null}
       {detailFor ? (
-        <DeptDetailDrawer hotelId={HOTEL_ID as string} dept={detailFor.dept} deptLabel={detailFor.label} onClose={() => setDetailFor(null)} />
+        <DeptDetailDrawer hotelId={HOTEL_ID as string} dept={detailFor.dept} deptLabel={detailFor.label} mode={modes.find((m) => m.dept === detailFor.dept)?.mode ?? detailFor.type} onClose={() => setDetailFor(null)} />
       ) : null}
       </div>
     </div>

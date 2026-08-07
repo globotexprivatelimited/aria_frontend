@@ -1,12 +1,17 @@
-﻿"use client";
+"use client";
 import { useEffect, useState, useCallback } from "react";
 import { getDepartmentDetail, type DeptDetail } from "../app/gm/departments/detail-actions";
+import { actOnRequest } from "../app/gm/departments/action-actions";
 
 const GREEN = "#0F5F4C", GOLD = "#B08A4F", RED = "#B23A2A", INK = "#1B2621";
 const clock = (iso: string | null) => iso ? new Date(iso).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }) : null;
 const dur = (m: number | null) => m == null ? null : m < 60 ? m + "m" : Math.floor(m / 60) + "h " + (m % 60) + "m";
 
-export default function DeptDetailDrawer({ hotelId, dept, deptLabel, onClose }: { hotelId: string; dept: string; deptLabel: string; onClose: () => void }) {
+export default function DeptDetailDrawer({ hotelId, dept, deptLabel, mode, onClose }: { hotelId: string; dept: string; deptLabel: string; mode?: string; onClose: () => void }) {
+  const [acting, setActing] = useState<string | null>(null);
+  const [actErr, setActErr] = useState<string | null>(null);
+  const approveMode = (mode ?? "accept_decline") === "accept_decline";
+
   const [data, setData] = useState<DeptDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,6 +20,17 @@ export default function DeptDetailDrawer({ hotelId, dept, deptLabel, onClose }: 
     setData(d); setLoading(false);
   }, [hotelId, dept]);
   useEffect(() => { load(); const iv = setInterval(load, 5000); return () => clearInterval(iv); }, [load]);
+
+  async function act(id: string, command: "ACCEPT" | "CLAIM" | "DONE" | "REJECT") {
+    const tk = typeof window !== "undefined" ? window.localStorage.getItem("aria_token") : null;
+    if (!tk) return;
+    setActing(id); setActErr(null);
+    const r = await actOnRequest({ token: tk, requestId: id, command });
+    setActing(null);
+    if (!r.ok) setActErr(r.message ?? "That did not go through.");
+    const fresh = await getDepartmentDetail(hotelId, dept);
+    if (fresh) setData(fresh);
+  }
 
   const statusPill = (s: string) => {
     const map: Record<string, { bg: string; fg: string; label: string }> = {
@@ -97,6 +113,22 @@ export default function DeptDetailDrawer({ hotelId, dept, deptLabel, onClose }: 
                     {step("Claimed", clock(r.claimedAt), !!r.claimedAt, dur(r.timeToClaimMins))}
                     {step("Done", clock(r.resolvedAt), !!r.resolvedAt, dur(r.timeToResolveMins))}
                   </div>
+                  {r.status !== "resolved" ? (
+                    <div style={{ display: "flex", gap: 6, marginTop: 10, paddingTop: 9, borderTop: "1px solid #F4F2EC", flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 10.5, color: "#B4B9B3", alignSelf: "center", marginRight: 2 }}>Cover this yourself:</span>
+                      {approveMode && r.status === "received" ? (
+                        <>
+                          <button disabled={acting === r.id} onClick={() => act(r.id, "ACCEPT")} style={{ borderRadius: 7, padding: "5px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", border: "1px solid #CFE5DC", background: "#EAF2ED", color: GREEN }}>Accept</button>
+                          <button disabled={acting === r.id} onClick={() => act(r.id, "REJECT")} style={{ borderRadius: 7, padding: "5px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", border: "1px solid #EED7D0", background: "#FBEDE9", color: RED }}>Decline</button>
+                        </>
+                      ) : r.status === "received" ? (
+                        <button disabled={acting === r.id} onClick={() => act(r.id, "CLAIM")} style={{ borderRadius: 7, padding: "5px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", border: "1px solid #EDD9B4", background: "#F7F1E4", color: GOLD }}>Claim</button>
+                      ) : null}
+                      {r.status === "in_progress" ? (
+                        <button disabled={acting === r.id} onClick={() => act(r.id, "DONE")} style={{ borderRadius: 7, padding: "5px 12px", fontSize: 11.5, fontWeight: 600, cursor: "pointer", border: "1px solid #CFE5DC", background: "#EAF2ED", color: GREEN }}>Mark done</button>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>

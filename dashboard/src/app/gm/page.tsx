@@ -15,6 +15,7 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis,
   ResponsiveContainer, Tooltip, CartesianGrid,
 } from "recharts";
+import VerifyEmailBanner from "../../components/VerifyEmailBanner";
 
 const GREEN = "#0F5F4C";
 const GOLD = "#B08A4F";
@@ -133,6 +134,7 @@ export default function GMDashboard() {
     <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F6F7F4 0%,#F1F3EF 100%)" }}>
       <GMSidebar />
       <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "18px 14px" : "30px 34px" }}>
+          <VerifyEmailBanner />
         {/* Header */}
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 24 }}>
           <div>
