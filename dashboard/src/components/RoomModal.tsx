@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import type { Room } from "../app/gm/reception/rooms-actions";
+import CountryPicker from "./CountryPicker";
+import { DIAL_CODES } from "../lib/dialCodes";
 
 const GREEN = "#0F5F4C", RED = "#B23A2A", AMBER = "#B08A4F", INK = "#1B2621";
 const TYPES = ["Standard", "Deluxe", "Suite", "Executive", "Presidential"];
@@ -33,6 +35,7 @@ type Handlers = {
 
 export default function RoomModal({ room, handlers }: { room: Room; handlers: Handlers }) {
   const [guestName, setGuestName] = useState("");
+  const [dial, setDial] = useState("+91");
   const [guestPhone, setGuestPhone] = useState("");
   const [partySize, setPartySize] = useState(1);
   const [checkOut, setCheckOut] = useState(defaultCheckout());
@@ -52,7 +55,7 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
     if (!guestName.trim()) return;
     setBusy(true);
     const iso = new Date(checkOut).toISOString();
-    await handlers.onCheckIn(room.room_number, guestName.trim(), guestPhone.trim(), partySize, iso);
+    await handlers.onCheckIn(room.room_number, guestName.trim(), guestPhone.trim() ? dial + guestPhone.replace(/[^0-9]/g, "") : "", partySize, iso);
     setBusy(false);
   }
   async function act(fn: () => Promise<void>) { setBusy(true); await fn(); setBusy(false); }
@@ -106,7 +109,10 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
               </div>
               <div style={{ marginBottom: 12 }}>
                 <label style={lbl}>WhatsApp number</label>
-                <input value={guestPhone} onChange={(e) => setGuestPhone(e.target.value)} placeholder="+91 90000 00000" style={field} />
+                <div style={{ display: "flex", gap: 7 }}>
+              <CountryPicker options={DIAL_CODES} value={dial} onChange={setDial} width={112} gap={0} />
+              <input value={guestPhone} onChange={(e) => setGuestPhone(e.target.value.replace(/[^0-9]/g, ""))} placeholder="Number only" inputMode="numeric" style={{ ...field, flex: 1 }} />
+            </div>
                 <div style={{ fontSize: 10, color: "#B4B9B3", marginTop: 4 }}>Guest texts this number to reach Aria for dining, spa &amp; requests</div>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12, marginBottom: 18 }}>
