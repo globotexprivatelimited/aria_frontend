@@ -11,6 +11,7 @@ import DeptItemManager from "../../../components/DeptItemManager";
 import MaintenanceManager from "../../../components/MaintenanceManager";
 import { getDepartmentPresence, type DeptPresence } from "./presence-actions";
 import { getDeptModes, setDeptMode, type DeptMode, type DeptModeRow } from "./mode-actions";
+import DeptDetailDrawer from "../../../components/DeptDetailDrawer";
 import DiningManager from "../../../components/DiningManager";
 import SlotEditor from "../../../components/SlotEditor";
 import type { DeptConfig } from "../../../lib/departments";
@@ -24,6 +25,7 @@ export default function GMDepartments() {
   const [managing, setManaging] = useState<DeptConfig | null>(null);
   const [presence, setPresence] = useState<DeptPresence[]>([]);
   const [modes, setModes] = useState<DeptModeRow[]>([]);
+  const [detailFor, setDetailFor] = useState<DeptConfig | null>(null);
 
   const load = useCallback(async () => {
     if (!HOTEL_ID) return;
@@ -94,7 +96,7 @@ export default function GMDepartments() {
           {DEPARTMENTS.map((d) => {
             const s = statFor(d.dept);
             return (
-              <div key={d.dept} style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24, boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
+              <div key={d.dept} onClick={() => setDetailFor(d)} style={{ cursor: "pointer", background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24, boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                   <div>
                     <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 600, color: "#1B2621" }}>{d.label}</div>
@@ -144,7 +146,7 @@ export default function GMDepartments() {
                   <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: "#B08A4F" }}>{s.inProgress}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>in progress</div></div>
                   <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: "#9AA09A" }}>{s.resolved}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>resolved</div></div>
                 </div>
-                <button onClick={() => setManaging(d)} style={{ marginTop: 16, width: "100%", borderRadius: 10, padding: "10px", fontSize: 14, fontWeight: 600, color: "#0F5F4C", background: "#F1F6F2", border: "1px solid #DCEBE1", cursor: "pointer" }}>{d.type === "auto" ? "Manage menu & stock" : "Manage time slots"}</button>
+                <button onClick={(e) => { e.stopPropagation(); setManaging(d); }} style={{ marginTop: 16, width: "100%", borderRadius: 10, padding: "10px", fontSize: 14, fontWeight: 600, color: "#0F5F4C", background: "#F1F6F2", border: "1px solid #DCEBE1", cursor: "pointer" }}>{d.type === "auto" ? "Manage menu & stock" : "Manage time slots"}</button>
               </div>
             );
           })}
@@ -178,6 +180,9 @@ export default function GMDepartments() {
             </div>
           </div>
         ) : null}
+      {detailFor ? (
+        <DeptDetailDrawer hotelId={HOTEL_ID as string} dept={detailFor.dept} deptLabel={detailFor.label} onClose={() => setDetailFor(null)} />
+      ) : null}
       </div>
     </div>
   );
