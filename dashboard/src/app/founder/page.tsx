@@ -1,198 +1,168 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { getAllActive, type Req as RequestRow } from "../_actions/requests";
-import { DEPARTMENTS } from "../../lib/departments";
-import FounderSidebar from "../../components/FounderSidebar";
+import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { getPortfolio, type Portfolio, type HotelSummary } from "./portfolio-actions";
 
-type Win = "today" | "24h" | "7d" | "all";
 
-function timeAgo(iso: string): string {
-  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (s < 60) return s + "s ago";
-  if (s < 3600) return Math.floor(s / 60) + "m ago";
-  if (s < 86400) return Math.floor(s / 3600) + "h ago";
-  return Math.floor(s / 86400) + "d ago";
+const INK = "#1B2621", GREEN = "#0F5F4C", GOLD = "#B08A4F", RED = "#B23A2A";
+const rupee = "\u20B9";
+const money = (n: number) => rupee + Math.round(n).toLocaleString("en-IN");
+
+const TONE = {
+  live:    { accent: "#0F5F4C", tint: "#EDF4F0", label: "Live" },
+  quiet:   { accent: "#7C7FA8", tint: "#F1F1F7", label: "Quiet" },
+  setup:   { accent: "#B4703A", tint: "#FBF2E9", label: "Needs setup" },
+  off:     { accent: "#8A8577", tint: "#F4F3EF", label: "Inactive" },
+};
+function toneFor(h: HotelSummary) {
+  if (!h.isActive) return TONE.off;
+  if (h.rooms.total === 0) return TONE.setup;
+  if (h.rooms.occupied > 0 || h.requests.open > 0) return TONE.live;
+  return TONE.quiet;
 }
+const ago = (iso: string | null) => {
+  if (!iso) return "no activity yet";
+  const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (m < 60) return m + "m ago";
+  const h = Math.floor(m / 60);
+  return h < 24 ? h + "h ago" : Math.floor(h / 24) + "d ago";
+};
 
-function windowStart(w: Win): number {
-  const now = Date.now();
-  if (w === "today") { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
-  if (w === "24h") return now - 24 * 3600 * 1000;
-  if (w === "7d") return now - 7 * 86400 * 1000;
-  return 0;
-}
-
-export default function FounderDashboard() {
-  const [rows, setRows] = useState<RequestRow[]>([]);
-  const [connected, setConnected] = useState(false);
-  const [win, setWin] = useState<Win>("24h");
-  const [hotelFilter, setHotelFilter] = useState<string | null>(null);
+export default function FounderPage() {
+  const router = useRouter();
+  const [data, setData] = useState<Portfolio | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    setRows(await getAllActive());
+    const tk = typeof window !== "undefined" ? window.localStorage.getItem("aria_token") : null;
+    if (!tk) return;
+    const p = await getPortfolio(tk);
+    setData(p); setLoading(false);
   }, []);
+  useEffect(() => { load(); const iv = setInterval(load, 8000); return () => clearInterval(iv); }, [load]);
 
-  useEffect(() => {
-    load();
-    load();
-    const iv = setInterval(load, 4000);
-    return () => { clearInterval(iv); };
-  }, [load]);
+  const t = data?.totals ?? {};
+  const hotels = data?.hotels ?? [];
+  const needSetup = hotels.filter((h) => h.rooms.total === 0 && h.isActive);
+  const unverified = hotels.filter((h) => !h.emailVerified);
 
-  const num = (v: number | string | null | undefined) => (v == null ? 0 : typeof v === "string" ? parseFloat(v) || 0 : v);
-
-  const filtered = useMemo(() => {
-    const start = windowStart(win);
-    return rows.filter((r) => new Date(r.createdAt).getTime() >= start && (!hotelFilter || r.hotelId === hotelFilter));
-  }, [rows, win, hotelFilter]);
-
-  const open = filtered.filter((r) => r.status === "received").length;
-  const inProgress = filtered.filter((r) => r.status === "in_progress").length;
-  const resolved = filtered.filter((r) => r.status === "resolved").length;
-  const urgent = filtered.filter((r) => r.priority === "urgent" && r.status !== "resolved").length;
-  const hotels = new Set(filtered.filter((r) => r.status !== "resolved").map((r) => r.hotelId)).size;
-  const revenue = filtered.reduce((sum, r) => sum + num(r.revenueGenerated), 0);
-  const resolutionRate = filtered.length > 0 ? Math.round((resolved / filtered.length) * 100) : 0;
-
-  const allHotels = useMemo(() => Array.from(new Set(rows.map((r) => r.hotelId).filter((x): x is string => !!x))).sort(), [rows]);
-
-  const byDept: Record<string, number> = {};
-  for (const r of filtered) { if (r.status !== "resolved") byDept[r.department ?? "?"] = (byDept[r.department ?? "?"] ?? 0) + 1; }
-  const deptLabel = (d: string) => DEPARTMENTS.find((x) => x.dept === d)?.label ?? d;
-  const deptEntries = Object.entries(byDept).sort((a, b) => b[1] - a[1]);
-  const maxDept = Math.max(1, ...deptEntries.map((e) => e[1]));
-
-  const alerts = filtered.filter((r) => {
-    if (r.status === "resolved") return false;
-    if (r.priority === "urgent") return true;
-    const ageMin = (Date.now() - new Date(r.createdAt).getTime()) / 60000;
-    return ageMin > 30 && r.status === "received";
-  }).slice(0, 8);
-
-  const feed = filtered.slice(0, 10);
-
-  const cards = [
-    { label: "Open", value: String(open), color: "#0F5F4C", sub: "awaiting action", big: true },
-    { label: "In progress", value: String(inProgress), color: "#B08A4F", sub: "being handled", big: true },
-    { label: "Urgent", value: String(urgent), color: urgent > 0 ? "#B23A2A" : "#1B2621", sub: "need attention", big: true },
-    { label: "Hotels", value: String(hotels), color: "#1B2621", sub: "active now", big: true },
-    { label: "Resolution", value: resolutionRate + "%", color: "#0F5F4C", sub: "completion", big: true },
-    { label: "Revenue", value: "Rs " + revenue.toLocaleString("en-IN"), color: "#0F5F4C", sub: "in window", big: false },
-  ];
-
-  const statusColor = (s: string) => s === "received" ? "#0F5F4C" : s === "in_progress" ? "#B08A4F" : "#9AA09A";
-  const statusLabel = (s: string) => s === "received" ? "New" : s === "in_progress" ? "Working" : "Done";
-  const WINDOWS: { key: Win; label: string }[] = [
-    { key: "today", label: "Today" }, { key: "24h", label: "24h" }, { key: "7d", label: "7 days" }, { key: "all", label: "All" },
-  ];
+  const stat = (label: string, value: string, accent: string, caption?: string) => (
+    <div key={label} style={{ padding: "16px 18px", borderRadius: 14, background: "#fff", border: "1px solid #EAE7DE", minWidth: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <span style={{ width: 6, height: 6, borderRadius: 2, background: accent }} />
+        <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".1em", color: "#A8A395" }}>{label}</span>
+      </div>
+      <div style={{ fontFamily: "Georgia, serif", fontSize: 27, fontWeight: 700, color: INK, marginTop: 6, lineHeight: 1 }}>{value}</div>
+      {caption ? <div style={{ fontSize: 11, color: "#9AA09A", marginTop: 4 }}>{caption}</div> : null}
+    </div>
+  );
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#F6F7F4" }}>
-      <FounderSidebar />
-      <div style={{ flex: 1, minWidth: 0, padding: "32px" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 20 }}>
+    <div style={{ minHeight: "100vh", background: "#F6F7F4", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "34px 30px 60px" }}>
+
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 14 }}>
           <div>
-            <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Operations</h1>
-            <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>
-              <span style={{ display: "inline-block", height: 8, width: 8, borderRadius: 999, marginRight: 6, background: connected ? "#34D399" : "#F0B429" }} />
-              {connected ? "Live across every hotel" : "Connecting..."}
-              {hotelFilter ? <span> &middot; filtered to <b>{hotelFilter}</b> <span onClick={() => setHotelFilter(null)} style={{ color: "#0F5F4C", cursor: "pointer", textDecoration: "underline" }}>clear</span></span> : null}
-            </p>
+            <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD }}>Every hotel, one view</div>
+            <h1 style={{ fontFamily: "Georgia, serif", fontSize: 34, fontWeight: 600, color: INK, marginTop: 4, letterSpacing: "-.5px" }}>Portfolio</h1>
           </div>
-          <div style={{ display: "flex", gap: 6, background: "#fff", border: "1px solid #EAEAE4", borderRadius: 10, padding: 4 }}>
-            {WINDOWS.map((w) => (
-              <button key={w.key} onClick={() => setWin(w.key)}
-                style={{ border: 0, borderRadius: 7, padding: "6px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer", background: win === w.key ? "#0F5F4C" : "transparent", color: win === w.key ? "#fff" : "#5A615B" }}>
-                {w.label}
-              </button>
-            ))}
-          </div>
+
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 14 }}>
-          {cards.map((c) => (
-            <div key={c.label} style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 14, padding: "18px 16px", boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
-              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".06em", color: "#9AA09A" }}>{c.label}</div>
-              <div style={{ fontFamily: "Georgia, serif", fontSize: c.big ? 32 : 22, fontWeight: 600, marginTop: 6, color: c.color }}>{c.value}</div>
-              <div style={{ fontSize: 11, color: "#B4B9B3", marginTop: 2 }}>{c.sub}</div>
-            </div>
-          ))}
-        </div>
+        {loading ? <div style={{ color: "#B4B9B3", fontSize: 14, marginTop: 30 }}>Loading the portfolio&hellip;</div> : null}
 
-        {alerts.length > 0 ? (
-          <div style={{ marginTop: 20, background: "#FDF6F4", border: "1px solid #F0D5CD", borderRadius: 16, padding: 20 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: 999, background: "#B23A2A" }} />
-              <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#B23A2A", fontWeight: 700 }}>Needs attention &middot; {alerts.length}</h2>
+        {!loading && data ? (
+          <>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(158px,1fr))", gap: 12, marginTop: 22 }}>
+              {stat("Hotels", String(t.hotels ?? 0), GREEN, (t.hotels ?? 0) - needSetup.length + " live")}
+              {stat("Guests in house", String(t.guests ?? 0), "#B4703A", (t.occupied ?? 0) + " rooms occupied")}
+              {stat("Staff", String(t.staff ?? 0), "#7C7FA8", (t.onDuty ?? 0) + " on duty now")}
+              {stat("Open requests", String(t.openRequests ?? 0), (t.urgent ?? 0) > 0 ? RED : "#5B8C6E", (t.urgent ?? 0) + " urgent")}
+              {stat("Revenue today", money(t.revenueToday ?? 0), GREEN, money(t.revenueWeek ?? 0) + " this week")}
+              {stat("Missed", money(t.missedLoss ?? 0), RED, "estimated, unserved")}
             </div>
-            <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 24px" }}>
-              {alerts.map((r) => (
-                <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
-                  <span style={{ fontWeight: 600, color: "#1B2621" }}>Room {r.roomNumber ?? "?"}</span>
-                  <span style={{ color: "#6E756F", flex: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.requestDetail}</span>
-                  {r.priority === "urgent" ? <span style={{ borderRadius: 999, padding: "1px 8px", fontSize: 11, fontWeight: 600, background: "#FBEDE9", color: "#B23A2A" }}>Urgent</span> : null}
-                  <span style={{ fontSize: 11, color: "#B4B9B3" }}>{timeAgo(r.createdAt)}</span>
-                </div>
-              ))}
+
+            {(needSetup.length > 0 || unverified.length > 0) ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 16 }}>
+                {needSetup.length > 0 ? (
+                  <div style={{ borderRadius: 12, padding: "11px 16px", background: "#FBF3E6", border: "1px solid #EDD9B4", color: "#8A6420", fontSize: 13.5 }}>
+                    <b>{needSetup.length} hotel{needSetup.length === 1 ? "" : "s"} not set up</b> &mdash; {needSetup.map((h) => h.name).join(", ")} {needSetup.length === 1 ? "has" : "have"} no rooms yet.
+                  </div>
+                ) : null}
+                {unverified.length > 0 ? (
+                  <div style={{ borderRadius: 12, padding: "11px 16px", background: "#F5F5F0", border: "1px solid #E7E3D8", color: "#6E756F", fontSize: 13.5 }}>
+                    <b>{unverified.map((h) => h.name).join(", ")}</b> {unverified.length === 1 ? "has" : "have"} not confirmed their email.
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(330px,1fr))", gap: 14, marginTop: 20 }}>
+              {hotels.map((h) => {
+                const tone = toneFor(h);
+                return (
+                  <div key={h.hotelId}
+                    onClick={() => router.push("/founder/hotels/" + h.hotelId)}
+                    className="hotel-card"
+                    style={{ position: "relative", overflow: "hidden", cursor: "pointer", borderRadius: 17, padding: "20px 20px 17px 23px",
+                      background: "linear-gradient(160deg,#FFFFFF 0%,#FEFDFC 55%," + tone.tint + " 100%)",
+                      border: "1px solid #EAE7DE", transition: "transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s" }}>
+                    <span style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 4, background: tone.accent }} />
+                    {h.requests.urgent > 0 ? <span style={{ position: "absolute", top: 0, right: 0, width: 0, height: 0, borderTop: "30px solid " + RED, borderLeft: "30px solid transparent" }} /> : null}
+
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
+                      <div style={{ minWidth: 0 }}>
+                        <h3 style={{ fontFamily: "Georgia, serif", fontSize: 20, fontWeight: 600, color: INK, margin: 0 }}>{h.name}</h3>
+                        <div style={{ fontSize: 11.5, color: "#9AA09A", marginTop: 3 }}>
+                          {h.city ? h.city + " \u00b7 " : ""}hotel {h.hotelId} &middot; {ago(h.lastActivity)}
+                        </div>
+                      </div>
+                      <span style={{ borderRadius: 999, padding: "3px 10px", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", background: tone.tint, color: tone.accent, whiteSpace: "nowrap" }}>{tone.label}</span>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 5, marginTop: 15 }}>
+                      <span style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 700, color: h.rooms.total ? tone.accent : "#C8CCC6", lineHeight: 1 }}>{h.rooms.occupancyPct}%</span>
+                      <span style={{ fontSize: 11.5, color: "#9AA09A" }}>occupied &middot; {h.rooms.occupied}/{h.rooms.total || "\u2014"} rooms</span>
+                    </div>
+                    <div style={{ height: 5, borderRadius: 999, background: "#F1EEE6", marginTop: 8, overflow: "hidden" }}>
+                      <span style={{ display: "block", height: "100%", width: h.rooms.occupancyPct + "%", background: tone.accent, transition: "width .5s" }} />
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 4, marginTop: 15, paddingTop: 13, borderTop: "1px solid #F1EEE6" }}>
+                      {[
+                        { n: h.guestsInHouse, l: "guests" },
+                        { n: h.staff.onDuty, l: "on duty" },
+                        { n: h.requests.open, l: "waiting" },
+                        { n: h.missed.count, l: "missed" },
+                      ].map((x) => (
+                        <div key={x.l}>
+                          <div style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 700, color: x.n > 0 ? INK : "#C8CCC6", lineHeight: 1 }}>{x.n}</div>
+                          <div style={{ fontSize: 9.5, textTransform: "uppercase", letterSpacing: ".07em", color: "#A8A395", marginTop: 3 }}>{x.l}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 13 }}>
+                      <span style={{ fontSize: 12.5, color: "#6E756F" }}>
+                        <b style={{ color: INK, fontFamily: "Georgia, serif", fontSize: 15 }}>{money(h.revenue.today)}</b> today
+                      </span>
+                      <span style={{ fontSize: 11.5, color: tone.accent, fontWeight: 600 }}>Open &rarr;</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+          </>
         ) : null}
 
-        <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 16, marginTop: 20 }}>
-          <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24 }}>
-            <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#6E756F", fontWeight: 600 }}>Live activity feed</h2>
-            <div style={{ marginTop: 16 }}>
-              {feed.length === 0 ? (
-                <div style={{ padding: 32, textAlign: "center", color: "#9AA09A", fontSize: 14 }}>No activity in this window.</div>
-              ) : feed.map((r) => (
-                <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #F4F4F1" }}>
-                  <span style={{ width: 8, height: 8, borderRadius: 999, background: statusColor(r.status), flexShrink: 0 }} />
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ fontSize: 13, color: "#1B2621", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      <span style={{ fontWeight: 600 }}>Room {r.roomNumber ?? "?"}</span>
-                      <span style={{ color: "#6E756F" }}> &mdash; {r.requestDetail}</span>
-                    </div>
-                    <div style={{ fontSize: 11, color: "#9AA09A", marginTop: 1 }}>{deptLabel(r.department ?? "?")} &middot; {r.hotelId}</div>
-                  </div>
-                  <span style={{ fontSize: 11, fontWeight: 500, color: statusColor(r.status), flexShrink: 0 }}>{statusLabel(r.status)}</span>
-                  <span style={{ fontSize: 11, color: "#B4B9B3", flexShrink: 0, width: 54, textAlign: "right" }}>{timeAgo(r.createdAt)}</span>
-                </div>
-              ))}
-            </div>
+        {!loading && !data ? (
+          <div style={{ marginTop: 26, padding: "30px 0", textAlign: "center", color: "#B4B9B3", fontSize: 14, border: "1px dashed #E3DECF", borderRadius: 14 }}>
+            Could not load the portfolio. Check that the API is running.
           </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24 }}>
-              <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#6E756F", fontWeight: 600 }}>Open by department</h2>
-              <div style={{ marginTop: 16 }}>
-                {deptEntries.length === 0 ? <div style={{ color: "#9AA09A", fontSize: 14 }}>Nothing open.</div> : deptEntries.map(([d, n]) => (
-                  <div key={d} style={{ marginBottom: 14 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 5 }}>
-                      <span style={{ color: "#3A413B" }}>{deptLabel(d)}</span><span style={{ fontWeight: 600, color: "#1B2621" }}>{n}</span>
-                    </div>
-                    <div style={{ height: 6, borderRadius: 999, background: "#F0F0EA", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: Math.round((n / maxDept) * 100) + "%", background: "linear-gradient(90deg,#0F5F4C,#1A8266)", borderRadius: 999 }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24 }}>
-              <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#6E756F", fontWeight: 600 }}>Hotels &middot; click to filter</h2>
-              <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {allHotels.length === 0 ? <span style={{ color: "#9AA09A", fontSize: 14 }}>None yet.</span> : allHotels.map((h) => (
-                  <button key={h} onClick={() => setHotelFilter(hotelFilter === h ? null : h)}
-                    style={{ border: "1px solid " + (hotelFilter === h ? "#0F5F4C" : "#E3E3DC"), background: hotelFilter === h ? "#E8F1ED" : "#fff", color: hotelFilter === h ? "#0F5F4C" : "#3A413B", borderRadius: 999, padding: "6px 14px", fontSize: 13, fontWeight: 500, cursor: "pointer" }}>
-                    {h}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        ) : null}
       </div>
+      <style>{`.hotel-card:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(27,38,33,.09); }`}</style>
     </div>
   );
 }

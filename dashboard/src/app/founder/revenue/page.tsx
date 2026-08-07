@@ -1,80 +1,87 @@
-"use client";
-
+﻿"use client";
 import { useEffect, useState, useCallback } from "react";
-import { getAllSince, type Req as RequestRow } from "../../_actions/requests";
-import FounderSidebar from "../../../components/FounderSidebar";
+import { useRouter } from "next/navigation";
+import { getPortfolio, type Portfolio } from "../portfolio-actions";
 
-type Row = { hotelId: string; department: string | null; status: string; revenueGenerated: number | string | null; createdAt: string };
+const INK = "#1B2621", GREEN = "#0F5F4C", GOLD = "#B08A4F", RED = "#B23A2A";
+const rupee = "\u20B9";
+const money = (n: number) => rupee + Math.round(n).toLocaleString("en-IN");
 
-export default function RevenuePage() {
-  const [rows, setRows] = useState<Row[]>([]);
-  const [connected, setConnected] = useState(false);
+export default function FounderRevenuePage() {
+  const router = useRouter();
+  const [d, setD] = useState<Portfolio | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    setRows(await getAllSince(30));
+    const tk = typeof window !== "undefined" ? window.localStorage.getItem("aria_token") : null;
+    if (!tk) return;
+    setD(await getPortfolio(tk)); setLoading(false);
   }, []);
+  useEffect(() => { load(); const iv = setInterval(load, 10000); return () => clearInterval(iv); }, [load]);
 
-  useEffect(() => {
-    load();
-    load();
-    const iv = setInterval(load, 4000);
-    return () => { clearInterval(iv); };
-  }, [load]);
-
-  const num = (v: number | string | null) => (v == null ? 0 : typeof v === "string" ? parseFloat(v) || 0 : v);
-  const total = rows.reduce((sum, r) => sum + num(r.revenueGenerated), 0);
-
-  const byHotel: Record<string, number> = {};
-  const byDept: Record<string, number> = {};
-  for (const r of rows) {
-    const amt = num(r.revenueGenerated);
-    if (amt <= 0) continue;
-    byHotel[r.hotelId] = (byHotel[r.hotelId] ?? 0) + amt;
-    byDept[r.department ?? "?"] = (byDept[r.department ?? "?"] ?? 0) + amt;
-  }
-  const fmt = (n: number) => "Rs " + n.toLocaleString("en-IN");
+  const hotels = (d?.hotels ?? []).slice().sort((a, b) => b.revenue.total - a.revenue.total);
+  const t = d?.totals ?? {};
+  const shareTotal = hotels.reduce((s, h) => s + h.revenue.total * (h.revenueSharePercent / 100), 0);
+  const maxRev = Math.max(1, ...hotels.map((h) => h.revenue.total));
+  const card = { background: "#fff", border: "1px solid #EAE7DE", borderRadius: 15 };
+  const lbl = { fontSize: 10, textTransform: "uppercase" as const, letterSpacing: ".1em", color: "#A8A395" };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#F6F7F4" }}>
-      <FounderSidebar />
-      <div style={{ flex: 1, minWidth: 0, padding: "32px" }}>
-        <h1 style={{ fontFamily: "Georgia, serif", fontSize: 28, fontWeight: 600, color: "#1B2621" }}>Revenue</h1>
-        <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>
-          <span style={{ display: "inline-block", height: 8, width: 8, borderRadius: 999, marginRight: 6, background: connected ? "#34D399" : "#F0B429" }} />
-          {connected ? "Live across every hotel" : "Connecting..."}
-        </p>
+    <div style={{ padding: "34px 30px 60px", maxWidth: 1240 }}>
+      <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".14em", color: GOLD }}>Across the portfolio</div>
+      <h1 style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 600, color: INK, marginTop: 4, letterSpacing: "-.5px" }}>Revenue</h1>
 
-        <div style={{ marginTop: 24, background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 28 }}>
-          <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: ".06em", color: "#9AA09A" }}>Total recorded revenue</div>
-          <div style={{ fontFamily: "Georgia, serif", fontSize: 48, fontWeight: 600, marginTop: 8, color: "#0F5F4C" }}>{fmt(total)}</div>
-          <p style={{ fontSize: 13, color: "#9AA09A", marginTop: 4 }}>From confirmed dining and activity bookings</p>
-        </div>
+      {loading ? <div style={{ color: "#B4B9B3", marginTop: 24 }}>Loading&hellip;</div> : null}
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 24 }}>
-          <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24 }}>
-            <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#6E756F", fontWeight: 600 }}>By hotel</h2>
-            <ul style={{ listStyle: "none", marginTop: 16, padding: 0 }}>
-              {Object.entries(byHotel).sort((a, b) => b[1] - a[1]).map(([h, n]) => (
-                <li key={h} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #F0F0EA", paddingBottom: 8, marginBottom: 8, fontSize: 14 }}>
-                  <span style={{ color: "#3A413B" }}>{h}</span><span style={{ fontWeight: 600, color: "#0F5F4C" }}>{fmt(n)}</span>
-                </li>
-              ))}
-              {Object.keys(byHotel).length === 0 && <li style={{ color: "#9AA09A", fontSize: 14 }}>No revenue recorded yet.</li>}
-            </ul>
+      {!loading && d ? (
+        <>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 11, marginTop: 20 }}>
+            {[
+              { l: "Today", v: money(t.revenueToday ?? 0), c: GREEN },
+              { l: "This week", v: money(t.revenueWeek ?? 0), c: "#5B8C6E" },
+              { l: "All time", v: money(t.revenueTotal ?? 0), c: INK },
+              { l: "Your share", v: money(shareTotal), c: GOLD, s: "from agreed percentages" },
+              { l: "Missed", v: money(t.missedLoss ?? 0), c: RED, s: "demand not served" },
+            ].map((x) => (
+              <div key={x.l} style={{ ...card, padding: "15px 17px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 6, height: 6, borderRadius: 2, background: x.c }} /><span style={lbl}>{x.l}</span></div>
+                <div style={{ fontFamily: "Georgia, serif", fontSize: 24, fontWeight: 700, color: INK, marginTop: 6, lineHeight: 1 }}>{x.v}</div>
+                {x.s ? <div style={{ fontSize: 10.5, color: "#9AA09A", marginTop: 4 }}>{x.s}</div> : null}
+              </div>
+            ))}
           </div>
-          <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24 }}>
-            <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#6E756F", fontWeight: 600 }}>By department</h2>
-            <ul style={{ listStyle: "none", marginTop: 16, padding: 0 }}>
-              {Object.entries(byDept).sort((a, b) => b[1] - a[1]).map(([d, n]) => (
-                <li key={d} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid #F0F0EA", paddingBottom: 8, marginBottom: 8, fontSize: 14 }}>
-                  <span style={{ color: "#3A413B" }}>{d}</span><span style={{ fontWeight: 600, color: "#0F5F4C" }}>{fmt(n)}</span>
-                </li>
-              ))}
-              {Object.keys(byDept).length === 0 && <li style={{ color: "#9AA09A", fontSize: 14 }}>No revenue recorded yet.</li>}
-            </ul>
+
+          {shareTotal === 0 && (t.revenueTotal ?? 0) > 0 ? (
+            <div style={{ marginTop: 14, borderRadius: 12, padding: "11px 16px", background: "#FBF3E6", border: "1px solid #EDD9B4", color: "#8A6420", fontSize: 13.5 }}>
+              No revenue share is set on any hotel, so your share reads zero. Set a percentage per hotel to track it.
+            </div>
+          ) : null}
+
+          <div style={{ ...card, marginTop: 18, padding: 20 }}>
+            <div style={{ ...lbl, marginBottom: 14 }}>By hotel</div>
+            {hotels.map((h) => {
+              const pct = Math.round((h.revenue.total / maxRev) * 100);
+              return (
+                <div key={h.hotelId} onClick={() => router.push("/founder/hotels/" + h.hotelId)} style={{ cursor: "pointer", marginBottom: 15 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5, flexWrap: "wrap", gap: 8 }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: INK }}>{h.name}
+                      <span style={{ fontSize: 11, color: "#B4B9B3", marginLeft: 8 }}>{h.revenueSharePercent}% share</span>
+                    </span>
+                    <span style={{ fontSize: 12.5, color: "#6E756F" }}>
+                      <b style={{ color: INK, fontFamily: "Georgia, serif", fontSize: 15 }}>{money(h.revenue.total)}</b>
+                      <span style={{ color: GOLD, marginLeft: 9 }}>you: {money(h.revenue.total * (h.revenueSharePercent / 100))}</span>
+                      {h.missed.estimatedLoss > 0 ? <span style={{ color: RED, marginLeft: 9 }}>missed {money(h.missed.estimatedLoss)}</span> : null}
+                    </span>
+                  </div>
+                  <div style={{ height: 8, borderRadius: 999, background: "#F3F1EA", overflow: "hidden" }}>
+                    <span style={{ display: "block", height: "100%", width: Math.max(2, pct) + "%", background: GREEN, transition: "width .5s" }} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </div>
-      </div>
+        </>
+      ) : null}
     </div>
   );
 }
