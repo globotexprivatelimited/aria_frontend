@@ -91,6 +91,18 @@ export default function StaffDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // presence heartbeat - marks this staff member online while the portal is open
+  useEffect(() => {
+    const beat = () => {
+      const t = typeof window !== "undefined" ? window.localStorage.getItem("aria_token") : null;
+      if (!t) return;
+      fetch(API + "/api/presence/heartbeat", { method: "POST", headers: { authorization: "Bearer " + t } }).catch(() => {});
+    };
+    beat();
+    const iv = setInterval(beat, 30000);
+    return () => clearInterval(iv);
+  }, []);
+
   const load = useCallback(async () => {
     if (!hotelId || myDepts.length === 0) return;
     setRows(await getActiveRequests(hotelId, myDepts));

@@ -9,6 +9,7 @@ import { useMyHotel } from "../../../lib/useMyHotel";
 import MenuEditor from "../../../components/MenuEditor";
 import DeptItemManager from "../../../components/DeptItemManager";
 import MaintenanceManager from "../../../components/MaintenanceManager";
+import { getDepartmentPresence, type DeptPresence } from "./presence-actions";
 import DiningManager from "../../../components/DiningManager";
 import SlotEditor from "../../../components/SlotEditor";
 import type { DeptConfig } from "../../../lib/departments";
@@ -20,10 +21,12 @@ export default function GMDepartments() {
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [connected, setConnected] = useState(false);
   const [managing, setManaging] = useState<DeptConfig | null>(null);
+  const [presence, setPresence] = useState<DeptPresence[]>([]);
 
   const load = useCallback(async () => {
     if (!HOTEL_ID) return;
     setRows(await getHotelActive(HOTEL_ID));
+    setPresence(await getDepartmentPresence(HOTEL_ID));
   }, [HOTEL_ID]);
 
   useEffect(() => {
@@ -62,7 +65,22 @@ export default function GMDepartments() {
                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                   <div>
                     <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 600, color: "#1B2621" }}>{d.label}</div>
-                    <div style={{ fontSize: 12, color: "#9AA09A", marginTop: 2 }}>{d.type === "auto" ? "Auto \u00b7 Claim / Done" : "Accept / Decline"}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 5 }}>
+                      {(() => {
+                        const p = presence.find((x) => x.dept === d.dept);
+                        const on = !!p?.online;
+                        const names = (p?.staff ?? []).map((s) => s.name).join(", ");
+                        return (
+                          <>
+                            <span style={{ width: 7, height: 7, borderRadius: 999, background: on ? "#2ECC71" : "#C8CCC6", boxShadow: on ? "0 0 0 3px rgba(46,204,113,.2)" : "none", flexShrink: 0 }} />
+                            <span style={{ fontSize: 11.5, fontWeight: 600, color: on ? "#0F5F4C" : "#A8A395" }}>
+                              {on ? names + " on duty" : "No one on duty"}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#9AA09A", marginTop: 4 }}>{d.type === "auto" ? "Auto \u00b7 Claim / Done" : "Accept / Decline"}</div>
                   </div>
                   {s.urgent > 0 ? <span style={{ borderRadius: 999, padding: "2px 10px", fontSize: 12, fontWeight: 600, background: "#FBEDE9", color: "#B23A2A" }}>{s.urgent} urgent</span> : null}
                 </div>
