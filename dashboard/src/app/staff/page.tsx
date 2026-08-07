@@ -265,11 +265,10 @@ export default function StaffDashboard() {
               <button onClick={() => send(dept, r.id, "PROBLEM")} style={{ borderRadius: 9, padding: "9px 14px", fontSize: 14, borderWidth: 1, borderStyle: "solid", borderColor: "#DED8C8", background: "#fff", cursor: "pointer", color: "#3A413B" }}>Issue</button>
             </div>
           ) : (
-            <div style={{ marginTop: 18, display: "flex", gap: 8 }}>
-              <button onClick={() => send(dept, r.id, "ACCEPT")} style={{ flex: 1, borderRadius: 9, padding: "9px", fontSize: 14, fontWeight: 600, color: "#fff", background: "#0F5F4C", border: 0, cursor: "pointer" }}>Accept</button>
-              <button onClick={() => setProposeFor(r.id)} style={{ borderRadius: 9, padding: "9px 14px", fontSize: 14, fontWeight: 600, color: "#96733C", background: "#F9F2E2", borderWidth: 1, borderStyle: "solid", borderColor: "#EAD9BC", cursor: "pointer" }}>Propose</button>
-              <button onClick={() => send(dept, r.id, "REJECT")} style={{ borderRadius: 9, padding: "9px 14px", fontSize: 14, borderWidth: 1, borderStyle: "solid", borderColor: "#DED8C8", background: "#fff", cursor: "pointer", color: "#3A413B" }}>Decline</button>
-            </div>
+                    <div style={{ marginTop: 18, display: "flex", gap: 8 }}>
+                      <button onClick={() => send(dept, r.id, "ACCEPT")} style={{ flex: 1, borderRadius: 9, padding: "9px", fontSize: 14, fontWeight: 600, color: "#fff", background: "#0F5F4C", border: 0, cursor: "pointer" }}>Accept</button>
+                      <button onClick={() => send(dept, r.id, "REJECT")} style={{ borderRadius: 9, padding: "9px 14px", fontSize: 14, borderWidth: 1, borderStyle: "solid", borderColor: "#DED8C8", background: "#fff", cursor: "pointer", color: "#3A413B" }}>Decline</button>
+                    </div>
           )}
         </div>
       </div>
@@ -448,15 +447,22 @@ export default function StaffDashboard() {
               <div style={{ borderRadius: 16, padding: 48, textAlign: "center", border: "1px dashed #D9D3C3", background: "#FBF9F3", color: "#A8A395", fontSize: 14 }}>No completed requests yet. Resolved requests will be recorded here.</div>
             ) : (
               <div style={{ background: "#FEFDFB", border: "1px solid #EBE6D9", borderRadius: 16, overflow: isMobile ? "auto" : "hidden" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "80px 1.4fr 2fr 140px", minWidth: isMobile ? 560 : "auto", padding: "14px 24px", borderBottom: "1px solid #EDE8DC", fontSize: 11, textTransform: "uppercase", letterSpacing: ".08em", color: "#A8A395" }}>
-                  <span>Room</span><span>Department</span><span>Request</span><span style={{ textAlign: "right" }}>Completed</span>
+                <div style={{ display: "grid", gridTemplateColumns: "72px 1.2fr 1.9fr 96px 1fr 130px", minWidth: isMobile ? 760 : "auto", padding: "14px 24px", borderBottom: "1px solid #EDE8DC", fontSize: 11, textTransform: "uppercase", letterSpacing: ".08em", color: "#A8A395" }}>
+                  <span>Room</span><span>Department</span><span>Request</span><span>Outcome</span><span>Handled by</span><span style={{ textAlign: "right" }}>Completed</span>
                 </div>
                 {history.map((r) => (
-                  <div key={r.id} style={{ display: "grid", gridTemplateColumns: "80px 1.4fr 2fr 140px", minWidth: isMobile ? 560 : "auto", padding: "16px 24px", borderBottom: "1px solid #F4F0E7", fontSize: 14, alignItems: "center" }}>
+                  <div key={r.id} style={{ display: "grid", gridTemplateColumns: "72px 1.2fr 1.9fr 96px 1fr 130px", minWidth: isMobile ? 760 : "auto", padding: "16px 24px", borderBottom: "1px solid #F4F0E7", fontSize: 14, alignItems: "center" }}>
                     <span style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 700, color: "#1B2621" }}>{r.roomNumber ?? "\u2014"}</span>
                     <span><span style={{ borderRadius: 999, padding: "3px 11px", fontSize: 12, fontWeight: 500, background: "#F1F6F2", color: "#0F5F4C", border: "1px solid #DCEBE1" }}>{DEPT_CFG[r.department]?.label ?? r.department}</span></span>
                     <span style={{ color: "#3A413B", fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.requestDetail}</span>
-                    <span style={{ textAlign: "right", color: "#A8A395", fontSize: 12 }}>{when(r.createdAt)}</span>
+                    <span>
+                      <span style={{ borderRadius: 999, padding: "3px 10px", fontSize: 11.5, fontWeight: 600,
+                        background: r.declined ? "#FBEDE9" : "#EAF2ED", color: r.declined ? "#B23A2A" : "#0F5F4C" }}>
+                        {r.declined ? "Declined" : "Done"}
+                      </span>
+                    </span>
+                    <span style={{ color: "#6E756F", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.claimedBy ?? "\u2014"}</span>
+                    <span style={{ textAlign: "right", color: "#A8A395", fontSize: 12 }}>{when(r.resolvedAt ?? r.createdAt)}</span>
                   </div>
                 ))}
               </div>
