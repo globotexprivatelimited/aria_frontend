@@ -16,6 +16,7 @@ import {
   ResponsiveContainer, Tooltip, CartesianGrid,
 } from "recharts";
 import VerifyEmailBanner from "../../components/VerifyEmailBanner";
+import GMKpiCards from "../../components/GMKpiCards";
 
 const GREEN = "#0F5F4C";
 const GOLD = "#B08A4F";
@@ -119,12 +120,13 @@ export default function GMDashboard() {
   const statusColor = (s: string) => s === "received" ? GREEN : s === "in_progress" ? GOLD : "#9AA09A";
   const statusLabel = (s: string) => s === "received" ? "New" : s === "in_progress" ? "Working" : "Done";
 
+  const kpiTotal = Math.max(1, open + inProgress + resolvedToday + urgent);
   const kpis = [
-    { label: "Guests in house", value: guests, sub: "active rooms", color: GREEN, glyph: "\u2302" },
-    { label: "Open requests", value: open, sub: "awaiting action", color: INK, glyph: "\u25CB" },
-    { label: "In progress", value: inProgress, sub: "being handled", color: GOLD, glyph: "\u25D1" },
-    { label: "Resolved today", value: resolvedToday, sub: "completed", color: GREEN, glyph: "\u2713" },
-    { label: "Urgent", value: urgent, sub: "need attention", color: urgent > 0 ? RED : INK, glyph: "\u26A0" },
+    { key: "guests",   label: "Guests in house", value: guests,       caption: "active rooms",    share: 0 },
+    { key: "open",     label: "Open requests",   value: open,         caption: "awaiting action", share: open / kpiTotal },
+    { key: "progress", label: "In progress",     value: inProgress,   caption: "being handled",   share: inProgress / kpiTotal },
+    { key: "resolved", label: "Resolved today",  value: resolvedToday, caption: "completed",      share: resolvedToday / kpiTotal },
+    { key: "urgent",   label: "Urgent",          value: urgent,       caption: "need attention",  share: urgent / kpiTotal },
   ];
 
   const card = { background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 20 };
@@ -148,15 +150,8 @@ export default function GMDashboard() {
         </div>
 
         {/* KPI hero tiles */}
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : isTablet ? "repeat(3, minmax(0, 1fr))" : "repeat(5, minmax(0, 1fr))", gap: 14, marginBottom: 18, transition: "box-shadow .4s", boxShadow: pulse ? "0 0 0 3px rgba(46,204,113,.25)" : "none", borderRadius: 16 }}>
-          {kpis.map((k) => (
-            <div key={k.label} style={{ ...card, padding: 18, position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", top: -8, right: -4, fontSize: 54, opacity: 0.06, color: k.color, fontWeight: 700 }}>{k.glyph}</div>
-              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>
-              <div style={{ fontFamily: "Georgia, serif", fontSize: 34, fontWeight: 700, color: k.color, lineHeight: 1.1, marginTop: 6 }}>{k.value}</div>
-              <div style={{ fontSize: 11, color: "#B4B9B3", marginTop: 2 }}>{k.sub}</div>
-            </div>
-          ))}
+        <div style={{ marginBottom: 18, borderRadius: 16, transition: "box-shadow .4s", boxShadow: pulse ? "0 0 0 3px rgba(46,204,113,.25)" : "none" }}>
+          <GMKpiCards items={kpis} columns={isMobile ? "repeat(2, minmax(0, 1fr))" : isTablet ? "repeat(3, minmax(0, 1fr))" : "repeat(5, minmax(0, 1fr))"} />
         </div>
 
         {/* Row: area chart + donut */}

@@ -6,6 +6,7 @@ import RoomModal from "../../../components/RoomModal";
 import GMSidebar from "../../../components/GMSidebar";
 import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
+import CheckInPanel from "../../../components/CheckInPanel";
 
 const GREEN = "#0F5F4C", RED = "#B23A2A", AMBER = "#B08A4F", INK = "#1B2621";
 const STATUS = {
@@ -99,7 +100,10 @@ export default function ReceptionBoard() {
           <div style={{ marginBottom: 18 }}>
             <RoomSetup onSave={handleSetup} existingCount={rooms.length} target={target} />
           </div>
+
         ) : null}
+
+        <CheckInPanel hotelId={HOTEL_ID as string} rooms={rooms} onDone={load} />
 
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : isTablet ? "repeat(3, minmax(0, 1fr))" : "repeat(5, 1fr)", gap: 14, marginBottom: 18 }}>
           {kpis.map((k) => (
