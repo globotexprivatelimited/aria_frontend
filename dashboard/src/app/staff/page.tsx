@@ -60,6 +60,7 @@ export default function StaffDashboard() {
   const [myDepts, setMyDepts] = useState<string[]>([]);
   const [hotelId, setHotelId] = useState<string | null>(null);
   const [hotelToken, setHotelToken] = useState<string>("");
+  const [deptModes, setDeptModes] = useState<Record<string, string>>({});
   const [myName, setMyName] = useState<string>("");
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [history, setHistory] = useState<RequestRow[]>([]);
@@ -106,6 +107,15 @@ export default function StaffDashboard() {
   const load = useCallback(async () => {
     if (!hotelId || myDepts.length === 0) return;
     setRows(await getActiveRequests(hotelId, myDepts));
+    try {
+      const res = await fetch(API + "/api/dept-config?hotelId=" + encodeURIComponent(hotelId), { headers: { "x-admin-key": "dev-admin-key" } });
+      const j = await res.json();
+      if (j?.ok && Array.isArray(j.data)) {
+        const m: Record<string, string> = {};
+        for (const row of j.data) m[row.dept] = row.mode;
+        setDeptModes(m);
+      }
+    } catch { /* fall back to the default config */ }
   }, [hotelId, myDepts]);
 
   const loadHistory = useCallback(async () => {
@@ -240,7 +250,7 @@ export default function StaffDashboard() {
                 <button onClick={() => { setProposeFor(null); setProposeText(""); }} style={{ borderRadius: 9, padding: "9px 14px", fontSize: 14, borderWidth: 1, borderStyle: "solid", borderColor: "#DED8C8", background: "#fff", cursor: "pointer" }}>Cancel</button>
               </div>
             </div>
-          ) : cfg.type === "auto" ? (
+          ) : ((deptModes[dept] ?? (cfg.type === "auto" ? "auto" : "accept_decline")) !== "accept_decline") ? (
             <div style={{ marginTop: 18, display: "flex", gap: 8 }}>
               {!claimed ? <button onClick={() => send(dept, r.id, "CLAIM")} style={{ flex: 1, borderRadius: 9, padding: "9px", fontSize: 14, fontWeight: 600, color: "#fff", background: "#0F5F4C", border: 0, cursor: "pointer" }}>Claim</button> : null}
               <button onClick={() => send(dept, r.id, "DONE")} style={claimed ? { flex: 1, borderRadius: 9, padding: "9px", fontSize: 14, fontWeight: 600, background: "#0F5F4C", color: "#fff", border: 0, cursor: "pointer" } : { borderRadius: 9, padding: "9px 16px", fontSize: 14, fontWeight: 600, borderWidth: 1, borderStyle: "solid", borderColor: "#DED8C8", background: "#fff", cursor: "pointer", color: "#3A413B" }}>Done</button>

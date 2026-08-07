@@ -12,6 +12,7 @@ import MaintenanceManager from "../../../components/MaintenanceManager";
 import { getDepartmentPresence, type DeptPresence } from "./presence-actions";
 import { getDeptModes, setDeptMode, type DeptMode, type DeptModeRow } from "./mode-actions";
 import DeptDetailDrawer from "../../../components/DeptDetailDrawer";
+import DeptCard from "../../../components/DeptCard";
 import DiningManager from "../../../components/DiningManager";
 import SlotEditor from "../../../components/SlotEditor";
 import type { DeptConfig } from "../../../lib/departments";
@@ -96,58 +97,20 @@ export default function GMDepartments() {
           {DEPARTMENTS.map((d) => {
             const s = statFor(d.dept);
             return (
-              <div key={d.dept} onClick={() => setDetailFor(d)} style={{ cursor: "pointer", background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24, boxShadow: "0 1px 3px rgba(0,0,0,.04)" }}>
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-                  <div>
-                    <div style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 600, color: "#1B2621" }}>{d.label}</div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 5 }}>
-                      {(() => {
-                        const p = presence.find((x) => x.dept === d.dept);
-                        const on = !!p?.online;
-                        const names = (p?.staff ?? []).map((s) => s.name).join(", ");
-                        return (
-                          <>
-                            <span style={{ width: 7, height: 7, borderRadius: 999, background: on ? "#2ECC71" : "#C8CCC6", boxShadow: on ? "0 0 0 3px rgba(46,204,113,.2)" : "none", flexShrink: 0 }} />
-                            <span style={{ fontSize: 11.5, fontWeight: 600, color: on ? "#0F5F4C" : "#A8A395" }}>
-                              {on ? names + " on duty" : "No one on duty"}
-                            </span>
-                          </>
-                        );
-                      })()}
-                    </div>
-                    <div style={{ display: "flex", gap: 4, marginTop: 6 }}>
-                      {([
-                        { k: "auto", label: "Auto", hint: "Guest is promised instantly; staff claim and deliver" },
-                        { k: "accept_decline", label: "Accept / Decline", hint: "A human approves before the guest is told yes" },
-                        { k: "maintenance", label: "Tracked", hint: "Acknowledged, never declined, always tracked" },
-                      ] as { k: DeptMode; label: string; hint: string }[]).map((m) => {
-                        const current = (modes.find((x) => x.dept === d.dept)?.mode ?? d.type) as string;
-                        const on = current === m.k;
-                        return (
-                          <button key={m.k} title={m.hint}
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              setModes((prev) => { const next = prev.filter((x) => x.dept !== d.dept); return [...next, { dept: d.dept, mode: m.k }]; });
-                              const res = await setDeptMode({ hotelId: HOTEL_ID as string, dept: d.dept, mode: m.k });
-                              if (!res.ok) setModes(await getDeptModes(HOTEL_ID as string));
-                            }}
-                            style={{ borderRadius: 999, padding: "3px 10px", fontSize: 10.5, fontWeight: 600, cursor: "pointer",
-                              border: "1px solid " + (on ? "#0F5F4C" : "#E7E3D8"),
-                              background: on ? "#EAF2ED" : "#fff",
-                              color: on ? "#0F5F4C" : "#A8A395" }}>{m.label}</button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  {s.urgent > 0 ? <span style={{ borderRadius: 999, padding: "2px 10px", fontSize: 12, fontWeight: 600, background: "#FBEDE9", color: "#B23A2A" }}>{s.urgent} urgent</span> : null}
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : isTablet ? "repeat(2, minmax(0, 1fr))" : "repeat(3, minmax(0, 1fr))", gap: 12, marginTop: 18 }}>
-                  <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: s.open > 0 ? "#0F5F4C" : "#C4C9C2" }}>{s.open}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>open</div></div>
-                  <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: "#B08A4F" }}>{s.inProgress}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>in progress</div></div>
-                  <div><div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 600, color: "#9AA09A" }}>{s.resolved}</div><div style={{ fontSize: 11, color: "#9AA09A" }}>resolved</div></div>
-                </div>
-                <button onClick={(e) => { e.stopPropagation(); setManaging(d); }} style={{ marginTop: 16, width: "100%", borderRadius: 10, padding: "10px", fontSize: 14, fontWeight: 600, color: "#0F5F4C", background: "#F1F6F2", border: "1px solid #DCEBE1", cursor: "pointer" }}>{d.type === "auto" ? "Manage menu & stock" : "Manage time slots"}</button>
-              </div>
+              <DeptCard
+                key={d.dept}
+                d={d}
+                stats={{ open: s.open, inProgress: s.inProgress, resolved: s.resolved, urgent: s.urgent }}
+                presence={presence.find((p) => p.dept === d.dept)}
+                modes={modes}
+                onOpenDetail={() => setDetailFor(d)}
+                onManage={() => setManaging(d)}
+                onSetMode={async (mode) => {
+                  setModes((prev) => [...prev.filter((x) => x.dept !== d.dept), { dept: d.dept, mode }]);
+                  const res = await setDeptMode({ hotelId: HOTEL_ID as string, dept: d.dept, mode });
+                  if (!res.ok) setModes(await getDeptModes(HOTEL_ID as string));
+                }}
+              />
             );
           })}
         </div>
