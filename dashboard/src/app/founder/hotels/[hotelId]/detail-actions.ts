@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
 
@@ -6,7 +6,7 @@ export type HotelDetail = {
   hotel: { hotelId: string; name: string; city: string | null; address: string | null;
     whatsappNumber: string | null; contactEmail: string | null; contactPhone: string | null;
     checkInTime: string | null; checkOutTime: string | null; roomTarget: number | null;
-    onboarded: boolean; isActive: boolean; emailVerified: boolean; revenueSharePercent: number; createdAt: string };
+    onboarded: boolean; isActive: boolean; emailVerified: boolean; revenueSharePercent: number; planCode: string; pilotEndsAt: string | null; accountOwner: string | null; createdAt: string };
   rooms: { roomNumber: string; type: string | null; floor: number | null; status: string;
     guestName: string | null; guestPhone: string | null; partySize: number | null;
     checkIn: string | null; checkOut: string | null; notes: string | null }[];

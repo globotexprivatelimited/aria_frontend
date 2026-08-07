@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getHotelDetail, type HotelDetail } from "./detail-actions";
+import { getPlans, setPlan, setShare, setActive, type PlanRow } from "./settings-actions";
 import { DEPT_SKIN } from "../../../../components/DeptCard";
 
 const INK = "#1B2621", GREEN = "#0F5F4C", GOLD = "#B08A4F", RED = "#B23A2A";
@@ -24,11 +25,18 @@ export default function FounderHotelPage() {
   const [d, setD] = useState<HotelDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"rooms" | "people" | "work" | "money">("rooms");
+  const [plans, setPlans] = useState<PlanRow[]>([]);
+  const [shareDraft, setShareDraft] = useState<string>("");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const tk = typeof window !== "undefined" ? window.localStorage.getItem("aria_token") : null;
     if (!tk || !hotelId) return;
-    setD(await getHotelDetail(tk, hotelId)); setLoading(false);
+    const det = await getHotelDetail(tk, hotelId);
+    setD(det); setLoading(false);
+    setPlans(await getPlans(tk));
+    if (det && shareDraft === "") setShareDraft(String(det.hotel.revenueSharePercent));
   }, [hotelId]);
   useEffect(() => { load(); const iv = setInterval(load, 8000); return () => clearInterval(iv); }, [load]);
 
@@ -97,6 +105,73 @@ export default function FounderHotelPage() {
             <div style={{ fontSize: 11, color: "#9AA09A", marginTop: 3 }}>{x.s}</div>
           </div>
         ))}
+      </div>
+
+      <div style={{ ...card, marginTop: 18 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 8 }}>
+          <div style={lbl}>Account</div>
+          {saved ? <span style={{ fontSize: 12, color: GREEN, fontWeight: 600 }}>{saved}</span> : null}
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 18, marginTop: 14 }}>
+          <div>
+            <div style={{ fontSize: 11.5, color: "#6E756F", marginBottom: 8 }}>Plan</div>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {plans.map((p) => {
+                const on = d.hotel.planCode === p.code;
+                return (
+                  <button key={p.code} disabled={saving}
+                    onClick={async () => {
+                      const tk = window.localStorage.getItem("aria_token"); if (!tk) return;
+                      setSaving(true); const r = await setPlan(tk, hotelId, p.code); setSaving(false);
+                      setSaved(r.ok ? "Moved to " + p.name : (r.error ?? "Did not save"));
+                      setTimeout(() => setSaved(null), 3000); load();
+                    }}
+                    style={{ borderRadius: 9, padding: "8px 14px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
+                      border: "1px solid " + (on ? GREEN : "#E3DECF"), background: on ? "#EAF2ED" : "#fff", color: on ? GREEN : "#6E756F" }}>
+                    {p.name}<span style={{ opacity: .6, marginLeft: 5 }}>{p.monthlyPrice ? money(p.monthlyPrice) : "free"}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
+            <div style={{ fontSize: 11.5, color: "#6E756F", marginBottom: 8 }}>Your share of their revenue</div>
+            <div style={{ display: "flex", gap: 7 }}>
+              <input value={shareDraft} onChange={(e) => setShareDraft(e.target.value.replace(/[^0-9.]/g, ""))}
+                style={{ width: 90, borderRadius: 9, border: "1px solid #E3DECF", background: "#FBFAF5", padding: "9px 12px", fontSize: 14, outline: "none", color: INK }} />
+              <span style={{ alignSelf: "center", fontSize: 13, color: "#9AA09A" }}>%</span>
+              <button disabled={saving}
+                onClick={async () => {
+                  const tk = window.localStorage.getItem("aria_token"); if (!tk) return;
+                  setSaving(true); const r = await setShare(tk, hotelId, Number(shareDraft || 0)); setSaving(false);
+                  setSaved(r.ok ? "Share set to " + (shareDraft || 0) + "%" : (r.error ?? "Did not save"));
+                  setTimeout(() => setSaved(null), 3000); load();
+                }}
+                style={{ borderRadius: 9, padding: "9px 16px", fontSize: 12.5, fontWeight: 600, cursor: "pointer", border: 0, background: GREEN, color: "#fff" }}>Save</button>
+            </div>
+            <div style={{ fontSize: 11, color: "#A8A395", marginTop: 6 }}>
+              {money(d.revenue.month * (Number(shareDraft || 0) / 100))} on the last 30 days
+            </div>
+          </div>
+
+          <div>
+            <div style={{ fontSize: 11.5, color: "#6E756F", marginBottom: 8 }}>Account state</div>
+            <button disabled={saving}
+              onClick={async () => {
+                const tk = window.localStorage.getItem("aria_token"); if (!tk) return;
+                setSaving(true); const r = await setActive(tk, hotelId, !d.hotel.isActive); setSaving(false);
+                setSaved(r.ok ? (d.hotel.isActive ? "Switched off" : "Switched back on") : (r.error ?? "Did not save"));
+                setTimeout(() => setSaved(null), 3000); load();
+              }}
+              style={{ borderRadius: 9, padding: "9px 16px", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
+                border: "1px solid " + (d.hotel.isActive ? "#EED7D0" : "#CFE5DC"),
+                background: d.hotel.isActive ? "#FBEDE9" : "#EAF2ED", color: d.hotel.isActive ? RED : GREEN }}>
+              {d.hotel.isActive ? "Suspend this hotel" : "Switch back on"}
+            </button>
+          </div>
+        </div>
       </div>
 
       <div style={{ display: "flex", gap: 7, marginTop: 24, marginBottom: 16, flexWrap: "wrap" }}>

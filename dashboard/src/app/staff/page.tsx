@@ -82,6 +82,7 @@ export default function StaffDashboard() {
       if (me.role === "founder") { router.replace("/founder"); return; }
       if (me.role === "gm") { router.replace("/gm"); return; }
       const depts = await getMyDepartments();
+    try { window.localStorage.setItem("aria_depts", (depts ?? []).join(",")); } catch { /* not critical */ }
       if (!alive) return;
       setMyDepts(depts.filter((d) => DEPT_CFG[d]));
       setHotelId(me.hotelId); getWebhookToken().then(setHotelToken);
@@ -98,6 +99,13 @@ export default function StaffDashboard() {
       const t = typeof window !== "undefined" ? window.localStorage.getItem("aria_token") : null;
       if (!t) return;
       fetch(API + "/api/presence/heartbeat", { method: "POST", headers: { authorization: "Bearer " + t } }).catch(() => {});
+      // someone covering a department keeps that station alive
+      const ds = typeof window !== "undefined" ? (window.localStorage.getItem("aria_depts") ?? "") : "";
+      for (const d of ds.split(",").filter(Boolean)) {
+        fetch(API + "/api/stations/heartbeat", { method: "POST",
+          headers: { "Content-Type": "application/json", authorization: "Bearer " + t },
+          body: JSON.stringify({ dept: d }) }).catch(() => {});
+      }
     };
     beat();
     const iv = setInterval(beat, 30000);
