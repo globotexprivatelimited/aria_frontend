@@ -128,3 +128,22 @@
     @apply font-sans;
   }
 }
+
+/* Cross-device text rendering: prevents blurry/fuzzy text on scaled displays
+   and non-retina screens. */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* Elements that animate or transform can render on half-pixels and blur.
+   Promoting them to their own layer with backface-visibility keeps text crisp. */
+button, input, select, textarea {
+  -webkit-font-smoothing: antialiased;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

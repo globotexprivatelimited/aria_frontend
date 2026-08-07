@@ -28,7 +28,16 @@ const DIAL_CODES = [
 ];
 
 const LOGIN_URL = process.env.NEXT_PUBLIC_LOGIN_URL ?? "http://localhost:3001/login";
-const STEPS = ["Your details", "Hotel details", "Departments", "Review"];
+const STEPS = ["Hotel details", "Departments", "Review"];
+
+function PhoneRow({ code, setCode, num, setNum, ph, fkey, setFocus, fld }: { code: string; setCode: (v: string) => void; num: string; setNum: (v: string) => void; ph: string; fkey: string; setFocus: (v: string) => void; fld: (k: string) => React.CSSProperties }) {
+  return (
+    <div style={{ display: "flex", gap: 9 }}>
+      <CountryPicker options={DIAL_CODES} value={code} onChange={setCode} />
+      <input value={num} onChange={(e) => setNum(e.target.value.replace(/[^0-9]/g, ""))} onFocus={() => setFocus(fkey)} onBlur={() => setFocus("")} placeholder={ph} inputMode="numeric" style={{ ...fld(fkey), flex: 1 }} />
+    </div>
+  );
+}
 
 export default function RegisterPage() {
   const [step, setStep] = useState(0);
@@ -58,12 +67,12 @@ export default function RegisterPage() {
 
   function validateStep(s: number): string | null {
     if (s === 0) {
-      if (!fullName.trim()) return "Please enter your full name.";
+      
       if (!email.trim() || !email.includes("@")) return "Please enter a valid email address.";
       if (password.length < 8) return "Your password needs at least 8 characters.";
     }
-    if (s === 1 && !hotelName.trim()) return "Please enter your hotel name.";
-    if (s === 2 && depts.length === 0) return "Choose at least one department.";
+    if (s === 0 && !hotelName.trim()) return "Please enter your hotel name.";
+    if (s === 1 && depts.length === 0) return "Choose at least one department.";
     return null;
   }
   function next() { const e = validateStep(step); if (e) { setError(e); return; } setError(null); setStep((s) => Math.min(s + 1, STEPS.length - 1)); }
@@ -71,25 +80,17 @@ export default function RegisterPage() {
 
   async function submit() {
     setError(null); setBusy(true);
-    const res = await registerHotel({ fullName, email, password, phone, hotelName, address, city, roomCount, checkInTime, checkOutTime, contactPhone, departments: depts });
+    const res = await registerHotel({ fullName: hotelName, email, password, phone: "", hotelName, address, city, roomCount, checkInTime, checkOutTime, contactPhone, departments: depts });
     setBusy(false);
     if (!res.ok) { setError(res.message); return; }
     setDone(true);
   }
 
-  const fieldBase = { width: "100%", marginTop: 7, borderRadius: 12, borderWidth: 1, borderStyle: "solid" as const, borderColor: "#E4E2DA", background: "#FCFBF8", padding: "12px 15px", fontSize: 14.5, color: "#1B2621", outline: "none", boxSizing: "border-box" as const, transition: "border-color .15s, box-shadow .15s, background .15s" };
+  const fieldBase = { width: "100%", marginTop: 7, borderRadius: 12, borderWidth: 1, borderStyle: "solid" as const, borderColor: "#E4E2DA", background: "#FCFBF8", padding: "12px 15px", fontSize: 14, color: "#1B2621", outline: "none", boxSizing: "border-box" as const, transition: "border-color .15s, box-shadow .15s, background .15s" };
   const fld = (key: string) => ({ ...fieldBase, ...(focus === key ? { borderColor: "#0F5F4C", background: "#fff", boxShadow: "0 0 0 3px rgba(15,95,76,.09)" } : {}) });
-  const label = { fontSize: 11.5, fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: ".09em", color: "#8A9089" };
+  const label = { fontSize: 12, fontWeight: 600, textTransform: "uppercase" as const, letterSpacing: ".09em", color: "#8A9089" };
   const deptLabel = (d: string) => DEPARTMENTS.find((x) => x.dept === d)?.label ?? d;
 
-  function PhoneRow({ code, setCode, num, setNum, ph, fkey }: { code: string; setCode: (v: string) => void; num: string; setNum: (v: string) => void; ph: string; fkey: string }) {
-    return (
-      <div style={{ display: "flex", gap: 9 }}>
-        <CountryPicker options={DIAL_CODES} value={code} onChange={setCode} />
-        <input value={num} onChange={(e) => setNum(e.target.value.replace(/[^0-9]/g, ""))} onFocus={() => setFocus(fkey)} onBlur={() => setFocus("")} placeholder={ph} inputMode="numeric" style={{ ...fld(fkey), flex: 1 }} />
-      </div>
-    );
-  }
 
   if (done) {
     return (
@@ -97,7 +98,7 @@ export default function RegisterPage() {
         <div style={{ maxWidth: 460, textAlign: "center", background: "#fff", borderRadius: 22, padding: "48px 44px", boxShadow: "0 30px 80px rgba(20,40,33,.12), 0 2px 8px rgba(20,40,33,.05)", borderTop: "3px solid #B08A4F" }}>
           <div style={{ width: 64, height: 64, borderRadius: 999, background: "#EAF1EC", color: "#0F5F4C", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", fontSize: 32 }}>&#10003;</div>
           <h1 style={{ fontFamily: "Georgia, serif", fontSize: 28, fontWeight: 600, color: "#1B2621", marginTop: 24, letterSpacing: "-.01em" }}>Welcome to Aria</h1>
-          <p style={{ fontSize: 14.5, color: "#63696330".slice(0,7), marginTop: 10, lineHeight: 1.6 }}><b style={{ color: "#1B2621" }}>{hotelName}</b> is registered and your manager account is ready.</p>
+          <p style={{ fontSize: 14, color: "#63696330".slice(0,7), marginTop: 10, lineHeight: 1.6 }}><b style={{ color: "#1B2621" }}>{hotelName}</b> is registered and your manager account is ready.</p>
           <a href={LOGIN_URL} style={{ display: "inline-block", marginTop: 28, borderRadius: 12, padding: "14px 34px", fontSize: 15, fontWeight: 600, color: "#fff", background: "#0F5F4C", textDecoration: "none", boxShadow: "0 8px 20px rgba(15,95,76,.25)" }}>Go to sign in</a>
         </div>
       </div>
@@ -125,7 +126,7 @@ export default function RegisterPage() {
       <div className="reg-form-col" style={{ flex: 1, minWidth: 0, overflowY: "auto", maxHeight: "100vh", padding: "52px 40px", display: "flex", flexDirection: "column", alignItems: "center" }}>
         <div style={{ width: "100%", maxWidth: 520 }}>
           <div style={{ marginBottom: 30 }}>
-            <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F" }}>Hotel registration</div>
+            <div style={{ fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F" }}>Hotel registration</div>
             <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621", marginTop: 8, letterSpacing: "-.015em" }}>Set up your concierge</h1>
           </div>
 
@@ -133,8 +134,8 @@ export default function RegisterPage() {
             {STEPS.map((s, i) => (
               <div key={s} style={{ flex: 1, display: "flex", alignItems: "center" }}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-                  <div style={{ width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12.5, fontWeight: 600, transition: "all .2s", background: i < step ? "#0F5F4C" : i === step ? "#0F5F4C" : "#fff", color: i <= step ? "#fff" : "#B4B9B3", border: i === step ? "none" : i < step ? "none" : "1px solid #E0DED6", boxShadow: i === step ? "0 0 0 4px rgba(15,95,76,.13)" : "none" }}>{i < step ? "\u2713" : i + 1}</div>
-                  <span style={{ fontSize: 10.5, marginTop: 7, color: i === step ? "#0F5F4C" : "#A7ACA5", fontWeight: i === step ? 600 : 500, whiteSpace: "nowrap", letterSpacing: ".01em" }}>{s}</span>
+                  <div style={{ width: 28, height: 28, borderRadius: 999, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 600, transition: "all .2s", background: i < step ? "#0F5F4C" : i === step ? "#0F5F4C" : "#fff", color: i <= step ? "#fff" : "#B4B9B3", border: i === step ? "none" : i < step ? "none" : "1px solid #E0DED6", boxShadow: i === step ? "0 0 0 4px rgba(15,95,76,.13)" : "none" }}>{i < step ? "\u2713" : i + 1}</div>
+                  <span style={{ fontSize: 10, marginTop: 7, color: i === step ? "#0F5F4C" : "#A7ACA5", fontWeight: i === step ? 600 : 500, whiteSpace: "nowrap", letterSpacing: ".01em" }}>{s}</span>
                 </div>
                 {i < STEPS.length - 1 ? <div style={{ flex: 1, height: 1.5, background: i < step ? "#0F5F4C" : "#E4E2DA", margin: "0 6px", marginBottom: 17, transition: "background .2s" }} /> : null}
               </div>
@@ -142,7 +143,7 @@ export default function RegisterPage() {
           </div>
 
           {error ? (
-            <div style={{ marginBottom: 20, borderRadius: 11, padding: "12px 16px", fontSize: 13.5, background: "#FBEEEA", color: "#A5382A", border: "1px solid #EFD3CB", display: "flex", alignItems: "center", gap: 9 }}>
+            <div style={{ marginBottom: 20, borderRadius: 11, padding: "12px 16px", fontSize: 14, background: "#FBEEEA", color: "#A5382A", border: "1px solid #EFD3CB", display: "flex", alignItems: "center", gap: 9 }}>
               <span style={{ flexShrink: 0, width: 18, height: 18, borderRadius: 999, background: "#A5382A", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700 }}>!</span>
               {error}
             </div>
@@ -151,12 +152,22 @@ export default function RegisterPage() {
           <div style={{ background: "#fff", borderRadius: 20, padding: "34px 34px 30px", boxShadow: "0 24px 60px rgba(20,40,33,.10), 0 2px 6px rgba(20,40,33,.04)", borderTop: "3px solid #B08A4F", minHeight: 300 }}>
             {step === 0 ? (
               <div>
-                <h2 style={{ fontFamily: "Georgia, serif", fontSize: 21, fontWeight: 600, color: "#1B2621" }}>Your details</h2>
-                <p style={{ fontSize: 13.5, color: "#8A9089", marginTop: 5, marginBottom: 22 }}>This becomes your manager sign-in.</p>
-                <div style={{ display: "grid", gap: 18 }}>
-                  <div><label style={label}>Full name</label><input value={fullName} onChange={(e) => setFullName(e.target.value)} onFocus={() => setFocus("fn")} onBlur={() => setFocus("")} placeholder="Your name" autoFocus style={fld("fn")} /></div>
-                  <div><label style={label}>Email</label><input value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocus("em")} onBlur={() => setFocus("")} placeholder="you@hotel.com" style={fld("em")} /></div>
-                  <div>
+                <h2 style={{ fontFamily: "Georgia, serif", fontSize: 21, fontWeight: 600, color: "#1B2621" }}>Hotel details</h2>
+                <p style={{ fontSize: 14, color: "#8A9089", marginTop: 5, marginBottom: 22 }}>Tell us about your property.</p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+                  <div style={{ gridColumn: "1 / -1" }}><label style={label}>Hotel name</label><input value={hotelName} onChange={(e) => setHotelName(e.target.value)} onFocus={() => setFocus("hn")} onBlur={() => setFocus("")} placeholder="The Grand Palace" autoFocus style={fld("hn")} /></div>
+                  <div style={{ gridColumn: "1 / -1" }}><label style={label}>Address</label><input value={address} onChange={(e) => setAddress(e.target.value)} onFocus={() => setFocus("ad")} onBlur={() => setFocus("")} placeholder="Street address" style={fld("ad")} /></div>
+                  <div><label style={label}>City</label><input value={city} onChange={(e) => setCity(e.target.value)} onFocus={() => setFocus("ci")} onBlur={() => setFocus("")} placeholder="City" style={fld("ci")} /></div>
+                  <div><label style={label}>Rooms</label><input value={roomCount} onChange={(e) => setRoomCount(e.target.value.replace(/[^0-9]/g, ""))} onFocus={() => setFocus("rc")} onBlur={() => setFocus("")} placeholder="120" inputMode="numeric" style={fld("rc")} /></div>
+                  <div><label style={label}>Check-in</label><input value={checkInTime} onChange={(e) => setCheckInTime(e.target.value)} onFocus={() => setFocus("ci2")} onBlur={() => setFocus("")} style={fld("ci2")} /></div>
+                  <div><label style={label}>Check-out</label><input value={checkOutTime} onChange={(e) => setCheckOutTime(e.target.value)} onFocus={() => setFocus("co")} onBlur={() => setFocus("")} style={fld("co")} /></div>
+                  <div style={{ gridColumn: "1 / -1" }}><label style={label}>Hotel WhatsApp number</label><PhoneRow code={contactCode} setCode={setContactCode} num={contactNum} setNum={setContactNum} ph="Number guests will message" fkey="ph2" setFocus={setFocus} fld={fld} /></div>
+                  <div style={{ gridColumn: "1 / -1", marginTop: 6, paddingTop: 18, borderTop: "1px solid #F0EFE9" }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: ".1em", color: "#B08A4F", marginBottom: 4 }}>Sign-in details</div>
+                    <p style={{ fontSize: 13, color: "#8A9089", marginBottom: 16 }}>Your hotel signs in with this email and password.</p>
+                  </div>
+                  <div style={{ gridColumn: "1 / -1" }}><label style={label}>Hotel contact email</label><input value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocus("em")} onBlur={() => setFocus("")} placeholder="hotel@yourhotel.com" style={fld("em")} /></div>
+                  <div style={{ gridColumn: "1 / -1" }}>
                     <label style={label}>Password</label>
                     <div style={{ position: "relative" }}>
                       <input type={showPw ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setFocus("pw")} onBlur={() => setFocus("")} placeholder="At least 8 characters" style={{ ...fld("pw"), paddingRight: 46 }} />
@@ -169,31 +180,14 @@ export default function RegisterPage() {
                       </button>
                     </div>
                   </div>
-                  <div><label style={label}>Phone</label><PhoneRow code={phoneCode} setCode={setPhoneCode} num={phoneNum} setNum={setPhoneNum} ph="Your number" fkey="ph1" /></div>
                 </div>
               </div>
             ) : null}
 
             {step === 1 ? (
               <div>
-                <h2 style={{ fontFamily: "Georgia, serif", fontSize: 21, fontWeight: 600, color: "#1B2621" }}>Hotel details</h2>
-                <p style={{ fontSize: 13.5, color: "#8A9089", marginTop: 5, marginBottom: 22 }}>Tell us about your property.</p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
-                  <div style={{ gridColumn: "1 / -1" }}><label style={label}>Hotel name</label><input value={hotelName} onChange={(e) => setHotelName(e.target.value)} onFocus={() => setFocus("hn")} onBlur={() => setFocus("")} placeholder="The Grand Palace" autoFocus style={fld("hn")} /></div>
-                  <div style={{ gridColumn: "1 / -1" }}><label style={label}>Address</label><input value={address} onChange={(e) => setAddress(e.target.value)} onFocus={() => setFocus("ad")} onBlur={() => setFocus("")} placeholder="Street address" style={fld("ad")} /></div>
-                  <div><label style={label}>City</label><input value={city} onChange={(e) => setCity(e.target.value)} onFocus={() => setFocus("ci")} onBlur={() => setFocus("")} placeholder="City" style={fld("ci")} /></div>
-                  <div><label style={label}>Rooms</label><input value={roomCount} onChange={(e) => setRoomCount(e.target.value.replace(/[^0-9]/g, ""))} onFocus={() => setFocus("rc")} onBlur={() => setFocus("")} placeholder="120" inputMode="numeric" style={fld("rc")} /></div>
-                  <div><label style={label}>Check-in</label><input value={checkInTime} onChange={(e) => setCheckInTime(e.target.value)} onFocus={() => setFocus("ci2")} onBlur={() => setFocus("")} style={fld("ci2")} /></div>
-                  <div><label style={label}>Check-out</label><input value={checkOutTime} onChange={(e) => setCheckOutTime(e.target.value)} onFocus={() => setFocus("co")} onBlur={() => setFocus("")} style={fld("co")} /></div>
-                  <div style={{ gridColumn: "1 / -1" }}><label style={label}>Hotel WhatsApp number</label><PhoneRow code={contactCode} setCode={setContactCode} num={contactNum} setNum={setContactNum} ph="Number guests will message" fkey="ph2" /></div>
-                </div>
-              </div>
-            ) : null}
-
-            {step === 2 ? (
-              <div>
                 <h2 style={{ fontFamily: "Georgia, serif", fontSize: 21, fontWeight: 600, color: "#1B2621" }}>Departments</h2>
-                <p style={{ fontSize: 13.5, color: "#8A9089", marginTop: 5, marginBottom: 22 }}>Aria routes each guest request to the teams you run.</p>
+                <p style={{ fontSize: 14, color: "#8A9089", marginTop: 5, marginBottom: 22 }}>Aria routes each guest request to the teams you run.</p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}>
                   {DEPARTMENTS.map((d) => {
                     const on = depts.includes(d.dept);
@@ -214,12 +208,12 @@ export default function RegisterPage() {
               </div>
             ) : null}
 
-            {step === 3 ? (
+            {step === 2 ? (
               <div>
                 <h2 style={{ fontFamily: "Georgia, serif", fontSize: 21, fontWeight: 600, color: "#1B2621" }}>Review and confirm</h2>
-                <p style={{ fontSize: 13.5, color: "#8A9089", marginTop: 5, marginBottom: 22 }}>A last look before we set things up.</p>
+                <p style={{ fontSize: 14, color: "#8A9089", marginTop: 5, marginBottom: 22 }}>A last look before we set things up.</p>
                 <div style={{ borderRadius: 14, border: "1px solid #EDEBE3", overflow: "hidden" }}>
-                  {[["Manager", fullName], ["Email", email], ["Phone", phone || "\u2014"], ["Hotel", hotelName], ["City", city || "\u2014"], ["Rooms", roomCount || "\u2014"], ["Check-in / out", checkInTime + " / " + checkOutTime], ["WhatsApp", contactPhone || "\u2014"], ["Departments", depts.map(deptLabel).join(", ")]].map(([k, v], i) => (
+                  {[["Hotel", hotelName], ["Contact email", email], ["Hotel", hotelName], ["City", city || "\u2014"], ["Rooms", roomCount || "\u2014"], ["Check-in / out", checkInTime + " / " + checkOutTime], ["WhatsApp", contactPhone || "\u2014"], ["Departments", depts.map(deptLabel).join(", ")]].map(([k, v], i) => (
                     <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "12px 16px", fontSize: 14, background: i % 2 ? "#FCFBF8" : "#fff", borderBottom: i === 8 ? "none" : "1px solid #F2F0E9" }}>
                       <span style={{ color: "#9AA09A", flexShrink: 0 }}>{k}</span><span style={{ color: "#1B2621", fontWeight: 500, textAlign: "right" }}>{v}</span>
                     </div>
@@ -229,7 +223,7 @@ export default function RegisterPage() {
             ) : null}
 
             <div style={{ display: "flex", gap: 11, marginTop: 30 }}>
-              {step > 0 ? <button onClick={back} disabled={busy} style={{ borderRadius: 12, padding: "13px 24px", fontSize: 14.5, fontWeight: 600, color: "#3A413B", background: "#fff", border: "1px solid #DAD8D0", cursor: "pointer" }}>Back</button> : null}
+              {step > 0 ? <button onClick={back} disabled={busy} style={{ borderRadius: 12, padding: "13px 24px", fontSize: 14, fontWeight: 600, color: "#3A413B", background: "#fff", border: "1px solid #DAD8D0", cursor: "pointer" }}>Back</button> : null}
               {step < STEPS.length - 1 ? (
                 <button onClick={next} style={{ flex: 1, borderRadius: 12, padding: "13px", fontSize: 15, fontWeight: 600, color: "#fff", background: "#0F5F4C", border: 0, cursor: "pointer", boxShadow: "0 8px 18px rgba(15,95,76,.22)" }}>Continue</button>
               ) : (
@@ -238,7 +232,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <p style={{ textAlign: "center", fontSize: 13.5, color: "#9AA09A", marginTop: 22 }}>Already registered? <a href={LOGIN_URL} style={{ color: "#0F5F4C", fontWeight: 600, textDecoration: "none" }}>Sign in</a></p>
+          <p style={{ textAlign: "center", fontSize: 14, color: "#9AA09A", marginTop: 22 }}>Already registered? <a href={LOGIN_URL} style={{ color: "#0F5F4C", fontWeight: 600, textDecoration: "none" }}>Sign in</a></p>
         </div>
       </div>
     </div>
