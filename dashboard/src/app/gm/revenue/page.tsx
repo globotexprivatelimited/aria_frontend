@@ -7,6 +7,7 @@ import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import MissedRevenuePanel from "../../../components/MissedRevenuePanel";
+import RevenueFlow from "../../../components/RevenueFlow";
 
 const GREEN = "#0F5F4C", GOLD = "#B08A4F", INK = "#1B2621";
 const rupee = "\u20B9";
@@ -61,23 +62,8 @@ export default function RevenuePage() {
           <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 700, color: INK, margin: 0 }}>{hotelName || "Your Hotel"} &middot; Earnings</h1>
         </div>
 
-        {/* Total earnings hero */}
-        <div style={{ ...card, background: "linear-gradient(135deg,#0F5F4C 0%,#0C4A3C 100%)", border: "none", marginBottom: 16, padding: 28, position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: -30, right: -20, fontSize: 160, opacity: 0.06, color: "#fff", fontWeight: 700, fontFamily: "Georgia, serif" }}>{rupee}</div>
-          <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: ".1em", color: "rgba(255,255,255,.6)", marginBottom: 6 }}>Total revenue &middot; all channels</div>
-          <div style={{ fontFamily: "Georgia, serif", fontSize: 52, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{fmt(totalUp)}</div>
-          <div style={{ fontSize: 13, color: "rgba(255,255,255,.7)", marginTop: 8 }}>{sum.transactions} transaction{sum.transactions === 1 ? "" : "s"} recorded</div>
-        </div>
-
-        {/* KPI row */}
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : isTablet ? "repeat(2, minmax(0, 1fr))" : "repeat(4, 1fr)", gap: 14, marginBottom: 16 }}>
-          {kpis.map((k) => (
-            <div key={k.label} style={card}>
-              <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".07em", color: "#9AA09A", fontWeight: 600 }}>{k.label}</div>
-              <div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 700, color: k.color, marginTop: 6 }}>{fmt(k.value)}</div>
-            </div>
-          ))}
-        </div>
+        {/* Revenue in motion - real series, real department mix */}
+        <RevenueFlow summary={sum} series={series} byDept={byDept} byHour={byHour} />
 
         {/* Area chart + channel donut */}
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.7fr 1fr", gap: 16, marginBottom: 16 }}>
