@@ -7,6 +7,10 @@ build/
 .env.*.local
 *.log
 .DS_Store
+<<<<<<< HEAD
 Thumbs.db
 # TypeScript build cache
 *.tsbuildinfo
+=======
+Thumbs.db
+>>>>>>> 25d370e (Add dashboard portals: founder, GM, staff, auth)

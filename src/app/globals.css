@@ -24,3 +24,47 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+/* Crisp text across displays, browsers, and Windows display scaling */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+button, input, select, textarea {
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/* Prevent horizontal scroll / blank space on mobile */
+html, body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
+/* ============ RESPONSIVE FOUNDATION ============ */
+html {
+  overflow-x: clip;
+  width: 100%;
+}
+body {
+  overflow-x: clip;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Nothing may exceed its container */
+img, svg, video, canvas, table { max-width: 100%; }
+
+/* Grid and flex children must be allowed to shrink */
+@media (max-width: 640px) {
+  [style*="display: grid"] > *, [style*="display:grid"] > * { min-width: 0; }
+  [style*="display: flex"] > *, [style*="display:flex"] > * { min-width: 0; }
+}
