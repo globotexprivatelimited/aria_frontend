@@ -229,7 +229,7 @@ export default function GMConversation() {
   const session = thread?.session ?? null;
   const room = session?.room ?? null;
   const name = (session?.name ?? "").trim() || "Unknown guest";
-  const look = stateLook(session?.state ?? "");
+  const look = session && !session.verified && session.state !== "closed" ? { bg: C.amberSoft, fg: C.amber, label: "Not registered" } : stateLook(session?.state ?? "");
 
   const messages = useMemo(() => {
     const all = thread?.messages ?? [];
@@ -304,7 +304,7 @@ export default function GMConversation() {
                 )}
               </div>
               <div style={{ marginTop: 5, fontSize: 13, color: C.muted, display: "flex", gap: 16, flexWrap: "wrap" }}>
-                <span style={{ fontWeight: 600, color: C.body }}>{room ? "Room " + room : "No room"}</span>
+                <span style={{ fontWeight: 600, color: C.body }}>{room ? (session?.verified ? "Room " + room : "Claims room " + room) : "No room"}</span>
                 <span>{phone}</span>
                 {session?.checkInDate && <span>Checked in {fmtDate(session.checkInDate)}</span>}
                 {session?.checkOutDate && <span>Checks out {fmtDate(session.checkOutDate)}</span>}
