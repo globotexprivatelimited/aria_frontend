@@ -74,7 +74,7 @@ export default function GMGuests() {
           {guests.length === 0 ? (
             <div style={{ padding: 40, textAlign: "center", color: "#9AA09A", fontSize: 14 }}>No guests checked in yet.</div>
           ) : guests.map((g) => (
-            <Link key={g.room} href={"/conversations/" + encodeURIComponent(g.phone) + "?hotelId=" + encodeURIComponent(HOTEL_ID ?? "")}
+            <Link key={g.room} href={"/gm/conversations/" + encodeURIComponent(g.phone)}
               style={{ display: "grid", gridTemplateColumns: "1fr 2fr 3fr 1fr 1fr", minWidth: isMobile ? 520 : "auto", padding: "16px 24px", borderBottom: "1px solid #F4F4F1", fontSize: 14, alignItems: "center", textDecoration: "none", cursor: "pointer" }}>
               <span style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 600, color: "#1B2621" }}>{g.room}</span>
               <span style={{ color: "#1B2621" }}>{g.name || "Guest"}{g.verified ? "" : " (self reported)"}</span>
