@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 import { getHotelActive, type Req as RequestRow } from "../../_actions/requests";
+import { getInHouseGuests, type InHouseGuest } from "../../_actions/guests";
 import GMSidebar from "../../../components/GMSidebar";
 import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
@@ -16,17 +17,21 @@ function timeAgo(iso: string): string {
   return Math.floor(s / 86400) + "d ago";
 }
 
-type Guest = { room: string; phone: string; lastDetail: string; lastAt: string; openCount: number };
+type Guest = { room: string; phone: string; name: string; verified: boolean; lastDetail: string; lastAt: string; openCount: number };
 
 export default function GMGuests() {
   const { isMobile, isTablet } = useBreakpoint();
   const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
   const [rows, setRows] = useState<RequestRow[]>([]);
+  const [sessions, setSessions] = useState<InHouseGuest[]>([]);
   const [connected, setConnected] = useState(false);
 
   const load = useCallback(async () => {
     if (!HOTEL_ID) return;
-    setRows(await getHotelActive(HOTEL_ID));
+    const [reqs, inHouse] = await Promise.all([getHotelActive(HOTEL_ID), getInHouseGuests(HOTEL_ID)]);
+    setRows(reqs);
+    setSessions(inHouse);
+    setConnected(true);
   }, [HOTEL_ID]);
 
   useEffect(() => {
@@ -38,10 +43,16 @@ export default function GMGuests() {
   }, [load, HOTEL_ID]);
 
   const byRoom: Record<string, Guest> = {};
+  for (const s of sessions) {
+    const room = s.room ?? "";
+    if (!room) continue;
+    byRoom[room] = { room, phone: s.phone, name: s.name ?? "", verified: s.verified, lastDetail: "", lastAt: s.lastMessageAt ?? s.checkInDate ?? new Date(0).toISOString(), openCount: 0 };
+  }
   for (const r of rows) {
     const room = r.roomNumber ?? "";
     if (!room) continue;
-    if (!byRoom[room]) byRoom[room] = { room, phone: r.guestPhone ?? "", lastDetail: r.requestDetail ?? "", lastAt: r.createdAt, openCount: 0 };
+    if (!byRoom[room]) byRoom[room] = { room, phone: r.guestPhone ?? "", name: "", verified: false, lastDetail: "", lastAt: r.createdAt, openCount: 0 };
+    if (!byRoom[room].lastDetail || new Date(r.createdAt).getTime() >= new Date(byRoom[room].lastAt).getTime()) { byRoom[room].lastDetail = r.requestDetail ?? ""; byRoom[room].lastAt = r.createdAt; }
     if (r.status !== "resolved") byRoom[room].openCount += 1;
   }
   const guests = Object.values(byRoom).sort((a, b) => new Date(b.lastAt).getTime() - new Date(a.lastAt).getTime());
@@ -53,20 +64,21 @@ export default function GMGuests() {
         <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Guests</h1>
         <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>
           <span style={{ display: "inline-block", height: 8, width: 8, borderRadius: 999, marginRight: 6, background: connected ? "#34D399" : "#F0B429" }} />
-          {connected ? "Live" : "Connecting..."} &middot; {guests.length} rooms with activity &middot; click a guest to read their chat
+          {connected ? "Live" : "Connecting..."} &middot; {guests.length} guests in house &middot; click a guest to read their chat
         </p>
 
         <div style={{ marginTop: 24, background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, overflow: isMobile ? "auto" : "hidden" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 3fr 1fr 1fr", minWidth: isMobile ? 520 : "auto", padding: "14px 24px", borderBottom: "1px solid #EAEAE4", fontSize: 11, textTransform: "uppercase", letterSpacing: ".06em", color: "#9AA09A" }}>
-            <span>Room</span><span>Last request</span><span>Open</span><span>Last seen</span>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 3fr 1fr 1fr", minWidth: isMobile ? 520 : "auto", padding: "14px 24px", borderBottom: "1px solid #EAEAE4", fontSize: 11, textTransform: "uppercase", letterSpacing: ".06em", color: "#9AA09A" }}>
+            <span>Room</span><span>Guest</span><span>Last request</span><span>Open</span><span>Last seen</span>
           </div>
           {guests.length === 0 ? (
-            <div style={{ padding: 40, textAlign: "center", color: "#9AA09A", fontSize: 14 }}>No guest activity yet.</div>
+            <div style={{ padding: 40, textAlign: "center", color: "#9AA09A", fontSize: 14 }}>No guests checked in yet.</div>
           ) : guests.map((g) => (
-            <Link key={g.room} href={"/conversations/" + encodeURIComponent(g.phone)}
-              style={{ display: "grid", gridTemplateColumns: "1fr 3fr 1fr 1fr", minWidth: isMobile ? 520 : "auto", padding: "16px 24px", borderBottom: "1px solid #F4F4F1", fontSize: 14, alignItems: "center", textDecoration: "none", cursor: "pointer" }}>
+            <Link key={g.room} href={"/conversations/" + encodeURIComponent(g.phone) + "?hotelId=" + encodeURIComponent(HOTEL_ID ?? "")}
+              style={{ display: "grid", gridTemplateColumns: "1fr 2fr 3fr 1fr 1fr", minWidth: isMobile ? 520 : "auto", padding: "16px 24px", borderBottom: "1px solid #F4F4F1", fontSize: 14, alignItems: "center", textDecoration: "none", cursor: "pointer" }}>
               <span style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 600, color: "#1B2621" }}>{g.room}</span>
-              <span style={{ color: "#3A413B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{g.lastDetail}</span>
+              <span style={{ color: "#1B2621" }}>{g.name || "Guest"}{g.verified ? "" : " (self reported)"}</span>
+              <span style={{ color: "#3A413B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{g.lastDetail || "No requests yet"}</span>
               <span>{g.openCount > 0 ? <span style={{ borderRadius: 999, padding: "2px 10px", fontSize: 12, fontWeight: 600, background: "#E8F1ED", color: "#0F5F4C" }}>{g.openCount}</span> : <span style={{ color: "#C4C9C2" }}>&mdash;</span>}</span>
               <span style={{ color: "#9AA09A", fontSize: 13 }}>{timeAgo(g.lastAt)}</span>
             </Link>

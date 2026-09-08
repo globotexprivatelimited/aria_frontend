@@ -8,14 +8,14 @@ type Thread = {
   messages: { at: string; direction: string; type: string; body: string | null }[];
 };
 
-export default async function ConversationPage({ params }: { params: Promise<{ phone: string }> }) {
-  const { phone } = await params;
+export default async function ConversationPage({ params, searchParams }: { params: Promise<{ phone: string }>; searchParams: Promise<{ hotelId?: string }> }) {
+  const [{ phone }, { hotelId }] = await Promise.all([params, searchParams]);
   const decoded = decodeURIComponent(phone);
 
   let thread: Thread | null = null;
   let error: string | null = null;
   try {
-    thread = await apiGet<Thread>("/api/dashboard/conversations/" + encodeURIComponent(decoded));
+    thread = await apiGet<Thread>("/api/dashboard/conversations/" + encodeURIComponent(decoded) + (hotelId ? "?hotelId=" + encodeURIComponent(hotelId) : ""));
   } catch (e) {
     error = e instanceof Error ? e.message : "unknown error";
   }
@@ -26,7 +26,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ p
 
   return (
     <div>
-      <Link href="/guests" className="text-sm text-slate-500 hover:text-emerald-800">&larr; Back to guests</Link>
+      <Link href="/gm/guests" className="text-sm text-slate-500 hover:text-emerald-800">&larr; Back to guests</Link>
 
       <div className="mt-4 flex items-baseline justify-between">
         <div>
