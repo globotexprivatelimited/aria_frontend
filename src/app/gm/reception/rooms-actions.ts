@@ -2,7 +2,7 @@
 import { apiGet, apiPost } from "@/lib/api";
 
 export type Room = {
-  id: string; room_number: string; room_type: string; floor: number; status: string;
+  id: string; hotel_id: string; room_number: string; room_type: string; floor: number; status: string;
   guest_name: string | null; guest_phone: string | null; party_size: number | null;
   check_in: string | null; check_out: string | null; notes: string | null;
 };
@@ -53,4 +53,23 @@ export async function clearFloor(hotelId: string, floor: number): Promise<{ ok: 
 export async function getRoomTarget(hotelId: string): Promise<{ target: number; created: number }> {
   if (!hotelId) return { target: 0, created: 0 };
   try { const r = await apiGet<{ ok: boolean; data?: { target: number; created: number } }>("/api/rooms/target?hotelId=" + encodeURIComponent(hotelId)); return r.ok && r.data ? r.data : { target: 0, created: 0 }; } catch { return { target: 0, created: 0 }; }
+}
+export type StayEvent = { room: string; kind: string; previousAt: string | null; newAt: string | null; by: string | null; reason: string | null; at: string };
+
+/** Move a stay's checkout time. The server keeps the room, the session and the pre-checkout nudge in step. */
+export async function setRoomCheckout(hotelId: string, roomNumber: string, checkOut: string, by?: string, reason?: string): Promise<{ ok: boolean; checkout?: string; guestMessage?: string; message?: string }> {
+  try {
+    const r = await apiPost<{ ok: boolean; data?: { checkout: string; guestMessage: string }; error?: string }>("/api/rooms/set-checkout", { hotelId, roomNumber, checkOut, by, reason });
+    return r.ok && r.data ? { ok: true, checkout: r.data.checkout, guestMessage: r.data.guestMessage } : { ok: false, message: r.error };
+  } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "failed" }; }
+}
+
+/** What has been changed on a stay - shown in the room modal so a late checkout has a record. */
+export async function getStayEvents(hotelId: string, roomNumber?: string): Promise<StayEvent[]> {
+  if (!hotelId) return [];
+  try {
+    const q = "/api/rooms/stay-events?hotelId=" + encodeURIComponent(hotelId) + (roomNumber ? "&roomNumber=" + encodeURIComponent(roomNumber) : "");
+    const r = await apiGet<{ ok: boolean; data?: StayEvent[] }>(q);
+    return r.ok && r.data ? r.data : [];
+  } catch { return []; }
 }
