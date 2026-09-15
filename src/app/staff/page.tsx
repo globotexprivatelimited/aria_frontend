@@ -11,7 +11,7 @@ import MaintenanceManager from "../../components/MaintenanceManager";
 import DiningManager from "../../components/DiningManager";
 import { useBreakpoint } from "../../lib/useBreakpoint";
 
-const API = "http://localhost:4000";
+const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
 type Tab = "dashboard" | "requests" | "history" | "manage";
 
 const DEPT_CFG: Record<string, { label: string; type: "auto" | "accept"; staffNumber: string; icon: string }> = {
