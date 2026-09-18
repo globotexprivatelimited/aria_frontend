@@ -214,7 +214,7 @@ export default function GMConversation() {
 
   useEffect(() => {
     load();
-    const poll = setInterval(load, 4000);
+    const poll = setInterval(load, 10000);
     const tick = setInterval(() => setNow(Date.now()), 30000);
     return () => { clearInterval(poll); clearInterval(tick); };
   }, [load]);

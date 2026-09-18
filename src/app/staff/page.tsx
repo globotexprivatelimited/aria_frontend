@@ -146,7 +146,7 @@ export default function StaffDashboard() {
       setRows((cur) => { if (cur.some((r) => r.status === "received")) ring(); else stop(); return cur; });
     };
     tick();
-    const iv = setInterval(tick, 4000);
+    const iv = setInterval(tick, 10000);
     return () => { clearInterval(iv); stop(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checking, hotelId, myDepts, load, loadHistory]);

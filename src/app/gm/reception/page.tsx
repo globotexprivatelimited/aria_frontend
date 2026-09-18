@@ -46,7 +46,7 @@ export default function ReceptionBoard() {
     const [r, s, t] = await Promise.all([getRooms(HOTEL_ID), getRoomStats(HOTEL_ID), getRoomTarget(HOTEL_ID)]);
     setRooms(r); setStats(s); setTarget(t.target);
   }, [HOTEL_ID]);
-  useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 5000); return () => clearInterval(iv); }, [load, HOTEL_ID]);
+  useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 15000); return () => clearInterval(iv); }, [load, HOTEL_ID]);
 
   const types = useMemo(() => Array.from(new Set(rooms.map((r) => r.room_type))), [rooms]);
   const shown = typeFilter === "all" ? rooms : rooms.filter((r) => r.room_type === typeFilter);

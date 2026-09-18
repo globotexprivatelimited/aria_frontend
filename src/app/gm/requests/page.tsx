@@ -33,7 +33,7 @@ export default function GmRequestsPage() {
     setRows(await getAllOpen(HOTEL_ID));
     setModes(await getDeptModes(HOTEL_ID));
   }, [HOTEL_ID]);
-  useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 5000); return () => clearInterval(iv); }, [HOTEL_ID, load]);
+  useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 15000); return () => clearInterval(iv); }, [HOTEL_ID, load]);
 
   async function act(id: string, command: "ACCEPT" | "CLAIM" | "DONE" | "REJECT") {
     const tk = typeof window !== "undefined" ? window.localStorage.getItem("aria_token") : null;

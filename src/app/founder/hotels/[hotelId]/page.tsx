@@ -38,7 +38,7 @@ export default function FounderHotelPage() {
     setPlans(await getPlans(tk));
     if (det && shareDraft === "") setShareDraft(String(det.hotel.revenueSharePercent));
   }, [hotelId]);
-  useEffect(() => { load(); const iv = setInterval(load, 8000); return () => clearInterval(iv); }, [load]);
+  useEffect(() => { load(); const iv = setInterval(load, 15000); return () => clearInterval(iv); }, [load]);
 
   if (loading) return <div style={{ padding: 40, color: "#B4B9B3" }}>Loading&hellip;</div>;
   if (!d) return <div style={{ padding: 40, color: RED }}>Could not load this hotel.</div>;

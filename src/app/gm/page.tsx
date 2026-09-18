@@ -60,7 +60,7 @@ export default function GMDashboard() {
   useEffect(() => {
     if (!HOTEL_ID) return;
     load();
-    const iv = setInterval(load, 4000);
+    const iv = setInterval(load, 15000);
     return () => { clearInterval(iv); };
   }, [load, HOTEL_ID]);
 

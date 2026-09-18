@@ -19,7 +19,7 @@ export default function DeptDetailDrawer({ hotelId, dept, deptLabel, mode, onClo
     const d = await getDepartmentDetail(hotelId, dept);
     setData(d); setLoading(false);
   }, [hotelId, dept]);
-  useEffect(() => { load(); const iv = setInterval(load, 5000); return () => clearInterval(iv); }, [load]);
+  useEffect(() => { load(); const iv = setInterval(load, 15000); return () => clearInterval(iv); }, [load]);
 
   async function act(id: string, command: "ACCEPT" | "CLAIM" | "DONE" | "REJECT") {
     const tk = typeof window !== "undefined" ? window.localStorage.getItem("aria_token") : null;

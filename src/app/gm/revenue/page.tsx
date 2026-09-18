@@ -39,7 +39,7 @@ export default function RevenuePage() {
     const [s, c, t, i, d, h, rm] = await Promise.all([getRevenueSummary(HOTEL_ID), getByChannel(HOTEL_ID), getTimeseries(HOTEL_ID, 30), getTopItems(HOTEL_ID), getByDept(HOTEL_ID), getByHour(HOTEL_ID), getByRoom(HOTEL_ID)]);
     setSum(s); setChannels(c); setSeries(t); setItems(i); setByDept(d); setByHour(h); setByRoom(rm);
   }, [HOTEL_ID]);
-  useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 8000); return () => clearInterval(iv); }, [load, HOTEL_ID]);
+  useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 15000); return () => clearInterval(iv); }, [load, HOTEL_ID]);
 
   const totalUp = useCountUp(sum.total);
   const card = { background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 20 };

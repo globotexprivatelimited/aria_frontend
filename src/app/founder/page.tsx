@@ -44,7 +44,7 @@ export default function FounderPage() {
     setData(p); setLoading(false);
     setIns(await getInsights(tk, 30));
   }, []);
-  useEffect(() => { load(); const iv = setInterval(load, 8000); return () => clearInterval(iv); }, [load]);
+  useEffect(() => { load(); const iv = setInterval(load, 15000); return () => clearInterval(iv); }, [load]);
 
   const t = data?.totals ?? {};
   const hotels = data?.hotels ?? [];
