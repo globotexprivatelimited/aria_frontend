@@ -109,13 +109,13 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
     setEvents(await getStayEvents(room.hotel_id, room.room_number));
   }
 
-  const field = { borderRadius: 9, border: "1px solid #E3DECF", background: "#FBFAF5", padding: "10px 12px", fontSize: 14, outline: "none", width: "100%", boxSizing: "border-box" as const };
+  const field = { borderRadius: 9, border: "1px solid #E3DECF", background: "#FBFAF5", color: INK, padding: "10px 12px", fontSize: 14, outline: "none", width: "100%", boxSizing: "border-box" as const };
   const lbl = { fontSize: 11, textTransform: "uppercase" as const, letterSpacing: ".05em", color: "#9AA09A", fontWeight: 600 as const, marginBottom: 5, display: "block" };
   const chip = { flex: 1, borderRadius: 8, padding: "7px 0", fontSize: 12, fontWeight: 600 as const, color: GREEN, background: "#EAF3EE", border: "1px solid #D6E6DD", cursor: "pointer" };
 
   return (
     <div onClick={handlers.onClose} style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(27,38,33,.4)", backdropFilter: "blur(2px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ width: 400, maxWidth: "100%", background: "#fff", borderRadius: 18, boxShadow: "0 24px 60px rgba(27,38,33,.28)", overflow: "hidden" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: 400, maxWidth: "100%", background: "#fff", color: INK, colorScheme: "light", borderRadius: 18, boxShadow: "0 24px 60px rgba(27,38,33,.28)", overflow: "hidden" }}>
         <div style={{ padding: "22px 24px", borderBottom: "1px solid #F0F0EA", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
             <div style={{ fontFamily: "Georgia, serif", fontSize: 28, fontWeight: 700, color: INK }}>Room {room.room_number}</div>
