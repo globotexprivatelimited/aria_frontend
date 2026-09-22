@@ -65,7 +65,8 @@ export default function ReceptionBoard() {
   async function doClean(rm: string) { const r = await markRoomClean(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " ready"); load(); } else flash(r.message ?? "failed"); }
   async function doEdit(rm: string, changes: { room_type?: string; floor?: number; newNumber?: string }) { const r = await editRoom(HOTEL_ID!, rm, changes); if (r.ok) { flash("Room updated"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doDelete(rm: string) { const r = await deleteRoom(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " deleted"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
-  async function doClearFloor(fl: number) { if (!confirm("Clear all rooms on floor " + fl + "?")) return; const r = await clearFloor(HOTEL_ID!, fl); if (r.ok) { flash("Cleared " + r.deleted + " rooms from floor " + fl); load(); } else flash(r.message ?? "failed"); }
+  async function doClearFloor(fl: number, count: number) { if (!confirm("Delete all " + count + " rooms on floor " + fl + "? They will be removed from your hotel and this cannot be undone.")) return; const r = await clearFloor(HOTEL_ID!, fl); if (r.ok) { flash("Deleted " + r.deleted + " rooms from floor " + fl); load(); } else flash(r.message ?? "failed"); }
+  async function doCleanFloor(fl: number, rooms: string[]) { const results = await Promise.all(rooms.map((rm) => markRoomClean(HOTEL_ID!, rm))); const failed = results.filter((r) => !r.ok); flash(failed.length ? (rooms.length - failed.length) + " of " + rooms.length + " rooms marked ready - " + (failed[0].message ?? "some could not be updated") : rooms.length + " room" + (rooms.length === 1 ? "" : "s") + " on floor " + fl + " ready"); load(); }
 
   const card = { background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 20 };
   const kpis = [
@@ -136,8 +137,8 @@ export default function ReceptionBoard() {
                 <span style={{ fontFamily: "Georgia, serif", fontSize: 16, fontWeight: 700, color: INK }}>Floor {floor}</span>
                 <span style={{ fontSize: 11, color: "#B4B9B3" }}>{fRooms.filter((r) => r.status === "occupied").length}/{fRooms.length} occupied</span>
                 <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg,#E4DBC7,transparent)" }} />
-                <button onClick={() => doClearFloor(floor)} style={{ fontSize: 10, color: "#B0776A", background: "#FBEDE9", border: "1px solid #EED7D0", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Clear floor</button>
-                <button onClick={() => doClearFloor(floor)} style={{ fontSize: 10, color: "#B0776A", background: "#FBEDE9", border: "1px solid #EED7D0", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Clear floor</button>
+                {(() => { const dirty = fRooms.filter((r) => r.status === "cleaning"); return dirty.length ? <button onClick={() => doCleanFloor(floor, dirty.map((r) => r.room_number))} title="Mark every room on this floor that is being cleaned as ready" style={{ fontSize: 10, fontWeight: 600, color: GREEN, background: "#EAF3EE", border: "1px solid #D6E6DD", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Mark {dirty.length} ready</button> : null; })()}
+                {fRooms.every((r) => r.status !== "occupied") ? <button onClick={() => doClearFloor(floor, fRooms.length)} title="Remove every room on this floor from your hotel" style={{ fontSize: 10, color: "#B0776A", background: "#FBEDE9", border: "1px solid #EED7D0", borderRadius: 999, padding: "3px 10px", cursor: "pointer" }}>Delete floor</button> : null}
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(52px, 1fr))", gap: 8 }}>
                 {fRooms.map((r) => {
