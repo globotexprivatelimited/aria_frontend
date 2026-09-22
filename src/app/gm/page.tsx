@@ -1,4 +1,5 @@
 "use client";
+import { getRoomStats } from "./reception/rooms-actions";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { getHotelActive, getHotelSince, type Req as RequestRow } from "../_actions/requests";
@@ -47,14 +48,15 @@ export default function GMDashboard() {
   const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [history, setHistory] = useState<RequestRow[]>([]);
+  const [occupied, setOccupied] = useState<number | null>(null);
   const [pulse, setPulse] = useState(false);
   const [prevActive, setPrevActive] = useState(0);
 
   const load = useCallback(async () => {
     if (!HOTEL_ID) return;
-    const [active, since] = await Promise.all([getHotelActive(HOTEL_ID), getHotelSince(HOTEL_ID, 7)]);
+    const [active, since, stats] = await Promise.all([getHotelActive(HOTEL_ID), getHotelSince(HOTEL_ID, 7), getRoomStats(HOTEL_ID)]);
     setRows((prev) => { if (active.length > prev.length && prev.length > 0) { setPulse(true); setTimeout(() => setPulse(false), 1500); } return active; });
-    setHistory(since);
+    setHistory(since); setOccupied(stats.occupied);
   }, [HOTEL_ID]);
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export default function GMDashboard() {
   const open = rows.filter((r) => r.status === "received").length;
   const inProgress = rows.filter((r) => r.status === "in_progress").length;
   const urgent = rows.filter((r) => r.priority === "urgent" && r.status !== "resolved").length;
-  const guests = new Set(rows.map((r) => r.roomNumber).filter(Boolean)).size;
+  const guests = occupied ?? 0; // rooms occupied on the board - the number Reception and the founder view show
 
   // ---- time-series (7 days) ----
   const now = new Date();
@@ -122,7 +124,7 @@ export default function GMDashboard() {
 
   const kpiTotal = Math.max(1, open + inProgress + resolvedToday + urgent);
   const kpis = [
-    { key: "guests",   label: "Guests in house", value: guests,       caption: "active rooms",    share: 0 },
+    { key: "guests",   label: "Guests in house", value: guests,       caption: "rooms occupied",    share: 0 },
     { key: "open",     label: "Open requests",   value: open,         caption: "awaiting action", share: open / kpiTotal },
     { key: "progress", label: "In progress",     value: inProgress,   caption: "being handled",   share: inProgress / kpiTotal },
     { key: "resolved", label: "Resolved today",  value: resolvedToday, caption: "completed",      share: resolvedToday / kpiTotal },
