@@ -1,4 +1,5 @@
 "use client";
+import { whoAmI } from "../../../lib/whoami";
 
 import { useEffect, useState, useCallback } from "react";
 import { getHotelActive, type Req as RequestRow } from "../../_actions/requests";
@@ -107,7 +108,7 @@ export default function GMDepartments() {
                 onManage={() => setManaging(d)}
                 onSetMode={async (mode) => {
                   setModes((prev) => [...prev.filter((x) => x.dept !== d.dept), { dept: d.dept, mode }]);
-                  const res = await setDeptMode({ hotelId: HOTEL_ID as string, dept: d.dept, mode });
+                  const res = await setDeptMode({ changedBy: whoAmI(),  hotelId: HOTEL_ID as string, dept: d.dept, mode });
                   if (!res.ok) setModes(await getDeptModes(HOTEL_ID as string));
                 }}
               />

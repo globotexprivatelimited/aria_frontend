@@ -12,7 +12,7 @@ export async function getDeptModes(hotelId: string): Promise<DeptModeRow[]> {
   } catch { return []; }
 }
 
-export async function setDeptMode(args: { hotelId: string; dept: string; mode: DeptMode }): Promise<{ ok: boolean; message?: string }> {
+export async function setDeptMode(args: { hotelId: string; dept: string; mode: DeptMode; changedBy?: string }): Promise<{ ok: boolean; message?: string }> {
   try {
     const r = await apiPost<{ ok: boolean; error?: string }>("/api/dept-config/set", args);
     return r.ok ? { ok: true } : { ok: false, message: r.error };
