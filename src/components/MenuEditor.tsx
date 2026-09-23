@@ -35,6 +35,20 @@ function DietDot({ diet }: { diet: string | null }) {
   );
 }
 
+/** The stock count as a box you can type in: Enter or clicking away saves the number, Escape puts the old one back. */
+function StockInput({ value, tone, onCommit }: { value: number; tone: string; onCommit: (n: number) => void }) {
+  const [draft, setDraft] = useState<string | null>(null);
+  const commit = () => { if (draft === null) return; const n = parseInt(draft, 10); setDraft(null); if (!isNaN(n) && n !== value) onCommit(Math.max(0, Math.min(9999, n))); };
+  return (
+    <input value={draft ?? String(value)} inputMode="numeric" title="Type a number and press Enter"
+      onFocus={(e) => { setDraft(String(value)); e.currentTarget.select(); }}
+      onChange={(e) => setDraft(e.target.value.replace(/[^0-9]/g, "").slice(0, 4))}
+      onBlur={commit}
+      onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); else if (e.key === "Escape") setDraft(null); }}
+      style={{ width: 46, height: 24, textAlign: "center", fontWeight: 600, fontSize: 13, color: tone, border: "1px solid #DED8C8", borderRadius: 6, background: "#fff", padding: 0, colorScheme: "light" }} />
+  );
+}
+
 export default function MenuEditor({ hotelId, dept, deptLabel }: { hotelId: string; dept: string; deptLabel: string }) {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -204,7 +218,7 @@ export default function MenuEditor({ hotelId, dept, deptLabel }: { hotelId: stri
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
                           <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                             <button onClick={() => patch(it.id, { stock: Math.max(0, it.stock - 1) })} style={{ width: 24, height: 24, borderRadius: 6, border: "1px solid #DED8C8", background: "#fff", cursor: "pointer", fontSize: 15, lineHeight: 1, color: "#6E756F" }}>&minus;</button>
-                            <span style={{ minWidth: 26, textAlign: "center", fontWeight: 600, fontSize: 13, color: out ? "#C0563E" : low ? "#96733C" : "#1B2621" }}>{it.stock}</span>
+                            <StockInput value={it.stock} tone={out ? "#C0563E" : low ? "#96733C" : "#1B2621"} onCommit={(n) => patch(it.id, { stock: n })} />
                             <button onClick={() => patch(it.id, { stock: it.stock + 1 })} style={{ width: 24, height: 24, borderRadius: 6, border: "1px solid #DED8C8", background: "#fff", cursor: "pointer", fontSize: 15, lineHeight: 1, color: "#6E756F" }}>+</button>
                             {out ? <span style={{ fontSize: 10, fontWeight: 600, color: "#C0563E", marginLeft: 2 }}>OUT</span> : low ? <span style={{ fontSize: 10, fontWeight: 600, color: "#96733C", marginLeft: 2 }}>LOW</span> : null}
                           </span>
