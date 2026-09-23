@@ -62,7 +62,7 @@ export default function ReceptionBoard() {
   }
   async function doCheckIn(rm: string, guestName: string, guestPhone: string, partySize: number, checkOut: string) { const r = await checkInRoom(HOTEL_ID!, rm, guestName, guestPhone, partySize, checkOut); if (r.ok) { flash("Checked in to Room " + rm); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doCheckout(rm: string) { const r = await checkOutRoom(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " checked out"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
-  async function doClean(rm: string) { const r = await markRoomClean(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " ready"); load(); } else flash(r.message ?? "failed"); }
+  async function doClean(rm: string) { const r = await markRoomClean(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " ready"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doEdit(rm: string, changes: { room_type?: string; floor?: number; newNumber?: string }) { const r = await editRoom(HOTEL_ID!, rm, changes); if (r.ok) { flash("Room updated"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doDelete(rm: string) { const r = await deleteRoom(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " deleted"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doClearFloor(fl: number, count: number) { if (!confirm("Delete all " + count + " rooms on floor " + fl + "? They will be removed from your hotel and this cannot be undone.")) return; const r = await clearFloor(HOTEL_ID!, fl); if (r.ok) { flash("Deleted " + r.deleted + " rooms from floor " + fl); load(); } else flash(r.message ?? "failed"); }
