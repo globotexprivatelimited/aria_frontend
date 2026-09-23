@@ -75,6 +75,9 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
     if (!guestName.trim()) return;
     setBusy(true);
     const iso = new Date(checkOut).toISOString();
+    const digits = guestPhone.replace(/[^0-9]/g, "");
+    if (digits && dial === "+91" && digits.length !== 10) { alert("An Indian mobile number has 10 digits - please check " + dial + " " + digits + "."); return; }
+    if (!confirm("Check " + guestName.trim() + " into room " + room.room_number + (digits ? " and send the WhatsApp welcome to " + dial + " " + digits : " (no phone, so no WhatsApp welcome)") + "?")) return;
     await handlers.onCheckIn(room.room_number, guestName.trim(), guestPhone.trim() ? dial + guestPhone.replace(/[^0-9]/g, "") : "", partySize, iso);
     setBusy(false);
   }

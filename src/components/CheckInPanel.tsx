@@ -36,6 +36,9 @@ export default function CheckInPanel({ hotelId, rooms, onDone }: { hotelId: stri
     if (unknown) { setErr("There is no room " + room.trim() + " in this hotel."); return; }
     if (taken) { setErr("Room " + room.trim() + " is occupied. Check " + (taken.guest_name ?? "the guest") + " out first."); return; }
     if (!name.trim()) { setErr("Enter the guest name."); return; }
+    const digits = phone.replace(/[^0-9]/g, "");
+    if (digits && dial === "+91" && digits.length !== 10) { setErr("An Indian mobile number has 10 digits - please check " + dial + " " + digits + "."); return; }
+    if (!confirm("Check " + name.trim() + " into room " + match!.room_number + (digits ? " and send the WhatsApp welcome to " + dial + " " + digits : " (no phone, so no WhatsApp welcome)") + "?")) return;
     setBusy(true); setErr(null); setMsg(null);
     const r = await checkInGuest({
       hotelId, roomNumber: match!.room_number, guestName: name.trim(),
