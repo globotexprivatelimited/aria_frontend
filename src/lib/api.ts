@@ -23,11 +23,19 @@ async function bearer(): Promise<Record<string, string>> {
   } catch { return {}; }
 }
 
+
+/** Every console call is made as a signed-in person. No session, no call - the platform key alone must never act on a hotel. */
+async function session(): Promise<Record<string, string>> {
+  const h = await bearer();
+  if (!h.authorization) throw new Error("Not signed in - please log in again.");
+  return h;
+}
+
 export async function apiGet<T>(path: string): Promise<T> {
   // only append the default hotelId when the caller has not already specified one
   const url = path.includes("hotelId=") ? BASE + path : BASE + path + (path.includes("?") ? "&" : "?") + "hotelId=" + HOTEL;
   const res = await fetch(url, {
-    headers: { "x-admin-key": KEY, ...(await bearer()) },
+    headers: { "x-admin-key": KEY, ...(await session()) },
     cache: "no-store",
   });
   if (!res.ok) throw await apiError(res, path);
@@ -37,7 +45,7 @@ export async function apiGet<T>(path: string): Promise<T> {
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(BASE + path, {
     method: "POST",
-    headers: { "x-admin-key": KEY, "Content-Type": "application/json", ...(await bearer()) },
+    headers: { "x-admin-key": KEY, "Content-Type": "application/json", ...(await session()) },
     body: JSON.stringify(body),
     cache: "no-store",
   });
