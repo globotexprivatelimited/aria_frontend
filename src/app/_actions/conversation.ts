@@ -2,7 +2,7 @@
 
 import { apiGet, apiPost } from "@/lib/api";
 
-export type ThreadMessage = { at: string; direction: string; type: string | null; body: string | null };
+export type ThreadMessage = { at: string; direction: string; type: string | null; body: string | null; status?: string | null; error?: string | null; statusAt?: string | null };
 
 export type ThreadSession = {
   id?: string;

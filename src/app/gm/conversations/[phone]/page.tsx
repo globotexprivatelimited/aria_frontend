@@ -120,6 +120,10 @@ function DayMarker({ label }: { label: string }) {
     </div>
   );
 }
+function statusMark(s: string): string { return s === "read" || s === "delivered" ? "\u2713\u2713" : s === "sent" || s === "accepted" ? "\u2713" : s === "failed" || s === "rejected" || s === "not_sent" ? "!" : ""; }
+function statusTitle(s: string, e: string | null | undefined): string { return s === "read" ? "Read by the guest" : s === "delivered" ? "Delivered to the guest's phone" : s === "sent" ? "Sent by WhatsApp" : s === "accepted" ? "Accepted by WhatsApp - delivery pending" : s === "not_sent" ? "Not sent - WhatsApp is not configured" : "Not delivered" + (e ? " - " + e : ""); }
+const failedStatus = (s: string | null | undefined) => s === "failed" || s === "rejected" || s === "not_sent";
+
 function Bubble({ m, compact }: { m: ThreadMessage; compact: boolean }) {
   const inbound = m.direction === "inbound";
   const isText = !m.type || m.type === "text";
@@ -145,7 +149,11 @@ function Bubble({ m, compact }: { m: ThreadMessage; compact: boolean }) {
         <div style={{ fontSize: 14, lineHeight: 1.55, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
           {m.body ?? (isText ? "" : "[" + humanise(m.type ?? "attachment") + " message]")}
         </div>
-        <div style={{ marginTop: 3, fontSize: 11, textAlign: "right", color: inbound ? C.faint : "rgba(255,255,255,0.72)" }}>{fmtTime(m.at)}</div>
+        <div style={{ marginTop: 3, fontSize: 11, color: inbound ? C.faint : "rgba(255,255,255,0.72)", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 6 }}>
+          <span>{fmtTime(m.at)}</span>
+          {!inbound && m.status ? <span title={statusTitle(m.status, m.error)} style={{ fontSize: 12, letterSpacing: -2, color: m.status === "read" ? "#9BE7FF" : failedStatus(m.status) ? "#FFD1C9" : "rgba(255,255,255,0.85)" }}>{statusMark(m.status)}</span> : null}
+        </div>
+        {!inbound && failedStatus(m.status) ? <div style={{ marginTop: 4, fontSize: 11, color: "#FFD1C9", textAlign: "right" }}>Not delivered{m.error ? " - " + m.error : ""}</div> : null}
       </div>
     </div>
   );
