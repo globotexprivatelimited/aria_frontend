@@ -14,11 +14,20 @@ async function apiError(res: Response, path: string): Promise<Error> {
   return new Error("API " + res.status + " on " + path);
 }
 
+/** The signed-in person's token from the cookie set at login - the API verifies it and takes the hotel from it, not from the browser. */
+async function bearer(): Promise<Record<string, string>> {
+  try {
+    const { cookies } = await import("next/headers");
+    const token = (await cookies()).get("aria_token")?.value;
+    return token ? { authorization: "Bearer " + token } : {};
+  } catch { return {}; }
+}
+
 export async function apiGet<T>(path: string): Promise<T> {
   // only append the default hotelId when the caller has not already specified one
   const url = path.includes("hotelId=") ? BASE + path : BASE + path + (path.includes("?") ? "&" : "?") + "hotelId=" + HOTEL;
   const res = await fetch(url, {
-    headers: { "x-admin-key": KEY },
+    headers: { "x-admin-key": KEY, ...(await bearer()) },
     cache: "no-store",
   });
   if (!res.ok) throw await apiError(res, path);
@@ -28,7 +37,7 @@ export async function apiGet<T>(path: string): Promise<T> {
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(BASE + path, {
     method: "POST",
-    headers: { "x-admin-key": KEY, "Content-Type": "application/json" },
+    headers: { "x-admin-key": KEY, "Content-Type": "application/json", ...(await bearer()) },
     body: JSON.stringify(body),
     cache: "no-store",
   });

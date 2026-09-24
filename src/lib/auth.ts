@@ -1,5 +1,8 @@
 const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
 const TOKEN_KEY = "aria_token";
+/** The token also lives in a cookie so the console's server actions can send it to the API, which then verifies who is asking and which hotel is theirs. */
+function setCookie(token: string) { if (typeof document === "undefined") return; document.cookie = TOKEN_KEY + "=" + encodeURIComponent(token) + "; path=/; max-age=" + 60 * 60 * 24 * 7 + "; SameSite=Lax" + (location.protocol === "https:" ? "; Secure" : ""); }
+function clearCookie() { if (typeof document !== "undefined") document.cookie = TOKEN_KEY + "=; path=/; max-age=0"; }
 
 export type Role = "founder" | "gm" | "fb" | "housekeeping" | "spa" | "front_desk" | "staff";
 
@@ -15,10 +18,10 @@ export function homeForRole(role: string): string {
 
 function getToken(): string | null {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(TOKEN_KEY);
+  const t = window.localStorage.getItem(TOKEN_KEY); if (t && !document.cookie.includes(TOKEN_KEY + "=")) setCookie(t); return t;
 }
 export function setToken(token: string) {
-  if (typeof window !== "undefined") window.localStorage.setItem(TOKEN_KEY, token);
+  if (typeof window !== "undefined") { window.localStorage.setItem(TOKEN_KEY, token); setCookie(token); }
 }
 
 type MeResponse = { ok: boolean; data?: { role: string; hotelId: string; fullName: string; hotelName: string; departments: string[]; webhookToken?: string } };
@@ -67,7 +70,7 @@ export async function signIn(email: string, password: string): Promise<{ ok: boo
 
 export async function signOut() {
   if (typeof window !== "undefined") {
-    window.localStorage.removeItem(TOKEN_KEY);
+    window.localStorage.removeItem(TOKEN_KEY); clearCookie();
     // clear any legacy supabase keys too
     Object.keys(window.localStorage).forEach((k) => { if (k.startsWith("sb-") || k.toLowerCase().includes("supabase")) window.localStorage.removeItem(k); });
   }
