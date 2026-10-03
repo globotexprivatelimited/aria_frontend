@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { getHotelActive, getHotelSince, type Req as RequestRow } from "../_actions/requests";
 import { DEPARTMENTS } from "../../lib/departments";
 import GMSidebar from "../../components/GMSidebar";
+import { LuxuryStars } from "../../components/LuxuryStars";
 import { useBreakpoint } from "../../lib/useBreakpoint";
 import GMRings from "../../components/GMRings";
 import GMDeptCards from "../../components/GMDeptCards";
@@ -46,7 +47,7 @@ function useCountUp(target: number): number {
 
 export default function GMDashboard() {
   const { isMobile, isTablet } = useBreakpoint();
-  const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
+  const { hotelId: HOTEL_ID, hotelName, loading: hotelLoading } = useMyHotel();
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [history, setHistory] = useState<RequestRow[]>([]);
   const [occupied, setOccupied] = useState<number | null>(null);
@@ -66,11 +67,14 @@ export default function GMDashboard() {
   }, [HOTEL_ID]);
 
   useEffect(() => {
-    if (!HOTEL_ID) return;
+    if (!HOTEL_ID) {
+      if (!hotelLoading) setLoading(false);
+      return;
+    }
     load();
     const iv = setInterval(load, 15000);
     return () => { clearInterval(iv); };
-  }, [load, HOTEL_ID]);
+  }, [load, HOTEL_ID, hotelLoading]);
 
   // ---- live KPIs from active rows ----
   const open = rows.filter((r) => r.status === "received").length;
@@ -180,7 +184,7 @@ export default function GMDashboard() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, position: "relative", zIndex: 1 }}>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                    <span style={{ color: "#E5C890", fontSize: 12, letterSpacing: 2 }}>★★★★★</span>
+                    <LuxuryStars count={5} size={12} color="#E5C890" gap={3} />
                     <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".18em", color: "rgba(255,255,255,0.78)", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Luxury Hotel Intelligence</span>
                   </div>
                   <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 34, fontWeight: 700, margin: 0, letterSpacing: "-0.01em", color: "#FFFFFF" }}>{hotelName}</h1>
@@ -204,19 +208,24 @@ export default function GMDashboard() {
               <div style={{ marginTop: 22, paddingTop: 18, borderTop: "1px solid rgba(255,255,255,0.15)", display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
                 <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#E5C890", fontWeight: 700, marginRight: 4 }}>Quick Actions:</span>
                 <Link href="/gm/reception" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.18)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-                  <span>🏨</span> Reception &amp; Rooms
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 21h18M4 21V8l8-5 8 5v13M9 21v-6h6v6" /></svg>
+                  <span>Reception &amp; Rooms</span>
                 </Link>
                 <Link href="/gm/requests" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: open > 0 ? "rgba(178,58,42,0.35)" : "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-                  <span>📋</span> Requests {open > 0 ? <span style={{ background: "#B23A2A", borderRadius: 999, padding: "1px 7px", fontSize: 11, marginLeft: 2 }}>{open} open</span> : null}
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><rect x="8" y="2" width="8" height="4" rx="1" ry="1" /><path d="M9 14l2 2 4-4" /></svg>
+                  <span>Requests</span> {open > 0 ? <span style={{ background: "#B23A2A", borderRadius: 999, padding: "1px 7px", fontSize: 11, marginLeft: 2 }}>{open} open</span> : null}
                 </Link>
                 <Link href="/gm/guests" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-                  <span>👥</span> Guests ({guests} in house)
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                  <span>Guests ({guests} in house)</span>
                 </Link>
                 <Link href="/gm/departments" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-                  <span>🛎️</span> Departments
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 4v3M2 18h20M4 18a8 8 0 0 1 16 0" /><circle cx="12" cy="3" r="1" /></svg>
+                  <span>Departments</span>
                 </Link>
                 <Link href="/gm/revenue" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-                  <span>💰</span> Revenue Folio
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+                  <span>Revenue Folio</span>
                 </Link>
               </div>
             </div>
@@ -377,7 +386,12 @@ export default function GMDashboard() {
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, overflowY: "auto", maxHeight: 290, WebkitOverflowScrolling: "touch" }}>
                   {feed.length === 0 ? (
                     <div style={{ color: "#A0ABA6", fontSize: 13, textAlign: "center", padding: "40px 0" }}>
-                      <div style={{ fontSize: 24, marginBottom: 6, opacity: 0.5 }}>🛎️</div>
+                      <div style={{ display: "flex", justifyContent: "center", marginBottom: 8, opacity: 0.45 }}>
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2F5D50" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M12 4v3M2 18h20M4 18a8 8 0 0 1 16 0" />
+                          <circle cx="12" cy="3" r="1" />
+                        </svg>
+                      </div>
                       All quiet &mdash; no active requests
                     </div>
                   ) : feed.map((r) => (

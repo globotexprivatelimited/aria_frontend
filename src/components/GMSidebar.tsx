@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useMyHotel } from "../lib/useMyHotel";
 import { signOut } from "../lib/auth";
 import { useBreakpoint } from "../lib/useBreakpoint";
+import { LuxuryStars } from "./LuxuryStars";
 
 const ITEMS = [
   { href: "/gm", label: "Overview", icon: "M4 13h6V4H4v9zm0 7h6v-5H4v5zm8 0h6V11h-6v9zm0-16v5h6V4h-6z" },
@@ -47,7 +48,7 @@ export default function GMSidebar() {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
               <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 21, fontWeight: 700, color: "#0D1F1A", lineHeight: 1 }}>Aria</span>
-              <span style={{ fontSize: 9, color: "#B08A4F", letterSpacing: "1px" }}>★★★★★</span>
+              <LuxuryStars count={5} size={9} gap={2} />
             </div>
             <div style={{ fontSize: 9.5, textTransform: "uppercase", letterSpacing: ".18em", color: "#B08A4F", marginTop: 4, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 700 }}>Resort Command</div>
           </div>
@@ -114,7 +115,10 @@ export default function GMSidebar() {
             <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, #2F5D50 0%, #1E4238 100%)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700 }}>A</div>
             <div>
               <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17, fontWeight: 700, color: "#0D1F1A", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "block", maxWidth: "50vw" }}>{hotelName || "Aria"}</span>
-              <span style={{ fontSize: 8.5, color: "#B08A4F", letterSpacing: "1px", textTransform: "uppercase", fontWeight: 700 }}>★★★★★ Luxury Resort</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 2 }}>
+                <LuxuryStars count={5} size={8} gap={2} />
+                <span style={{ fontSize: 8.5, color: "#B08A4F", letterSpacing: "1px", textTransform: "uppercase", fontWeight: 700 }}>Luxury Resort</span>
+              </div>
             </div>
           </div>
           <button onClick={() => setDrawerOpen(true)} aria-label="Menu" style={{ width: 40, height: 40, borderRadius: 10, background: "#F1F6F4", border: "1px solid #E2EBE7", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#2F5D50" }}>

@@ -18,10 +18,11 @@ import DiningManager from "../../../components/DiningManager";
 import SlotEditor from "../../../components/SlotEditor";
 import type { DeptConfig } from "../../../lib/departments";
 import { DepartmentsSkeleton } from "../../../components/Skeleton";
+import { LuxuryStars } from "../../../components/LuxuryStars";
 
 export default function GMDepartments() {
   const { isMobile, isTablet } = useBreakpoint();
-  const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
+  const { hotelId: HOTEL_ID, hotelName, loading: hotelLoading } = useMyHotel();
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [connected, setConnected] = useState(false);
   const [managing, setManaging] = useState<DeptConfig | null>(null);
@@ -44,12 +45,14 @@ export default function GMDepartments() {
   }, [HOTEL_ID]);
 
   useEffect(() => {
-    load();
-    if (!HOTEL_ID) return;
+    if (!HOTEL_ID) {
+      if (!hotelLoading) setLoading(false);
+      return;
+    }
     load();
     const iv = setInterval(load, 15000);
     return () => { clearInterval(iv); };
-  }, [load, HOTEL_ID]);
+  }, [load, HOTEL_ID, hotelLoading]);
 
   const statFor = (dept: string) => {
     const list = rows.filter((r) => r.department === dept);
@@ -73,7 +76,7 @@ export default function GMDepartments() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 14, marginBottom: 24 }}>
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                  <span style={{ color: "#B08A4F", fontSize: 11, letterSpacing: 2 }}>★★★★★</span>
+                  <LuxuryStars count={5} size={11} color="#B08A4F" gap={2} />
                   <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Operations &middot; Divisions</span>
                 </div>
                 <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 32, fontWeight: 700, color: "#0D1F1A", margin: 0, letterSpacing: "-0.01em" }}>

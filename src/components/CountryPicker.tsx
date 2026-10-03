@@ -28,7 +28,9 @@ export default function CountryPicker({ options, value, onChange, width = 132, g
         style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, borderRadius: 10, border: "1px solid #E3E3DC", background: "#FBFBF9", padding: "11px 12px", fontSize: 14, cursor: "pointer", outline: "none" }}>
         <img src={flagUrl(sel.c)} alt="" width={22} height={16} style={{ borderRadius: 2, flexShrink: 0 }} />
         <span style={{ color: "#1B2621" }}>{sel.d}</span>
-        <span style={{ marginLeft: "auto", color: "#9AA09A", fontSize: 11 }}>&#9662;</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9AA09A" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: "auto" }} aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </button>
       {open ? (
         <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, width: 260, maxHeight: 280, overflowY: "auto", background: "#fff", border: "1px solid #E3E3DC", borderRadius: 10, boxShadow: "0 12px 30px rgba(0,0,0,.12)", zIndex: 60 }}>

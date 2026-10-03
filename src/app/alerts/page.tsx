@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { apiGet } from "@/lib/api";
 import GMSidebar from "@/components/GMSidebar";
+import { LuxuryStars } from "@/components/LuxuryStars";
 
 type Alerts = {
   emergencyMode: boolean;
@@ -26,7 +27,7 @@ export default async function AlertsPage() {
         {/* Grandoria Header */}
         <div style={{ marginBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-            <span style={{ color: "#B08A4F", fontSize: 11, letterSpacing: 2 }}>★★★★★</span>
+            <LuxuryStars count={5} size={11} color="#B08A4F" gap={2} />
             <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Attention Queue &middot; Exceptions</span>
           </div>
           <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, fontWeight: 700, color: "#0D1F1A", margin: 0, letterSpacing: "-0.01em" }}>Alerts &amp; Operational Flags</h1>
@@ -39,7 +40,14 @@ export default async function AlertsPage() {
           <>
             {data.emergencyMode ? (
               <div style={{ marginTop: 20, borderRadius: 14, border: "1px solid #F0C1B8", background: "#FBEDE9", padding: 20, boxShadow: "0 4px 16px rgba(178,58,42,.12)" }}>
-                <div style={{ fontWeight: 700, color: "#B23A2A", fontSize: 16 }}>⚠️ Emergency mode is ACTIVE</div>
+                <div style={{ fontWeight: 700, color: "#B23A2A", fontSize: 16, display: "flex", alignItems: "center", gap: 8 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B23A2A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                  <span>Emergency mode is ACTIVE</span>
+                </div>
                 <p style={{ fontSize: 13.5, color: "#B23A2A", marginTop: 4 }}>Every guest communication is receiving the automated emergency notice. Aria standard concierge answers are paused.</p>
               </div>
             ) : null}

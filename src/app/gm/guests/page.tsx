@@ -7,6 +7,7 @@ import { getInHouseGuests, type InHouseGuest } from "../../_actions/guests";
 import GMSidebar from "../../../components/GMSidebar";
 import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
+import { LuxuryStars } from "../../../components/LuxuryStars";
 
 function timeAgo(iso: string): string {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -34,7 +35,7 @@ import { TableSkeleton } from "../../../components/Skeleton";
 
 export default function GMGuests() {
   const { isMobile } = useBreakpoint();
-  const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
+  const { hotelId: HOTEL_ID, hotelName, loading: hotelLoading } = useMyHotel();
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [sessions, setSessions] = useState<InHouseGuest[]>([]);
   const [connected, setConnected] = useState(false);
@@ -53,11 +54,14 @@ export default function GMGuests() {
   }, [HOTEL_ID]);
 
   useEffect(() => {
+    if (!HOTEL_ID) {
+      if (!hotelLoading) setLoading(false);
+      return;
+    }
     load();
-    if (!HOTEL_ID) return;
     const iv = setInterval(load, 15000);
     return () => { clearInterval(iv); };
-  }, [load, HOTEL_ID]);
+  }, [load, HOTEL_ID, hotelLoading]);
 
   const inHouseByRoom: Record<string, InHouse> = {};
   const unregistered: Unregistered[] = [];
@@ -111,7 +115,7 @@ export default function GMGuests() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 14, marginBottom: 24 }}>
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                  <span style={{ color: "#B08A4F", fontSize: 11, letterSpacing: 2 }}>★★★★★</span>
+                  <LuxuryStars count={5} size={11} color="#B08A4F" gap={2} />
                   <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Guest Registry &middot; In-House</span>
                 </div>
                 <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 32, fontWeight: 700, color: ink, margin: 0, letterSpacing: "-0.01em" }}>

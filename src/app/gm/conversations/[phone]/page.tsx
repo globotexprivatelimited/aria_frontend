@@ -335,13 +335,19 @@ export default function GMConversation() {
                 {stats.total} messages, kept verbatim for dispute resolution
               </span>
               <span style={{ flex: 1 }} />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search this conversation"
-                aria-label="Search this conversation"
-                style={{ width: isMobile ? "100%" : 240, padding: "8px 12px", borderRadius: 10, border: "1px solid " + C.line, fontSize: 13, color: C.ink, background: C.bg, outline: "none" }}
-              />
+              <div style={{ position: "relative", width: isMobile ? "100%" : 240 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8A9792" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search this conversation"
+                  aria-label="Search this conversation"
+                  style={{ width: "100%", padding: "8px 12px 8px 32px", borderRadius: 10, border: "1px solid " + C.line, fontSize: 13, color: C.ink, background: C.bg, outline: "none", boxSizing: "border-box" }}
+                />
+              </div>
               {query && <span style={{ fontSize: 12, color: C.muted }}>{messages.length} {messages.length === 1 ? "match" : "matches"}</span>}
             </div>
 

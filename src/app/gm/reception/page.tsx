@@ -8,6 +8,7 @@ import { useBreakpoint } from "../../../lib/useBreakpoint";
 import { useMyHotel } from "../../../lib/useMyHotel";
 import CheckInPanel from "../../../components/CheckInPanel";
 import { ReceptionSkeleton } from "../../../components/Skeleton";
+import { LuxuryStars } from "../../../components/LuxuryStars";
 
 const GREEN = "#2F5D50", RED = "#B23A2A", AMBER = "#B08A4F", INK = "#0D1F1A";
 const STATUS = {
@@ -30,7 +31,7 @@ function fmtTime(iso: string | null): string {
 
 export default function ReceptionBoard() {
   const { isMobile, isTablet } = useBreakpoint();
-  const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
+  const { hotelId: HOTEL_ID, hotelName, loading: hotelLoading } = useMyHotel();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [stats, setStats] = useState<RoomStats>({ total: 0, available: 0, occupied: 0, cleaning: 0, occupancyPct: 0 });
   const [hover, setHover] = useState<Room | null>(null);
@@ -52,7 +53,15 @@ export default function ReceptionBoard() {
       setLoading(false);
     }
   }, [HOTEL_ID]);
-  useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 15000); return () => clearInterval(iv); }, [load, HOTEL_ID]);
+  useEffect(() => {
+    if (!HOTEL_ID) {
+      if (!hotelLoading) setLoading(false);
+      return;
+    }
+    load();
+    const iv = setInterval(load, 15000);
+    return () => clearInterval(iv);
+  }, [load, HOTEL_ID, hotelLoading]);
 
   const types = useMemo(() => Array.from(new Set(rooms.map((r) => r.room_type))), [rooms]);
   const shown = typeFilter === "all" ? rooms : rooms.filter((r) => r.room_type === typeFilter);
@@ -104,7 +113,7 @@ export default function ReceptionBoard() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 14, marginBottom: 22 }}>
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                  <span style={{ color: "#B08A4F", fontSize: 11, letterSpacing: 2 }}>★★★★★</span>
+                  <LuxuryStars count={5} size={11} color="#B08A4F" gap={2} />
                   <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Reception &middot; Room Inventory</span>
                 </div>
                 <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 32, fontWeight: 700, color: INK, margin: 0, letterSpacing: "-0.01em" }}>

@@ -9,6 +9,7 @@ import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, ResponsiveContainer
 import MissedRevenuePanel from "../../../components/MissedRevenuePanel";
 import RevenueFlow from "../../../components/RevenueFlow";
 import { Skeleton, SkeletonCard } from "../../../components/Skeleton";
+import { LuxuryStars } from "../../../components/LuxuryStars";
 
 const GREEN = "#2F5D50", GOLD = "#B08A4F", INK = "#0D1F1A";
 const rupee = "\u20B9";
@@ -26,7 +27,7 @@ function useCountUp(target: number): number {
 
 export default function RevenuePage() {
   const { isMobile, isTablet } = useBreakpoint();
-  const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
+  const { hotelId: HOTEL_ID, hotelName, loading: hotelLoading } = useMyHotel();
   const [sum, setSum] = useState<RevSummary>({ total: 0, today: 0, week: 0, month: 0, transactions: 0, avgOrder: 0 });
   const [channels, setChannels] = useState<RevChannel[]>([]);
   const [series, setSeries] = useState<RevPoint[]>([]);
@@ -45,7 +46,15 @@ export default function RevenuePage() {
       setLoading(false);
     }
   }, [HOTEL_ID]);
-  useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 15000); return () => clearInterval(iv); }, [load, HOTEL_ID]);
+  useEffect(() => {
+    if (!HOTEL_ID) {
+      if (!hotelLoading) setLoading(false);
+      return;
+    }
+    load();
+    const iv = setInterval(load, 15000);
+    return () => clearInterval(iv);
+  }, [load, HOTEL_ID, hotelLoading]);
 
   const totalUp = useCountUp(sum.total);
   const card = {
@@ -82,7 +91,7 @@ export default function RevenuePage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 14, marginBottom: 24 }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-              <span style={{ color: GOLD, fontSize: 11, letterSpacing: 2 }}>★★★★★</span>
+              <LuxuryStars count={5} size={11} color={GOLD} gap={2} />
               <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: GOLD, fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Financial Intelligence &middot; Folio</span>
             </div>
             <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 32, fontWeight: 700, color: INK, margin: 0, letterSpacing: "-0.01em" }}>

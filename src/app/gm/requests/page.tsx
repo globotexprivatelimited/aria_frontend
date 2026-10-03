@@ -9,6 +9,7 @@ import { getAllOpen, type GmReq } from "./requests-actions";
 import { actOnRequest } from "../departments/action-actions";
 import { getDeptModes, type DeptModeRow } from "../departments/mode-actions";
 import { Skeleton, SkeletonCard } from "../../../components/Skeleton";
+import { LuxuryStars } from "../../../components/LuxuryStars";
 
 const INK = "#0D1F1A", GREEN = "#2F5D50", GOLD = "#B08A4F", RED = "#B23A2A";
 const LABEL: Record<string, string> = {
@@ -23,7 +24,7 @@ const waitedMins = (iso: string) => Math.max(0, (Date.now() - new Date(iso).getT
 
 export default function GmRequestsPage() {
   const { isMobile } = useBreakpoint();
-  const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
+  const { hotelId: HOTEL_ID, hotelName, loading: hotelLoading } = useMyHotel();
   const [rows, setRows] = useState<GmReq[]>([]);
   const [modes, setModes] = useState<DeptModeRow[]>([]);
   const [acting, setActing] = useState<string | null>(null);
@@ -40,7 +41,15 @@ export default function GmRequestsPage() {
       setLoading(false);
     }
   }, [HOTEL_ID]);
-  useEffect(() => { if (!HOTEL_ID) return; load(); const iv = setInterval(load, 15000); return () => clearInterval(iv); }, [HOTEL_ID, load]);
+  useEffect(() => {
+    if (!HOTEL_ID) {
+      if (!hotelLoading) setLoading(false);
+      return;
+    }
+    load();
+    const iv = setInterval(load, 15000);
+    return () => clearInterval(iv);
+  }, [HOTEL_ID, load, hotelLoading]);
 
   async function act(id: string, command: "ACCEPT" | "CLAIM" | "DONE" | "REJECT") {
     const tk = typeof window !== "undefined" ? window.localStorage.getItem("aria_token") : null;
@@ -70,7 +79,7 @@ export default function GmRequestsPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 14, marginBottom: 24 }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-              <span style={{ color: GOLD, fontSize: 11, letterSpacing: 2 }}>★★★★★</span>
+              <LuxuryStars count={5} size={11} color={GOLD} gap={2} />
               <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: GOLD, fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Service Operations &middot; Queue</span>
             </div>
             <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 32, fontWeight: 700, color: INK, margin: 0, letterSpacing: "-0.01em" }}>
