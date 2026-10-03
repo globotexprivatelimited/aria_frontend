@@ -73,8 +73,8 @@ export default function LoginPage() {
       </div>
 
       {/* RIGHT: login form on clean surface */}
-      <div className="login-form-panel" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "48px 40px", background: "#F6F7F4" }}>
-        <div className="form-inner" style={{ width: "100%", maxWidth: 400 }}>
+      <div className="login-form-panel" style={{ flex: 1, minHeight: "100vh", overflowY: "auto", WebkitOverflowScrolling: "touch", display: "flex", alignItems: "center", justifyContent: "center", padding: "48px 40px", background: "#F6F7F4" }}>
+        <div className="form-inner" style={{ width: "100%", maxWidth: 400, paddingTop: 20, paddingBottom: 20 }}>
           <div style={{ marginBottom: 32 }}>
             <div style={{ display: "inline-block", fontSize: 11, textTransform: "uppercase", letterSpacing: ".2em", color: GOLD, marginBottom: 16, padding: "5px 13px", borderRadius: 999, background: "rgba(176,138,79,0.12)", border: "1px solid rgba(176,138,79,0.28)" }}>Welcome back</div>
             <h1 style={{ fontFamily: "Georgia, serif", fontSize: 40, fontWeight: 700, color: INK, margin: 0, lineHeight: 1.02, letterSpacing: "-0.6px" }}>Sign in</h1>

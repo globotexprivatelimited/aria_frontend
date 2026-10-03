@@ -31,34 +31,76 @@ button, input, select, textarea {
 }
 
 
-/* Prevent horizontal scroll / blank space on mobile */
-html, body {
-  max-width: 100%;
-  overflow-x: clip;
+/* Prevent horizontal scroll while enabling smooth vertical and container scrolling */
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
 }
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: auto;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-
-/* ============ RESPONSIVE FOUNDATION ============ */
-html {
-  overflow-x: clip;
-  width: 100%;
+/* Modern sleek scrollbar styling across Webkit and Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #D3CDC0 transparent;
 }
-body {
-  overflow-x: clip;
-  width: 100%;
-  max-width: 100%;
-  position: relative;
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
 }
-*, *::before, *::after { box-sizing: border-box; }
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #D3CDC0;
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #0F5F4C;
+}
 
-/* Nothing may exceed its container */
-img, svg, video, canvas, table { max-width: 100%; }
+/* User-friendly scrollable utility classes */
+.scrollable-y {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.scrollable-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Accessible focus ring */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid #0F5F4C;
+  outline-offset: 2px;
+}
+
+/* Media and container bounds */
+img, svg, video, canvas { max-width: 100%; }
 
 /* Grid and flex children must be allowed to shrink */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   [style*="display: grid"] > *, [style*="display:grid"] > * { min-width: 0; }
   [style*="display: flex"] > *, [style*="display:flex"] > * { min-width: 0; }
 }

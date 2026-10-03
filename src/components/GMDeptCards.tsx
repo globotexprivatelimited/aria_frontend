@@ -2,6 +2,7 @@
 import { useMemo } from "react";
 import type { Req } from "../app/_actions/requests";
 import { DEPARTMENTS } from "../lib/departments";
+import { useBreakpoint } from "../lib/useBreakpoint";
 
 const DEPT_COLORS: Record<string, string> = { fb: "#0F5F4C", housekeeping: "#3A6EA5", spa: "#8E5AA8", front_desk: "#B08A4F" , dining: "#B0763A", maintenance: "#7A6A55" };
 const INK = "#1B2621";
@@ -19,6 +20,7 @@ function Spark({ data, color }: { data: number[]; color: string }) {
 }
 
 export default function GMDeptCards({ active, week }: { active: Req[]; week: Req[] }) {
+  const { isMobile } = useBreakpoint();
   const now = new Date();
   const cards = useMemo(() => DEPARTMENTS.map((dp) => {
     const series: number[] = [];
@@ -30,11 +32,11 @@ export default function GMDeptCards({ active, week }: { active: Req[]; week: Req
     return { ...dp, series, openCount, weekCount, rate, color: DEPT_COLORS[dp.dept] ?? "#B08A4F" };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [active, week]);
-  const card = { background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 20 };
+  const card = { background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: isMobile ? 16 : 20 };
   return (
     <div style={card}>
       <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".09em", color: "#9AA09A", fontWeight: 600, marginBottom: 16 }}>Department performance</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "repeat(2, 1fr)", gap: 12 }}>
         {cards.map((c) => (
           <div key={c.dept} style={{ border: "1px solid #F0F0EA", borderRadius: 12, padding: 14, background: "#FCFCFA" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>

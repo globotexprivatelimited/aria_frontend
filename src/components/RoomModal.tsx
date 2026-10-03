@@ -117,17 +117,20 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
   const chip = { flex: 1, borderRadius: 8, padding: "7px 0", fontSize: 12, fontWeight: 600 as const, color: GREEN, background: "#EAF3EE", border: "1px solid #D6E6DD", cursor: "pointer" };
 
   return (
-    <div onClick={handlers.onClose} style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(27,38,33,.4)", backdropFilter: "blur(2px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ width: 400, maxWidth: "100%", background: "#fff", color: INK, colorScheme: "light", borderRadius: 18, boxShadow: "0 24px 60px rgba(27,38,33,.28)", overflow: "hidden" }}>
-        <div style={{ padding: "22px 24px", borderBottom: "1px solid #F0F0EA", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+    <div onClick={handlers.onClose} style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(27,38,33,.45)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", overflowY: "auto" }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ width: 420, maxWidth: "100%", maxHeight: "calc(100vh - 32px)", display: "flex", flexDirection: "column", background: "#fff", color: INK, colorScheme: "light", borderRadius: 18, boxShadow: "0 24px 60px rgba(27,38,33,.28)", overflow: "hidden" }}>
+        <div style={{ padding: "18px 22px", borderBottom: "1px solid #F0F0EA", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexShrink: 0 }}>
           <div>
-            <div style={{ fontFamily: "Georgia, serif", fontSize: 28, fontWeight: 700, color: INK }}>Room {room.room_number}</div>
+            <div style={{ fontFamily: "Georgia, serif", fontSize: 26, fontWeight: 700, color: INK }}>Room {room.room_number}</div>
             <div style={{ fontSize: 12, color: "#8A8577", marginTop: 2 }}>{room.room_type} &middot; Floor {room.floor}</div>
           </div>
-          <span style={{ fontSize: 12, fontWeight: 600, color: statusColor, background: statusBg, borderRadius: 8, padding: "5px 11px" }}>{statusLabel}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: statusColor, background: statusBg, borderRadius: 8, padding: "5px 11px" }}>{statusLabel}</span>
+            <button onClick={handlers.onClose} aria-label="Close" style={{ width: 30, height: 30, borderRadius: 8, background: "#F5F5F0", border: "1px solid #EAEAE4", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#6E756F", fontSize: 18, lineHeight: 1 }}>&times;</button>
+          </div>
         </div>
 
-        <div style={{ padding: "20px 24px" }}>
+        <div style={{ padding: "18px 22px", overflowY: "auto", flex: 1, minHeight: 0 }}>
           {mode === "edit" ? (
             <>
               <div style={{ fontSize: 13, color: INK, fontWeight: 600, marginBottom: 14 }}>Edit room</div>

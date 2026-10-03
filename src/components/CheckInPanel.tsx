@@ -4,6 +4,7 @@ import { checkInGuest } from "../app/gm/reception/rooms-actions";
 import type { Room } from "../app/gm/reception/rooms-actions";
 import CountryPicker from "./CountryPicker";
 import { DIAL_CODES } from "../lib/dialCodes";
+import { useBreakpoint } from "../lib/useBreakpoint";
 
 const GREEN = "#0F5F4C", GOLD = "#B08A4F", INK = "#1B2621", RED = "#B23A2A";
 
@@ -16,6 +17,7 @@ const shortWhen = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "no checkout set";
 
 export default function CheckInPanel({ hotelId, rooms, onDone }: { hotelId: string; rooms: Room[]; onDone: () => void }) {
+  const { isMobile, isTablet } = useBreakpoint();
   const [open, setOpen] = useState(true);
   const [room, setRoom] = useState("");
   const [name, setName] = useState("");
@@ -78,7 +80,7 @@ export default function CheckInPanel({ hotelId, rooms, onDone }: { hotelId: stri
           {err ? <div style={{ marginBottom: 12, borderRadius: 9, padding: "9px 13px", fontSize: 13, background: "#FBEDE9", color: RED, border: "1px solid #EED7D0" }}>{err}</div> : null}
           {msg ? <div style={{ marginBottom: 12, borderRadius: 9, padding: "9px 13px", fontSize: 13, background: "#EAF2ED", color: GREEN, border: "1px solid #CFE5DC" }}>{msg}</div> : null}
 
-          <div style={{ display: "grid", gridTemplateColumns: "0.8fr 1.4fr 1.3fr 1.1fr auto", gap: 11, alignItems: "end" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "repeat(2, minmax(0, 1fr))" : "0.8fr 1.4fr 1.3fr 1.1fr auto", gap: 11, alignItems: "end" }}>
             <div>
               <label style={lbl}>Room</label>
               <input value={room} onChange={(e) => { setRoom(e.target.value); setErr(null); }} placeholder="e.g. 204"
@@ -94,7 +96,7 @@ export default function CheckInPanel({ hotelId, rooms, onDone }: { hotelId: stri
             </div>
             <div><label style={lbl}>Checking out</label><input type="datetime-local" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} style={fld} /></div>
             <button onClick={submit} disabled={busy || blocked || !room.trim() || !name.trim()}
-              style={{ borderRadius: 9, padding: "11px 24px", fontSize: 14, fontWeight: 600, color: "#fff", background: GREEN, border: 0, cursor: busy || blocked ? "default" : "pointer", opacity: busy || blocked || !room.trim() || !name.trim() ? .5 : 1, whiteSpace: "nowrap" }}>
+              style={{ borderRadius: 9, padding: "11px 24px", fontSize: 14, fontWeight: 600, color: "#fff", background: GREEN, border: 0, cursor: busy || blocked ? "default" : "pointer", opacity: busy || blocked || !room.trim() || !name.trim() ? .5 : 1, whiteSpace: "nowrap", gridColumn: isMobile ? "1" : isTablet ? "span 2" : "auto", marginTop: isMobile || isTablet ? 6 : 0 }}>
               {busy ? "Checking in\u2026" : "Check in"}
             </button>
           </div>

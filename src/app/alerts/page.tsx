@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { apiGet } from "@/lib/api";
 import GMSidebar from "@/components/GMSidebar";
 
@@ -19,9 +19,9 @@ export default async function AlertsPage() {
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#F6F7F4" }}>
+    <div className="alerts-container" style={{ display: "flex", minHeight: "100vh", background: "#F6F7F4" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, padding: "32px" }}>
+      <div className="alerts-content" style={{ flex: 1, minWidth: 0, padding: "32px", overflowX: "hidden" }}>
         <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Alerts</h1>
         <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>Things worth a human eye</p>
 
@@ -36,7 +36,7 @@ export default async function AlertsPage() {
               </div>
             ) : null}
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 24 }}>
+            <div className="alerts-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 24 }}>
               <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24 }}>
                 <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#6E756F", fontWeight: 600 }}>Unverified guests</h2>
                 <p style={{ fontSize: 12, color: "#9AA09A", marginTop: 2 }}>Claimed a room but no front-desk record</p>
@@ -86,6 +86,13 @@ export default async function AlertsPage() {
           </>
         )}
       </div>
+      <style>{`
+        @media (max-width: 860px) {
+          .alerts-container { flex-direction: column !important; }
+          .alerts-content { padding: 18px 16px 40px !important; }
+          .alerts-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+        }
+      `}</style>
     </div>
   );
 }

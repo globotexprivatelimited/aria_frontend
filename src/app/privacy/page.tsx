@@ -11,52 +11,61 @@ export default function PrivacyPage() {
   const [erState, erAction, erPending] = useActionState(eraseGuest, null);
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold tracking-tight">Privacy</h1>
-      <p className="mt-1 text-sm text-slate-500">
-        Guest data rights under the Digital Personal Data Protection Act.
-      </p>
-
-      <div className="mt-8 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Export a guest&rsquo;s data</h2>
-          <p className="mt-1 text-xs text-slate-400">Everything the hotel holds about them.</p>
-          <form action={exAction} className="mt-4 space-y-3">
-            <div>
-              <label className={label}>WhatsApp number</label>
-              <input name="phone" className={field} placeholder="+919876543210" />
-            </div>
-            <button className="w-full rounded-lg bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-900 disabled:opacity-50" disabled={exPending}>
-              {exPending ? "Gathering&hellip;" : "Export data"}
-            </button>
-          </form>
-          {exState?.message && (
-            <p className={"mt-3 text-sm " + (exState.ok ? "text-emerald-800" : "text-red-700")}>{exState.message}</p>
-          )}
-          {exState?.data && (
-            <pre className="mt-3 max-h-72 overflow-auto rounded-lg bg-slate-900 p-4 text-xs leading-relaxed text-slate-100">
-              {JSON.stringify(exState.data, null, 2)}
-            </pre>
-          )}
+    <div className="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-4xl">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Privacy &amp; Data Protection</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Guest data rights under the Digital Personal Data Protection Act.
+            </p>
+          </div>
+          <a href="/login" className="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
+            &larr; Return to Sign in
+          </a>
         </div>
 
-        <div className="rounded-xl border border-red-200 bg-white p-6">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-red-700">Erase a guest&rsquo;s data</h2>
-          <p className="mt-1 text-xs text-slate-400">
-            Deletes their messages and anonymises their records. This cannot be undone.
-          </p>
-          <form action={erAction} className="mt-4 space-y-3">
-            <div>
-              <label className={label}>WhatsApp number</label>
-              <input name="phone" className={field} placeholder="+919876543210" />
-            </div>
-            <button className="w-full rounded-lg bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-800 disabled:opacity-50" disabled={erPending}>
-              {erPending ? "Erasing&hellip;" : "Erase permanently"}
-            </button>
-          </form>
-          {erState && (
-            <p className={"mt-3 text-sm " + (erState.ok ? "text-emerald-800" : "text-red-700")}>{erState.message}</p>
-          )}
+        <div className="mt-8 grid gap-6 sm:grid-cols-2">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700">Export a guest&rsquo;s data</h2>
+            <p className="mt-1 text-xs text-slate-400">Everything the hotel holds about them.</p>
+            <form action={exAction} className="mt-4 space-y-3.5">
+              <div>
+                <label className={label}>WhatsApp number</label>
+                <input name="phone" className={field} placeholder="+919876543210" required />
+              </div>
+              <button className="w-full rounded-lg bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-900 disabled:opacity-50 cursor-pointer" disabled={exPending}>
+                {exPending ? "Gathering\u2026" : "Export data"}
+              </button>
+            </form>
+            {exState?.message && (
+              <p className={"mt-3.5 rounded-lg p-3 text-sm " + (exState.ok ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200")}>{exState.message}</p>
+            )}
+            {exState?.data && (
+              <pre className="mt-3.5 max-h-72 overflow-auto rounded-lg bg-slate-900 p-4 text-xs leading-relaxed text-slate-100">
+                {JSON.stringify(exState.data, null, 2)}
+              </pre>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-red-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-red-700">Erase a guest&rsquo;s data</h2>
+            <p className="mt-1 text-xs text-slate-400">
+              Deletes their messages and anonymises their records. This cannot be undone.
+            </p>
+            <form action={erAction} className="mt-4 space-y-3.5">
+              <div>
+                <label className={label}>WhatsApp number</label>
+                <input name="phone" className={field} placeholder="+919876543210" required />
+              </div>
+              <button className="w-full rounded-lg bg-red-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-800 disabled:opacity-50 cursor-pointer" disabled={erPending}>
+                {erPending ? "Erasing\u2026" : "Erase permanently"}
+              </button>
+            </form>
+            {erState && (
+              <p className={"mt-3.5 rounded-lg p-3 text-sm " + (erState.ok ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200")}>{erState.message}</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

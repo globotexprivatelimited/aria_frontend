@@ -119,9 +119,12 @@ export default function GMStaff() {
       </div>
 
       {open ? (
-        <div onClick={() => !busy && setOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(20,25,22,.4)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, zIndex: 50 }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 460, background: "#fff", borderRadius: 18, padding: 28, boxShadow: "0 20px 60px rgba(0,0,0,.2)" }}>
-            <h2 style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 600, color: "#1B2621" }}>Add staff</h2>
+        <div onClick={() => !busy && setOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(20,25,22,.45)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 16px", zIndex: 50, overflowY: "auto" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 480, maxHeight: "calc(100vh - 40px)", overflowY: "auto", background: "#fff", borderRadius: 18, padding: "24px 28px", boxShadow: "0 24px 60px rgba(0,0,0,.22)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
+              <h2 style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 600, color: "#1B2621", margin: 0 }}>Add staff</h2>
+              <button onClick={() => !busy && setOpen(false)} aria-label="Close" style={{ width: 28, height: 28, borderRadius: 8, background: "#F5F5F0", border: "1px solid #EAEAE4", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#6E756F", fontSize: 18, lineHeight: 1 }}>&times;</button>
+            </div>
             <p style={{ fontSize: 13, color: "#9AA09A", marginTop: 4 }}>Assign one or more departments. They see a live board for each.</p>
             <div style={{ marginTop: 20 }}>
               <label style={label}>Departments</label>
@@ -151,9 +154,12 @@ export default function GMStaff() {
       ) : null}
 
       {resetFor ? (
-        <div onClick={() => !resetBusy && setResetFor(null)} style={{ position: "fixed", inset: 0, background: "rgba(20,25,22,.4)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, zIndex: 50 }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 400, background: "#fff", borderRadius: 18, padding: 28, boxShadow: "0 20px 60px rgba(0,0,0,.2)" }}>
-            <h2 style={{ fontFamily: "Georgia, serif", fontSize: 20, fontWeight: 600, color: "#1B2621" }}>Reset password</h2>
+        <div onClick={() => !resetBusy && setResetFor(null)} style={{ position: "fixed", inset: 0, background: "rgba(20,25,22,.45)", backdropFilter: "blur(3px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 16px", zIndex: 50, overflowY: "auto" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 420, maxHeight: "calc(100vh - 40px)", overflowY: "auto", background: "#fff", borderRadius: 18, padding: "24px 28px", boxShadow: "0 24px 60px rgba(0,0,0,.22)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
+              <h2 style={{ fontFamily: "Georgia, serif", fontSize: 20, fontWeight: 600, color: "#1B2621", margin: 0 }}>Reset password</h2>
+              <button onClick={() => !resetBusy && setResetFor(null)} aria-label="Close" style={{ width: 28, height: 28, borderRadius: 8, background: "#F5F5F0", border: "1px solid #EAEAE4", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#6E756F", fontSize: 18, lineHeight: 1 }}>&times;</button>
+            </div>
             <p style={{ fontSize: 13, color: "#9AA09A", marginTop: 4 }}>Set a new password for <b style={{ color: "#1B2621" }}>{resetFor.name}</b>. Share it with them to sign in.</p>
             <div style={{ marginTop: 18 }}>
               <label style={label}>New password</label>

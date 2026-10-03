@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
   const field = { width: "100%", boxSizing: "border-box" as const, borderRadius: 13, border: "1.5px solid #E3DECF", background: "#FBFAF5", padding: "15px 16px", fontSize: 15, outline: "none", color: INK };
 
   return (
-    <div style={{ minHeight: "100vh", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, -apple-system, sans-serif", overflow: "hidden" }}>
+    <div style={{ minHeight: "100vh", position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, -apple-system, sans-serif", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
       {/* 16:9 background image */}
       <img src="/forgot-bg.jpg" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }} />
       <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(120deg, rgba(11,26,22,0.88) 0%, rgba(11,26,22,0.5) 55%, rgba(11,26,22,0.25) 100%)" }} />

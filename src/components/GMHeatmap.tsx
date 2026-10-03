@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useMemo } from "react";
 import type { Req } from "../app/_actions/requests";
 
@@ -29,21 +29,23 @@ export default function GMHeatmap({ week }: { week: Req[] }) {
   return (
     <div style={card}>
       <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".09em", color: "#9AA09A", fontWeight: 600, marginBottom: 16 }}>Activity heatmap &middot; 7 days &times; 24 hours</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-        {grid.map((hours, di) => (
-          <div key={di} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ width: 28, fontSize: 10, color: "#9AA09A", textAlign: "right" }}>{days[di]}</span>
-            <div style={{ display: "flex", gap: 2, flex: 1 }}>
-              {hours.map((v, hi) => (
-                <div key={hi} title={days[di] + " " + hi + ":00 - " + v + " requests"} style={{ flex: 1, aspectRatio: "1", borderRadius: 2, background: shade(v), minWidth: 0 }} />
-              ))}
+      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: 6 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 420 }}>
+          {grid.map((hours, di) => (
+            <div key={di} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 28, fontSize: 10, color: "#9AA09A", textAlign: "right" }}>{days[di]}</span>
+              <div style={{ display: "flex", gap: 2, flex: 1 }}>
+                {hours.map((v, hi) => (
+                  <div key={hi} title={days[di] + " " + hi + ":00 - " + v + " requests"} style={{ flex: 1, aspectRatio: "1", borderRadius: 3, background: shade(v), minWidth: 10 }} />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
-        <div style={{ display: "flex", gap: 6, marginTop: 2 }}>
-          <span style={{ width: 28 }} />
-          <div style={{ display: "flex", flex: 1, justifyContent: "space-between", fontSize: 9, color: "#B4B9B3", paddingRight: 4 }}>
-            <span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>11p</span>
+          ))}
+          <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
+            <span style={{ width: 28 }} />
+            <div style={{ display: "flex", flex: 1, justifyContent: "space-between", fontSize: 9, color: "#B4B9B3", paddingRight: 4 }}>
+              <span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>11p</span>
+            </div>
           </div>
         </div>
       </div>
