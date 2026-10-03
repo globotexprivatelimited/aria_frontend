@@ -18,12 +18,13 @@ import {
 } from "recharts";
 import VerifyEmailBanner from "../../components/VerifyEmailBanner";
 import GMKpiCards from "../../components/GMKpiCards";
+import { DashboardSkeleton } from "../../components/Skeleton";
 
 const GREEN = "#0F5F4C";
 const GOLD = "#B08A4F";
 const INK = "#1B2621";
 const RED = "#B23A2A";
-const DEPT_COLORS: Record<string, string> = { fb: "#0F5F4C", housekeeping: "#3A6EA5", spa: "#8E5AA8", front_desk: "#B08A4F" , dining: "#B0763A", maintenance: "#7A6A55" };
+const DEPT_COLORS: Record<string, string> = { fb: "#0F5F4C", housekeeping: "#3A6EA5", spa: "#8E5AA8", front_desk: "#B08A4F", dining: "#B0763A", maintenance: "#7A6A55" };
 
 function timeAgo(iso: string): string {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -51,12 +52,17 @@ export default function GMDashboard() {
   const [occupied, setOccupied] = useState<number | null>(null);
   const [pulse, setPulse] = useState(false);
   const [prevActive, setPrevActive] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     if (!HOTEL_ID) return;
-    const [active, since, stats] = await Promise.all([getHotelActive(HOTEL_ID), getHotelSince(HOTEL_ID, 7), getRoomStats(HOTEL_ID)]);
-    setRows((prev) => { if (active.length > prev.length && prev.length > 0) { setPulse(true); setTimeout(() => setPulse(false), 1500); } return active; });
-    setHistory(since); setOccupied(stats.occupied);
+    try {
+      const [active, since, stats] = await Promise.all([getHotelActive(HOTEL_ID), getHotelSince(HOTEL_ID, 7), getRoomStats(HOTEL_ID)]);
+      setRows((prev) => { if (active.length > prev.length && prev.length > 0) { setPulse(true); setTimeout(() => setPulse(false), 1500); } return active; });
+      setHistory(since); setOccupied(stats.occupied);
+    } finally {
+      setLoading(false);
+    }
   }, [HOTEL_ID]);
 
   useEffect(() => {
@@ -124,11 +130,11 @@ export default function GMDashboard() {
 
   const kpiTotal = Math.max(1, open + inProgress + resolvedToday + urgent);
   const kpis = [
-    { key: "guests",   label: "Guests in house", value: guests,       caption: "rooms occupied",    share: 0 },
-    { key: "open",     label: "Open requests",   value: open,         caption: "awaiting action", share: open / kpiTotal },
-    { key: "progress", label: "In progress",     value: inProgress,   caption: "being handled",   share: inProgress / kpiTotal },
-    { key: "resolved", label: "Resolved today",  value: resolvedToday, caption: "completed",      share: resolvedToday / kpiTotal },
-    { key: "urgent",   label: "Urgent",          value: urgent,       caption: "need attention",  share: urgent / kpiTotal },
+    { key: "guests", label: "Guests in house", value: guests, caption: "rooms occupied", share: 0 },
+    { key: "open", label: "Open requests", value: open, caption: "awaiting action", share: open / kpiTotal },
+    { key: "progress", label: "In progress", value: inProgress, caption: "being handled", share: inProgress / kpiTotal },
+    { key: "resolved", label: "Resolved today", value: resolvedToday, caption: "completed", share: resolvedToday / kpiTotal },
+    { key: "urgent", label: "Urgent", value: urgent, caption: "need attention", share: urgent / kpiTotal },
   ];
 
   const card = {
@@ -162,235 +168,241 @@ export default function GMDashboard() {
       <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "18px 14px 48px" : "28px 36px 64px" }}>
         <VerifyEmailBanner />
 
-        {/* Grandoria Luxury Hotel Hero Banner */}
-        <div style={{ marginBottom: 24, background: "linear-gradient(135deg, #1A3E34 0%, #2F5D50 55%, #3B7262 100%)", borderRadius: 20, padding: isMobile ? "20px 18px" : "28px 32px", color: "#FFFFFF", boxShadow: "0 12px 34px -4px rgba(47,93,80,0.22)", position: "relative", overflow: "hidden" }}>
-          {/* Ambient Glow */}
-          <div style={{ position: "absolute", top: "-40%", right: "-10%", width: 280, height: 280, borderRadius: 999, background: "radial-gradient(circle, rgba(176,138,79,0.28) 0%, transparent 70%)", pointerEvents: "none" }} />
-          
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, position: "relative", zIndex: 1 }}>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                <span style={{ color: "#E5C890", fontSize: 12, letterSpacing: 2 }}>★★★★★</span>
-                <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".18em", color: "rgba(255,255,255,0.78)", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Luxury Hotel Intelligence</span>
+        {loading ? (
+          <DashboardSkeleton />
+        ) : (
+          <>
+            {/* Grandoria Luxury Hotel Hero Banner */}
+            <div style={{ marginBottom: 24, background: "linear-gradient(135deg, #1A3E34 0%, #2F5D50 55%, #3B7262 100%)", borderRadius: 20, padding: isMobile ? "20px 18px" : "28px 32px", color: "#FFFFFF", boxShadow: "0 12px 34px -4px rgba(47,93,80,0.22)", position: "relative", overflow: "hidden" }}>
+              {/* Ambient Glow */}
+              <div style={{ position: "absolute", top: "-40%", right: "-10%", width: 280, height: 280, borderRadius: 999, background: "radial-gradient(circle, rgba(176,138,79,0.28) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16, position: "relative", zIndex: 1 }}>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <span style={{ color: "#E5C890", fontSize: 12, letterSpacing: 2 }}>★★★★★</span>
+                    <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".18em", color: "rgba(255,255,255,0.78)", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Luxury Hotel Intelligence</span>
+                  </div>
+                  <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 34, fontWeight: 700, margin: 0, letterSpacing: "-0.01em", color: "#FFFFFF" }}>{hotelName}</h1>
+                  <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "rgba(255,255,255,0.85)", maxWidth: 540, fontWeight: 300 }}>
+                    Real-time guest operations, in-house concierge velocity, and room service command.
+                  </p>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "flex-start" : "flex-end", gap: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#EBF3F0", background: "rgba(255,255,255,0.14)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.22)", borderRadius: 999, padding: "7px 16px" }}>
+                    <span style={{ width: 8, height: 8, borderRadius: 999, background: "#2ECC71", boxShadow: "0 0 0 3px rgba(46,204,113,.3)" }} />
+                    Live &middot; Synced every 4s
+                  </div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.78)", fontFamily: "'Josefin Sans', sans-serif", letterSpacing: ".06em" }}>
+                    {new Date().toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric", year: "numeric" })}
+                  </div>
+                </div>
               </div>
-              <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 34, fontWeight: 700, margin: 0, letterSpacing: "-0.01em", color: "#FFFFFF" }}>{hotelName || "Grandoria Resort"}</h1>
-              <p style={{ margin: "6px 0 0", fontSize: 13.5, color: "rgba(255,255,255,0.85)", maxWidth: 540, fontWeight: 300 }}>
-                Real-time guest operations, in-house concierge velocity, and room service command.
-              </p>
-            </div>
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "flex-start" : "flex-end", gap: 10 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#EBF3F0", background: "rgba(255,255,255,0.14)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.22)", borderRadius: 999, padding: "7px 16px" }}>
-                <span style={{ width: 8, height: 8, borderRadius: 999, background: "#2ECC71", boxShadow: "0 0 0 3px rgba(46,204,113,.3)" }} />
-                Live &middot; Synced every 4s
-              </div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.78)", fontFamily: "'Josefin Sans', sans-serif", letterSpacing: ".06em" }}>
-                {new Date().toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric", year: "numeric" })}
-              </div>
-            </div>
-          </div>
-
-          {/* Grandoria Quick Operations Strip */}
-          <div style={{ marginTop: 22, paddingTop: 18, borderTop: "1px solid rgba(255,255,255,0.15)", display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#E5C890", fontWeight: 700, marginRight: 4 }}>Quick Actions:</span>
-            <Link href="/gm/reception" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.18)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-              <span>🏨</span> Reception &amp; Rooms
-            </Link>
-            <Link href="/gm/requests" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: open > 0 ? "rgba(178,58,42,0.35)" : "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-              <span>📋</span> Requests {open > 0 ? <span style={{ background: "#B23A2A", borderRadius: 999, padding: "1px 7px", fontSize: 11, marginLeft: 2 }}>{open} open</span> : null}
-            </Link>
-            <Link href="/gm/guests" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-              <span>👥</span> Guests ({guests} in house)
-            </Link>
-            <Link href="/gm/departments" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-              <span>🛎️</span> Departments
-            </Link>
-            <Link href="/gm/revenue" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
-              <span>💰</span> Revenue Folio
-            </Link>
-          </div>
-        </div>
-
-        {/* Section 1: Executive KPI Tiles */}
-        <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-          <div>
-            <div style={cardSectionTag}>OPERATIONAL OVERVIEW</div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Executive Indicators</h2>
-          </div>
-          <div style={{ fontSize: 11.5, color: "#7B8782" }}>Real-time live hotel stats</div>
-        </div>
-
-        <div style={{ marginBottom: 24, borderRadius: 18, transition: "box-shadow .4s", boxShadow: pulse ? "0 0 0 3px rgba(46,204,113,.25)" : "none" }}>
-          <GMKpiCards items={kpis} columns={isMobile ? "repeat(2, minmax(0, 1fr))" : isTablet ? "repeat(3, minmax(0, 1fr))" : "repeat(5, minmax(0, 1fr))"} />
-        </div>
-
-        {/* Section 2: Area Chart + Donut */}
-        <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-          <div>
-            <div style={cardSectionTag}>SERVICE VELOCITY</div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>7-Day Trajectory &amp; Departmental Mix</h2>
-          </div>
-          <div style={{ fontSize: 11.5, color: "#7B8782" }}>Weekly volume trends</div>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.6fr minmax(0, 1fr)", gap: 16, marginBottom: 24 }}>
-          <div style={card}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-              <div style={cardTitle}>Requests &middot; last 7 days</div>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: trend >= 0 ? GREEN : RED, fontWeight: 600 }}>
-                {trend >= 0 ? "\u25B2" : "\u25BC"} {Math.abs(trend)}% <span style={{ color: "#B4B9B3", fontWeight: 400 }}>vs yesterday</span>
+              {/* Grandoria Quick Operations Strip */}
+              <div style={{ marginTop: 22, paddingTop: 18, borderTop: "1px solid rgba(255,255,255,0.15)", display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                <span style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#E5C890", fontWeight: 700, marginRight: 4 }}>Quick Actions:</span>
+                <Link href="/gm/reception" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.18)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
+                  <span>🏨</span> Reception &amp; Rooms
+                </Link>
+                <Link href="/gm/requests" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: open > 0 ? "rgba(178,58,42,0.35)" : "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
+                  <span>📋</span> Requests {open > 0 ? <span style={{ background: "#B23A2A", borderRadius: 999, padding: "1px 7px", fontSize: 11, marginLeft: 2 }}>{open} open</span> : null}
+                </Link>
+                <Link href="/gm/guests" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
+                  <span>👥</span> Guests ({guests} in house)
+                </Link>
+                <Link href="/gm/departments" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
+                  <span>🛎️</span> Departments
+                </Link>
+                <Link href="/gm/revenue" style={{ display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 999, padding: "7px 16px", fontSize: 12.5, fontWeight: 600, background: "rgba(255,255,255,0.12)", color: "#FFFFFF", textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", transition: "background .2s" }}>
+                  <span>💰</span> Revenue Folio
+                </Link>
               </div>
             </div>
-            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, fontWeight: 700, color: INK, marginBottom: 8 }}>{weekTotal} <span style={{ fontSize: 13, color: "#8A9490", fontFamily: "system-ui" }}>total this week</span></div>
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={daySeries} margin={{ top: 6, right: 8, left: -16, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="gTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={GREEN} stopOpacity={0.32} />
-                    <stop offset="100%" stopColor={GREEN} stopOpacity={0.02} />
-                  </linearGradient>
-                  <linearGradient id="gRes" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={GOLD} stopOpacity={0.24} />
-                    <stop offset="100%" stopColor={GOLD} stopOpacity={0.02} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#EBF0ED" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#8A9490" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#8A9490" }} axisLine={false} tickLine={false} allowDecimals={false} width={28} />
-                <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #E2EBE7", fontSize: 12, boxShadow: "0 8px 24px rgba(47,93,80,.08)" }} />
-                <Area type="monotone" dataKey="total" name="Total" stroke={GREEN} strokeWidth={2.5} fill="url(#gTotal)" />
-                <Area type="monotone" dataKey="resolved" name="Resolved" stroke={GOLD} strokeWidth={2} fill="url(#gRes)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
 
-          <div style={card}>
-            <div style={cardTitle}>By department &middot; this week</div>
-            {deptData.length === 0 ? (
-              <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "#B4B9B3", fontSize: 13 }}>No data yet</div>
-            ) : (
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <ResponsiveContainer width="58%" height={200}>
-                  <PieChart>
-                    <Pie data={deptData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={48} outerRadius={78} paddingAngle={3} stroke="none">
-                      {deptData.map((d) => <Cell key={d.dept} fill={d.color} />)}
-                    </Pie>
-                    <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #E2EBE7", fontSize: 12 }} />
-                  </PieChart>
+            {/* Section 1: Executive KPI Tiles */}
+            <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+              <div>
+                <div style={cardSectionTag}>OPERATIONAL OVERVIEW</div>
+                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Executive Indicators</h2>
+              </div>
+              <div style={{ fontSize: 11.5, color: "#7B8782" }}>Real-time live hotel stats</div>
+            </div>
+
+            <div style={{ marginBottom: 24, borderRadius: 18, transition: "box-shadow .4s", boxShadow: pulse ? "0 0 0 3px rgba(46,204,113,.25)" : "none" }}>
+              <GMKpiCards items={kpis} columns={isMobile ? "repeat(2, minmax(0, 1fr))" : isTablet ? "repeat(3, minmax(0, 1fr))" : "repeat(5, minmax(0, 1fr))"} />
+            </div>
+
+            {/* Section 2: Area Chart + Donut */}
+            <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+              <div>
+                <div style={cardSectionTag}>SERVICE VELOCITY</div>
+                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>7-Day Trajectory &amp; Departmental Mix</h2>
+              </div>
+              <div style={{ fontSize: 11.5, color: "#7B8782" }}>Weekly volume trends</div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.6fr minmax(0, 1fr)", gap: 16, marginBottom: 24 }}>
+              <div style={card}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                  <div style={cardTitle}>Requests &middot; last 7 days</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: trend >= 0 ? GREEN : RED, fontWeight: 600 }}>
+                    {trend >= 0 ? "\u25B2" : "\u25BC"} {Math.abs(trend)}% <span style={{ color: "#B4B9B3", fontWeight: 400 }}>vs yesterday</span>
+                  </div>
+                </div>
+                <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28, fontWeight: 700, color: INK, marginBottom: 8 }}>{weekTotal} <span style={{ fontSize: 13, color: "#8A9490", fontFamily: "system-ui" }}>total this week</span></div>
+                <ResponsiveContainer width="100%" height={200}>
+                  <AreaChart data={daySeries} margin={{ top: 6, right: 8, left: -16, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="gTotal" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={GREEN} stopOpacity={0.32} />
+                        <stop offset="100%" stopColor={GREEN} stopOpacity={0.02} />
+                      </linearGradient>
+                      <linearGradient id="gRes" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={GOLD} stopOpacity={0.24} />
+                        <stop offset="100%" stopColor={GOLD} stopOpacity={0.02} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#EBF0ED" vertical={false} />
+                    <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#8A9490" }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: "#8A9490" }} axisLine={false} tickLine={false} allowDecimals={false} width={28} />
+                    <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #E2EBE7", fontSize: 12, boxShadow: "0 8px 24px rgba(47,93,80,.08)" }} />
+                    <Area type="monotone" dataKey="total" name="Total" stroke={GREEN} strokeWidth={2.5} fill="url(#gTotal)" />
+                    <Area type="monotone" dataKey="resolved" name="Resolved" stroke={GOLD} strokeWidth={2} fill="url(#gRes)" />
+                  </AreaChart>
                 </ResponsiveContainer>
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-                  {deptData.map((d) => (
-                    <div key={d.dept} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
-                      <span style={{ width: 10, height: 10, borderRadius: 3, background: d.color, flexShrink: 0 }} />
-                      <span style={{ color: INK, flex: 1, fontWeight: 500 }}>{d.name}</span>
-                      <span style={{ color: "#7B8782", fontWeight: 700 }}>{d.value}</span>
+              </div>
+
+              <div style={card}>
+                <div style={cardTitle}>By department &middot; this week</div>
+                {deptData.length === 0 ? (
+                  <div style={{ height: 200, display: "flex", alignItems: "center", justifyContent: "center", color: "#B4B9B3", fontSize: 13 }}>No data yet</div>
+                ) : (
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <ResponsiveContainer width="58%" height={200}>
+                      <PieChart>
+                        <Pie data={deptData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={48} outerRadius={78} paddingAngle={3} stroke="none">
+                          {deptData.map((d) => <Cell key={d.dept} fill={d.color} />)}
+                        </Pie>
+                        <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #E2EBE7", fontSize: 12 }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
+                      {deptData.map((d) => (
+                        <div key={d.dept} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
+                          <span style={{ width: 10, height: 10, borderRadius: 3, background: d.color, flexShrink: 0 }} />
+                          <span style={{ color: INK, flex: 1, fontWeight: 500 }}>{d.name}</span>
+                          <span style={{ color: "#7B8782", fontWeight: 700 }}>{d.value}</span>
+                        </div>
+                      ))}
                     </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Section 3: Performance Rings & Staff Leaderboard */}
+            <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+              <div>
+                <div style={cardSectionTag}>QUALITY &amp; BENCHMARKS</div>
+                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Resolution Ratios &amp; Department Standings</h2>
+              </div>
+              <div style={{ fontSize: 11.5, color: "#7B8782" }}>Team efficiency</div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.6fr minmax(0, 1fr)", gap: 16, marginBottom: 24 }}>
+              <GMRings active={rows} week={history} />
+              <GMLeaderboard week={history} />
+            </div>
+
+            {/* Section 4: Department Performance */}
+            <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+              <div>
+                <div style={cardSectionTag}>HOTEL DEPARTMENTS</div>
+                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Service Center Health</h2>
+              </div>
+              <div style={{ fontSize: 11.5, color: "#7B8782" }}>Live load vs 7-day sparklines</div>
+            </div>
+
+            <div style={{ marginBottom: 24 }}>
+              <GMDeptCards active={rows} week={history} />
+            </div>
+
+            {/* Section 5: Floor Grid & Heatmap */}
+            <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+              <div>
+                <div style={cardSectionTag}>PROPERTY MAPPING</div>
+                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Room Floor Grid &amp; Weekly Heatmap</h2>
+              </div>
+              <div style={{ fontSize: 11.5, color: "#7B8782" }}>Room activity status</div>
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <GMFloorGrid active={rows} />
+            </div>
+
+            <div style={{ marginBottom: 24 }}>
+              <GMHeatmap week={history} />
+            </div>
+
+            {/* Section 6: Peak Hours & Live Activity Stream */}
+            <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+              <div>
+                <div style={cardSectionTag}>REAL-TIME CONCIERGE PULSE</div>
+                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Peak Traffic &amp; Live Feed</h2>
+              </div>
+              <div style={{ fontSize: 11.5, color: "#7B8782" }}>Click request to view conversation</div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.6fr minmax(0, 1fr)", gap: 16 }}>
+              <div style={card}>
+                <div style={cardTitle}>Peak hours &middot; this week</div>
+                <ResponsiveContainer width="100%" height={190}>
+                  <BarChart data={hourData} margin={{ top: 6, right: 8, left: -16, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#EBF0ED" vertical={false} />
+                    <XAxis dataKey="label" tick={{ fontSize: 9.5, fill: "#8A9490" }} axisLine={false} tickLine={false} interval={2} />
+                    <YAxis tick={{ fontSize: 11, fill: "#8A9490" }} axisLine={false} tickLine={false} allowDecimals={false} width={28} />
+                    <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #E2EBE7", fontSize: 12 }} cursor={{ fill: "rgba(47,93,80,.05)" }} />
+                    <Bar dataKey="count" name="Requests" fill={GREEN} radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div style={{ ...card, display: "flex", flexDirection: "column" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                  <div style={{ ...cardTitle, marginBottom: 0 }}>Live guest activity</div>
+                  <span style={{ fontSize: 11, color: GREEN, fontWeight: 700, background: GREEN + "14", padding: "3px 9px", borderRadius: 999 }}>{rows.length} active</span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, overflowY: "auto", maxHeight: 290, WebkitOverflowScrolling: "touch" }}>
+                  {feed.length === 0 ? (
+                    <div style={{ color: "#A0ABA6", fontSize: 13, textAlign: "center", padding: "40px 0" }}>
+                      <div style={{ fontSize: 24, marginBottom: 6, opacity: 0.5 }}>🛎️</div>
+                      All quiet &mdash; no active requests
+                    </div>
+                  ) : feed.map((r) => (
+                    <Link
+                      key={r.id}
+                      href={r.guestPhone ? `/gm/conversations/${encodeURIComponent(r.guestPhone)}` : "/gm/requests"}
+                      style={{ display: "flex", gap: 11, alignItems: "flex-start", padding: "10px 12px", borderRadius: 12, textDecoration: "none", background: "#FAFBF9", border: "1px solid #EBF0ED", transition: "background .15s, border-color .15s" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = "#F1F6F4"; e.currentTarget.style.borderColor = "#D0DFDA"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = "#FAFBF9"; e.currentTarget.style.borderColor = "#EBF0ED"; }}
+                    >
+                      <span style={{ width: 8, height: 8, borderRadius: 999, background: DEPT_COLORS[r.department] ?? GOLD, marginTop: 5, flexShrink: 0 }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13, color: INK, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.requestDetail}</div>
+                        <div style={{ fontSize: 11, color: "#7B8782", marginTop: 2 }}>
+                          {r.roomNumber ? "Room " + r.roomNumber + " \u00B7 " : ""}{deptLabel(r.department)} &middot; {timeAgo(r.createdAt)}
+                        </div>
+                      </div>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: statusColor(r.status), background: statusColor(r.status) + "18", borderRadius: 6, padding: "3px 8px", whiteSpace: "nowrap" }}>{statusLabel(r.status)}</span>
+                    </Link>
                   ))}
                 </div>
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Section 3: Performance Rings & Staff Leaderboard */}
-        <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-          <div>
-            <div style={cardSectionTag}>QUALITY &amp; BENCHMARKS</div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Resolution Ratios &amp; Department Standings</h2>
-          </div>
-          <div style={{ fontSize: 11.5, color: "#7B8782" }}>Team efficiency</div>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.6fr minmax(0, 1fr)", gap: 16, marginBottom: 24 }}>
-          <GMRings active={rows} week={history} />
-          <GMLeaderboard week={history} />
-        </div>
-
-        {/* Section 4: Department Performance */}
-        <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-          <div>
-            <div style={cardSectionTag}>HOTEL DEPARTMENTS</div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Service Center Health</h2>
-          </div>
-          <div style={{ fontSize: 11.5, color: "#7B8782" }}>Live load vs 7-day sparklines</div>
-        </div>
-
-        <div style={{ marginBottom: 24 }}>
-          <GMDeptCards active={rows} week={history} />
-        </div>
-
-        {/* Section 5: Floor Grid & Heatmap */}
-        <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-          <div>
-            <div style={cardSectionTag}>PROPERTY MAPPING</div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Room Floor Grid &amp; Weekly Heatmap</h2>
-          </div>
-          <div style={{ fontSize: 11.5, color: "#7B8782" }}>Room activity status</div>
-        </div>
-
-        <div style={{ marginBottom: 20 }}>
-          <GMFloorGrid active={rows} />
-        </div>
-
-        <div style={{ marginBottom: 24 }}>
-          <GMHeatmap week={history} />
-        </div>
-
-        {/* Section 6: Peak Hours & Live Activity Stream */}
-        <div style={{ marginBottom: 12, display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-          <div>
-            <div style={cardSectionTag}>REAL-TIME CONCIERGE PULSE</div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 20, fontWeight: 700, color: "#0D1F1A", margin: 0 }}>Peak Traffic &amp; Live Feed</h2>
-          </div>
-          <div style={{ fontSize: 11.5, color: "#7B8782" }}>Click request to view conversation</div>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1.6fr minmax(0, 1fr)", gap: 16 }}>
-          <div style={card}>
-            <div style={cardTitle}>Peak hours &middot; this week</div>
-            <ResponsiveContainer width="100%" height={190}>
-              <BarChart data={hourData} margin={{ top: 6, right: 8, left: -16, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#EBF0ED" vertical={false} />
-                <XAxis dataKey="label" tick={{ fontSize: 9.5, fill: "#8A9490" }} axisLine={false} tickLine={false} interval={2} />
-                <YAxis tick={{ fontSize: 11, fill: "#8A9490" }} axisLine={false} tickLine={false} allowDecimals={false} width={28} />
-                <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #E2EBE7", fontSize: 12 }} cursor={{ fill: "rgba(47,93,80,.05)" }} />
-                <Bar dataKey="count" name="Requests" fill={GREEN} radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div style={{ ...card, display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-              <div style={{ ...cardTitle, marginBottom: 0 }}>Live guest activity</div>
-              <span style={{ fontSize: 11, color: GREEN, fontWeight: 700, background: GREEN + "14", padding: "3px 9px", borderRadius: 999 }}>{rows.length} active</span>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, overflowY: "auto", maxHeight: 290, WebkitOverflowScrolling: "touch" }}>
-              {feed.length === 0 ? (
-                <div style={{ color: "#A0ABA6", fontSize: 13, textAlign: "center", padding: "40px 0" }}>
-                  <div style={{ fontSize: 24, marginBottom: 6, opacity: 0.5 }}>🛎️</div>
-                  All quiet &mdash; no active requests
-                </div>
-              ) : feed.map((r) => (
-                <Link
-                  key={r.id}
-                  href={r.guestPhone ? `/gm/conversations/${encodeURIComponent(r.guestPhone)}` : "/gm/requests"}
-                  style={{ display: "flex", gap: 11, alignItems: "flex-start", padding: "10px 12px", borderRadius: 12, textDecoration: "none", background: "#FAFBF9", border: "1px solid #EBF0ED", transition: "background .15s, border-color .15s" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "#F1F6F4"; e.currentTarget.style.borderColor = "#D0DFDA"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "#FAFBF9"; e.currentTarget.style.borderColor = "#EBF0ED"; }}
-                >
-                  <span style={{ width: 8, height: 8, borderRadius: 999, background: DEPT_COLORS[r.department] ?? GOLD, marginTop: 5, flexShrink: 0 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, color: INK, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.requestDetail}</div>
-                    <div style={{ fontSize: 11, color: "#7B8782", marginTop: 2 }}>
-                      {r.roomNumber ? "Room " + r.roomNumber + " \u00B7 " : ""}{deptLabel(r.department)} &middot; {timeAgo(r.createdAt)}
-                    </div>
-                  </div>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: statusColor(r.status), background: statusColor(r.status) + "18", borderRadius: 6, padding: "3px 8px", whiteSpace: "nowrap" }}>{statusLabel(r.status)}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );

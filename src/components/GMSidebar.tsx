@@ -57,7 +57,7 @@ export default function GMSidebar() {
       {!iconsOnly ? (
         <div style={{ margin: "2px 14px 12px", padding: "10px 14px", borderRadius: 12, background: "linear-gradient(180deg, #F8FAF9 0%, #F1F6F4 100%)", border: "1px solid #E2EBE7" }}>
           <div style={{ fontSize: 9.5, textTransform: "uppercase", letterSpacing: ".12em", color: "#8A9792", marginBottom: 3, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 700 }}>Active Property</div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#0D1F1A", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontFamily: "'Poppins', sans-serif" }}>{hotelName || "Grandoria Resort"}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "#0D1F1A", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontFamily: "'Poppins', sans-serif" }}>{hotelName}</div>
         </div>
       ) : null}
 

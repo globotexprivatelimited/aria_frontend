@@ -101,9 +101,40 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Grandoria Luxury Shimmer Skeleton Loaders */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #EAEFEA 25%, #F4F8F5 50%, #EAEFEA 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+.skeleton-dark {
+  background: linear-gradient(90deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+.skeleton-gold {
+  background: linear-gradient(90deg, #F5EEE2 25%, #FAF5EB 50%, #F5EEE2 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
+}
+
 /* Accessible focus ring */
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 2px solid #0F5F4C;
+  outline: 2px solid #2F5D50;
   outline-offset: 2px;
 }
 
@@ -115,3 +146,4 @@ img, svg, video, canvas { max-width: 100%; }
   [style*="display: grid"] > *, [style*="display:grid"] > * { min-width: 0; }
   [style*="display: flex"] > *, [style*="display:flex"] > * { min-width: 0; }
 }
+
