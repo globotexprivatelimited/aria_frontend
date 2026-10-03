@@ -10,25 +10,25 @@ import { getConversation, replyToGuest, type Thread, type ThreadMessage } from "
 import { getHotelActive, type Req } from "@/app/_actions/requests";
 import { checkOutRoom } from "@/app/gm/reception/rooms-actions";
 
-/* ---------- palette: the GM console's existing cream / ink / emerald ---------- */
+/* ---------- palette: Grandoria luxury resort emerald / gold / ink ---------- */
 const C = {
-  bg: "#F6F7F4",
+  bg: "#F8FAF9",
   panel: "#FFFFFF",
-  ink: "#1B2621",
-  body: "#3A413B",
-  muted: "#6E756F",
-  faint: "#9AA09A",
-  line: "#EAEAE4",
-  lineSoft: "#F4F4F1",
-  emerald: "#0F5F4C",
-  emeraldSoft: "#E8F1ED",
-  amber: "#9A6B12",
-  amberSoft: "#FFF4DB",
-  red: "#9B2C2C",
-  redSoft: "#FDECEC",
-  neutralSoft: "#EEF0EC",
+  ink: "#0D1F1A",
+  body: "#4A5D56",
+  muted: "#72837C",
+  faint: "#8A9792",
+  line: "#E2EBE7",
+  lineSoft: "#F1F6F4",
+  emerald: "#2F5D50",
+  emeraldSoft: "#EBF3F0",
+  amber: "#B08A4F",
+  amberSoft: "#FDF7E7",
+  red: "#B23A2A",
+  redSoft: "#FBEDE9",
+  neutralSoft: "#F1F6F4",
 };
-const serif = "Georgia, 'Times New Roman', serif";
+const serif = "'Playfair Display', Georgia, serif";
 const REPLY_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 /* ---------- small formatting helpers ---------- */

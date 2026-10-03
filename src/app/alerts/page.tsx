@@ -19,65 +19,73 @@ export default async function AlertsPage() {
   }
 
   return (
-    <div className="alerts-container" style={{ display: "flex", minHeight: "100vh", background: "#F6F7F4" }}>
+    <div className="alerts-container" style={{ display: "flex", minHeight: "100vh", background: "linear-gradient(180deg,#F8FAF9 0%,#F1F6F4 100%)" }}>
       <GMSidebar />
-      <div className="alerts-content" style={{ flex: 1, minWidth: 0, padding: "32px", overflowX: "hidden" }}>
-        <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Alerts</h1>
-        <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>Things worth a human eye</p>
+      <div className="alerts-content" style={{ flex: 1, minWidth: 0, padding: "28px 36px 64px", overflowX: "hidden" }}>
+        
+        {/* Grandoria Header */}
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+            <span style={{ color: "#B08A4F", fontSize: 11, letterSpacing: 2 }}>★★★★★</span>
+            <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Attention Queue &middot; Exceptions</span>
+          </div>
+          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 32, fontWeight: 700, color: "#0D1F1A", margin: 0, letterSpacing: "-0.01em" }}>Alerts &amp; Operational Flags</h1>
+          <p style={{ fontSize: 13.5, color: "#72837C", marginTop: 4, fontFamily: "'Poppins', sans-serif" }}>Critical signals, unresolved exceptions, and urgent inquiries requiring GM intervention.</p>
+        </div>
 
         {error || !data ? (
-          <div style={{ marginTop: 20, borderRadius: 12, border: "1px solid #F0D5CD", background: "#FBEDE9", padding: 20, fontSize: 14, color: "#B23A2A" }}>{error ?? "No data."}</div>
+          <div style={{ marginTop: 20, borderRadius: 14, border: "1px solid #F0C1B8", background: "#FBEDE9", padding: 20, fontSize: 14, color: "#B23A2A" }}>{error ?? "No data available."}</div>
         ) : (
           <>
             {data.emergencyMode ? (
-              <div style={{ marginTop: 20, borderRadius: 12, border: "1px solid #E7B9A8", background: "#FBEDE9", padding: 20 }}>
-                <div style={{ fontWeight: 700, color: "#B23A2A" }}>Emergency mode is ON</div>
-                <p style={{ fontSize: 14, color: "#B23A2A", marginTop: 4 }}>Every guest message is receiving the emergency notice. Aria is not answering normally.</p>
+              <div style={{ marginTop: 20, borderRadius: 14, border: "1px solid #F0C1B8", background: "#FBEDE9", padding: 20, boxShadow: "0 4px 16px rgba(178,58,42,.12)" }}>
+                <div style={{ fontWeight: 700, color: "#B23A2A", fontSize: 16 }}>⚠️ Emergency mode is ACTIVE</div>
+                <p style={{ fontSize: 13.5, color: "#B23A2A", marginTop: 4 }}>Every guest communication is receiving the automated emergency notice. Aria standard concierge answers are paused.</p>
               </div>
             ) : null}
 
             <div className="alerts-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 24 }}>
-              <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24 }}>
-                <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#6E756F", fontWeight: 600 }}>Unverified guests</h2>
-                <p style={{ fontSize: 12, color: "#9AA09A", marginTop: 2 }}>Claimed a room but no front-desk record</p>
+              <div style={{ background: "#FFFFFF", border: "1px solid #E2EBE7", borderRadius: 18, padding: 24, boxShadow: "0 4px 20px -2px rgba(47,93,80,0.05)" }}>
+                <h2 style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".12em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Unverified Guests</h2>
+                <p style={{ fontSize: 12, color: "#8A9792", marginTop: 2 }}>Claimed a suite but no verified check-in folio found</p>
                 <div style={{ marginTop: 16 }}>
                   {data.unverifiedActiveGuests.length === 0 ? (
-                    <div style={{ fontSize: 14, color: "#9AA09A" }}>All in-house guests are verified.</div>
+                    <div style={{ fontSize: 13.5, color: "#8A9792" }}>All active guest numbers are formally registered.</div>
                   ) : data.unverifiedActiveGuests.map((g, i) => (
-                    <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #F4F4F1", fontSize: 14 }}>
-                      <span style={{ color: "#3A413B" }}><b style={{ color: "#1B2621" }}>Room {g.room ?? "?"}</b> &middot; {g.name ?? "Unknown"}</span>
-                      <Link href={"/conversations/" + encodeURIComponent(g.phone)} style={{ color: "#0F5F4C", textDecoration: "none", fontWeight: 500 }}>View</Link>
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F1F6F4", fontSize: 13.5 }}>
+                      <span style={{ color: "#4A5D56" }}><b style={{ color: "#0D1F1A", fontFamily: "'Josefin Sans', sans-serif" }}>Suite {g.room ?? "?"}</b> &middot; {g.name ?? "Unknown"}</span>
+                      <Link href={"/gm/conversations/" + encodeURIComponent(g.phone)} style={{ color: "#2F5D50", textDecoration: "none", fontWeight: 600, background: "#EBF3F0", padding: "4px 12px", borderRadius: 999, fontSize: 12 }}>View Chat</Link>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div style={{ background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24 }}>
-                <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#6E756F", fontWeight: 600 }}>Flagged sessions</h2>
-                <p style={{ fontSize: 12, color: "#9AA09A", marginTop: 2 }}>Quiet a long time &ndash; may have checked out</p>
+              <div style={{ background: "#FFFFFF", border: "1px solid #E2EBE7", borderRadius: 18, padding: 24, boxShadow: "0 4px 20px -2px rgba(47,93,80,0.05)" }}>
+                <h2 style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".12em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Flagged Conversations</h2>
+                <p style={{ fontSize: 12, color: "#8A9792", marginTop: 2 }}>Inactive for an extended period &ndash; verify checkout</p>
                 <div style={{ marginTop: 16, maxHeight: 360, overflowY: "auto" }}>
                   {data.flaggedSessions.length === 0 ? (
-                    <div style={{ fontSize: 14, color: "#9AA09A" }}>Nothing flagged.</div>
+                    <div style={{ fontSize: 13.5, color: "#8A9792" }}>No dormant conversations flagged.</div>
                   ) : data.flaggedSessions.map((s, i) => (
-                    <Link key={i} href={"/conversations/" + encodeURIComponent(s.phone)} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #F4F4F1", fontSize: 14, textDecoration: "none" }}>
-                      <span style={{ fontWeight: 500, color: "#1B2621" }}>Room {s.room ?? "?"}</span>
-                      <span style={{ color: "#9AA09A", fontSize: 13 }}>{s.lastMessageAt ? new Date(s.lastMessageAt).toLocaleDateString() : "\u2014"}</span>
+                    <Link key={i} href={"/gm/conversations/" + encodeURIComponent(s.phone)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #F1F6F4", fontSize: 13.5, textDecoration: "none", transition: "background .15s" }}>
+                      <span style={{ fontWeight: 600, color: "#0D1F1A", fontFamily: "'Josefin Sans', sans-serif" }}>Suite {s.room ?? "?"}</span>
+                      <span style={{ color: "#8A9792", fontSize: 12.5 }}>{s.lastMessageAt ? new Date(s.lastMessageAt).toLocaleDateString() : "\u2014"}</span>
                     </Link>
                   ))}
                 </div>
               </div>
 
-              <div style={{ gridColumn: "1 / -1", background: "#fff", border: "1px solid #EAEAE4", borderRadius: 16, padding: 24 }}>
-                <h2 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: ".06em", color: "#6E756F", fontWeight: 600 }}>Urgent requests</h2>
-                <p style={{ fontSize: 12, color: "#9AA09A", marginTop: 2 }}>Marked urgent and still open</p>
+              <div style={{ gridColumn: "1 / -1", background: "#FFFFFF", border: "1px solid #E2EBE7", borderRadius: 18, padding: 24, boxShadow: "0 4px 20px -2px rgba(47,93,80,0.05)" }}>
+                <h2 style={{ fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".12em", color: "#B23A2A", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Urgent Guest Requests</h2>
+                <p style={{ fontSize: 12, color: "#8A9792", marginTop: 2 }}>Flagged urgent priority and currently pending fulfillment</p>
                 <div style={{ marginTop: 16 }}>
                   {data.urgentRequests.length === 0 ? (
-                    <div style={{ fontSize: 14, color: "#9AA09A" }}>Nothing urgent right now.</div>
+                    <div style={{ fontSize: 13.5, color: "#8A9792" }}>Zero pending urgent requests across all departments.</div>
                   ) : data.urgentRequests.map((r) => (
-                    <div key={r.id} style={{ padding: "10px 0", borderBottom: "1px solid #F4F4F1", fontSize: 14 }}>
-                      <span style={{ fontWeight: 600, color: "#1B2621" }}>Room {r.room ?? "?"}</span>
-                      <span style={{ marginLeft: 8, color: "#6E756F", textTransform: "capitalize" }}>{r.department ?? r.intent ?? "unassigned"}</span>
-                      {r.detail ? <div style={{ marginTop: 2, color: "#9AA09A" }}>{r.detail}</div> : null}
+                    <div key={r.id} style={{ padding: "12px 0", borderBottom: "1px solid #F1F6F4", fontSize: 13.5 }}>
+                      <span style={{ fontWeight: 700, color: "#0D1F1A", fontFamily: "'Josefin Sans', sans-serif" }}>Suite {r.room ?? "?"}</span>
+                      <span style={{ marginLeft: 8, color: "#B08A4F", textTransform: "capitalize", fontWeight: 600 }}>{r.department ?? r.intent ?? "Concierge"}</span>
+                      {r.detail ? <div style={{ marginTop: 3, color: "#4A5D56" }}>{r.detail}</div> : null}
                     </div>
                   ))}
                 </div>
@@ -89,7 +97,7 @@ export default async function AlertsPage() {
       <style>{`
         @media (max-width: 860px) {
           .alerts-container { flex-direction: column !important; }
-          .alerts-content { padding: 18px 16px 40px !important; }
+          .alerts-content { padding: 18px 14px 40px !important; }
           .alerts-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
         }
       `}</style>

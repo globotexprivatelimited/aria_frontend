@@ -55,14 +55,26 @@ export default function GMDepartments() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "#F6F7F4" }}>
+    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F8FAF9 0%,#F1F6F4 100%)" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "32px" }}>
-        <h1 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 600, color: "#1B2621" }}>Departments</h1>
-        <p style={{ fontSize: 14, color: "#6E756F", marginTop: 2 }}>
-          <span style={{ display: "inline-block", height: 8, width: 8, borderRadius: 999, marginRight: 6, background: connected ? "#34D399" : "#F0B429" }} />
-          {connected ? "Live" : "Connecting..."} &middot; a live overview of every department
-        </p>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "18px 14px 48px" : "28px 36px 64px" }}>
+        
+        {/* Grandoria Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 14, marginBottom: 24 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+              <span style={{ color: "#B08A4F", fontSize: 11, letterSpacing: 2 }}>★★★★★</span>
+              <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Operations &middot; Divisions</span>
+            </div>
+            <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 32, fontWeight: 700, color: "#0D1F1A", margin: 0, letterSpacing: "-0.01em" }}>
+              {hotelName || "Grandoria Resort"} &middot; Departments
+            </h1>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#4A5D56", background: "#FFFFFF", border: "1px solid #E2EBE7", borderRadius: 999, padding: "7px 16px", boxShadow: "0 2px 8px rgba(47,93,80,.05)" }}>
+            <span style={{ width: 8, height: 8, borderRadius: 999, background: connected ? "#2ECC71" : "#F0B429", boxShadow: connected ? "0 0 0 3px rgba(46,204,113,.2)" : "none" }} />
+            {connected ? "Live &middot; Synced" : "Connecting..."}
+          </div>
+        </div>
 
         {(() => {
           const label = (k: string) => DEPARTMENTS.find((x) => x.dept === k)?.label ?? k;
@@ -71,30 +83,31 @@ export default function GMDepartments() {
           if (presence.length === 0) return null;
           if (unattended.length === 0 && unstaffed.length === 0) {
             return (
-              <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 16, borderRadius: 12, padding: "11px 16px", background: "#EAF2ED", border: "1px solid #CFE5DC", color: "#0F5F4C", fontSize: 13.5, fontWeight: 500 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 18, borderRadius: 14, padding: "12px 18px", background: "#EBF3F0", border: "1px solid #C0DDD3", color: "#2F5D50", fontSize: 13.5, fontWeight: 500, boxShadow: "0 2px 8px rgba(47,93,80,.05)" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M20 6L9 17l-5-5" /></svg>
-                Every department is staffed right now.
+                Every department is actively staffed right now.
               </div>
             );
           }
           return (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 18 }}>
               {unattended.length > 0 ? (
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, borderRadius: 12, padding: "12px 16px", background: "#FBF3E6", border: "1px solid #EDD9B4", color: "#8A6420", fontSize: 13.5 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, borderRadius: 14, padding: "12px 18px", background: "#FDF7E7", border: "1px solid #EAD69E", color: "#8A6420", fontSize: 13.5, boxShadow: "0 2px 8px rgba(176,138,79,.08)" }}>
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
                   <span><b>{unattended.length} department{unattended.length === 1 ? "" : "s"} unattended</b> &mdash; {unattended.join(", ")} {unattended.length === 1 ? "has" : "have"} staff assigned but no one is on duty.</span>
                 </div>
               ) : null}
               {unstaffed.length > 0 ? (
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, borderRadius: 12, padding: "12px 16px", background: "#F5F5F0", border: "1px solid #E7E3D8", color: "#6E756F", fontSize: 13.5 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, borderRadius: 14, padding: "12px 18px", background: "#FFFFFF", border: "1px solid #E2EBE7", color: "#4A5D56", fontSize: 13.5, boxShadow: "0 2px 8px rgba(0,0,0,.03)" }}>
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>
-                  <span><b>{unstaffed.join(", ")}</b> {unstaffed.length === 1 ? "has" : "have"} no staff assigned yet. Assign someone from the Staff page.</span>
+                  <span><b>{unstaffed.join(", ")}</b> {unstaffed.length === 1 ? "has" : "have"} no staff assigned yet. Assign staff from the Staff portal.</span>
                 </div>
               ) : null}
             </div>
           );
         })()}
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1fr 1fr", gap: 16, marginTop: 24 }}>
+
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "1fr 1fr", gap: 16, marginTop: 16 }}>
           {DEPARTMENTS.map((d) => {
             const s = statFor(d.dept);
             return (
@@ -116,19 +129,19 @@ export default function GMDepartments() {
           })}
         </div>
 
-        <p style={{ marginTop: 20, fontSize: 13, color: "#9AA09A" }}>
-          Each department team works its own board. You see live counts here for oversight.
+        <p style={{ marginTop: 20, fontSize: 13, color: "#8A9792", fontFamily: "'Poppins', sans-serif" }}>
+          Each department team operates its dedicated board. Live volume metrics are synced in real time.
         </p>
 
         {managing && HOTEL_ID ? (
-          <div onClick={() => setManaging(null)} style={{ position: "fixed", inset: 0, background: "rgba(20,25,22,.45)", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "40px 20px", zIndex: 60, overflowY: "auto" }}>
-            <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 760, background: "#F4F1EA", borderRadius: 18, boxShadow: "0 24px 70px rgba(0,0,0,.28)", overflow: "hidden" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", background: "#FEFDFB", borderBottom: "1px solid #E9E4D8" }}>
+          <div onClick={() => setManaging(null)} style={{ position: "fixed", inset: 0, background: "rgba(13,31,26,.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "40px 20px", zIndex: 60, overflowY: "auto" }}>
+            <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 760, background: "#FFFFFF", borderRadius: 20, border: "1px solid #E2EBE7", boxShadow: "0 24px 70px rgba(13,31,26,.32)", overflow: "hidden" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", background: "#FAFBFB", borderBottom: "1px solid #E2EBE7" }}>
                 <div>
-                  <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: ".12em", color: "#B08A4F" }}>{managing.dept === "fb" ? "Menu & inventory" : (managing.dept === "housekeeping" || managing.dept === "spa" || managing.dept === "front_desk") ? "Services & offerings" : "Bookable time slots"}</div>
-                  <h2 style={{ fontFamily: "Georgia, serif", fontSize: 23, fontWeight: 600, color: "#1B2621", marginTop: 3 }}>{managing.label}</h2>
+                  <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".14em", color: "#B08A4F", fontFamily: "'Josefin Sans', sans-serif", fontWeight: 700 }}>{managing.dept === "fb" ? "Menu & inventory" : (managing.dept === "housekeeping" || managing.dept === "spa" || managing.dept === "front_desk") ? "Services & offerings" : "Bookable time slots"}</div>
+                  <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, fontWeight: 700, color: "#0D1F1A", marginTop: 3 }}>{managing.label}</h2>
                 </div>
-                <button onClick={() => setManaging(null)} aria-label="Close" style={{ width: 36, height: 36, borderRadius: 10, background: "#F5F1E8", border: "1px solid #E9E4D8", cursor: "pointer", color: "#6E756F", fontSize: 18, lineHeight: 1 }}>&times;</button>
+                <button onClick={() => setManaging(null)} aria-label="Close" style={{ width: 36, height: 36, borderRadius: 10, background: "#F1F6F4", border: "1px solid #E2EBE7", cursor: "pointer", color: "#4A5D56", fontSize: 18, lineHeight: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>&times;</button>
               </div>
               <div style={{ padding: 24 }}>
                 {managing.dept === "dining"

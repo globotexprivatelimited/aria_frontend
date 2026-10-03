@@ -23,17 +23,16 @@ type Unregistered = { phone: string; name: string; claimedRoom: string; lastAt: 
 
 const EPOCH = new Date(0).toISOString();
 
-const ink = "#1B2621";
-const body = "#3A413B";
-const muted = "#6E756F";
-const faint = "#9AA09A";
-const line = "#EAEAE4";
-const lineSoft = "#F4F4F1";
-const serif = "Georgia, serif";
+const ink = "#0D1F1A";
+const body = "#4A5D56";
+const muted = "#72837C";
+const faint = "#8A9792";
+const line = "#E2EBE7";
+const lineSoft = "#F1F6F4";
 
 export default function GMGuests() {
   const { isMobile } = useBreakpoint();
-  const { hotelId: HOTEL_ID } = useMyHotel();
+  const { hotelId: HOTEL_ID, hotelName } = useMyHotel();
   const [rows, setRows] = useState<RequestRow[]>([]);
   const [sessions, setSessions] = useState<InHouseGuest[]>([]);
   const [connected, setConnected] = useState(false);
@@ -82,64 +81,80 @@ export default function GMGuests() {
   const guests = Object.values(inHouseByRoom).sort(byRecent);
   unregistered.sort(byRecent);
 
-  const table: CSSProperties = { marginTop: 16, background: "#fff", border: "1px solid " + line, borderRadius: 16, overflow: isMobile ? "auto" : "hidden" };
-  const headRow = (cols: string): CSSProperties => ({ display: "grid", gridTemplateColumns: cols, minWidth: isMobile ? 640 : "auto", padding: "14px 24px", borderBottom: "1px solid " + line, fontSize: 11, textTransform: "uppercase", letterSpacing: ".06em", color: faint });
-  const bodyRow = (cols: string): CSSProperties => ({ display: "grid", gridTemplateColumns: cols, minWidth: isMobile ? 640 : "auto", padding: "16px 24px", borderBottom: "1px solid " + lineSoft, fontSize: 14, alignItems: "center", textDecoration: "none", cursor: "pointer" });
+  const table: CSSProperties = { marginTop: 16, background: "#FFFFFF", border: "1px solid " + line, borderRadius: 18, boxShadow: "0 4px 20px -2px rgba(47,93,80,0.05)", overflow: "hidden" };
+  const headRow = (cols: string): CSSProperties => ({ display: "grid", gridTemplateColumns: cols, minWidth: isMobile ? 640 : "auto", padding: "14px 24px", borderBottom: "1px solid " + line, fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".12em", color: faint, fontFamily: "'Josefin Sans', sans-serif", fontWeight: 700, background: "#FAFBFB" });
+  const bodyRow = (cols: string): CSSProperties => ({ display: "grid", gridTemplateColumns: cols, minWidth: isMobile ? 640 : "auto", padding: "16px 24px", borderBottom: "1px solid " + lineSoft, fontSize: 13.5, alignItems: "center", textDecoration: "none", cursor: "pointer", transition: "background .15s" });
   const openBadge = (n: number) => n > 0
-    ? <span style={{ borderRadius: 999, padding: "2px 10px", fontSize: 12, fontWeight: 600, background: "#E8F1ED", color: "#0F5F4C" }}>{n}</span>
-    : <span style={{ color: "#C4C9C2" }}>&mdash;</span>;
+    ? <span style={{ borderRadius: 999, padding: "3px 10px", fontSize: 11.5, fontWeight: 700, background: "#EBF3F0", color: "#2F5D50", border: "1px solid #C0DDD3" }}>{n} open</span>
+    : <span style={{ color: "#B4C2BC" }}>&mdash;</span>;
   const chatHref = (phone: string) => "/gm/conversations/" + encodeURIComponent(phone);
 
-  const inHouseCols = "1fr 2fr 3fr 1fr 1fr";
-  const unregCols = "2fr 2fr 1fr 1fr 1fr";
+  const inHouseCols = "1fr 2fr 3fr 1.2fr 1.2fr";
+  const unregCols = "2fr 2fr 1.2fr 1.2fr 1.2fr";
 
   return (
-    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "#F6F7F4" }}>
+    <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", minHeight: "100vh", background: "linear-gradient(180deg,#F8FAF9 0%,#F1F6F4 100%)" }}>
       <GMSidebar />
-      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "20px 16px" : "32px" }}>
-        <h1 style={{ fontFamily: serif, fontSize: 30, fontWeight: 600, color: ink }}>Guests</h1>
-        <p style={{ fontSize: 14, color: muted, marginTop: 2 }}>
-          <span style={{ display: "inline-block", height: 8, width: 8, borderRadius: 999, marginRight: 6, background: connected ? "#34D399" : "#F0B429" }} />
-          {connected ? "Live" : "Connecting..."} &middot; {guests.length} in house
-          {unregistered.length > 0 ? " and " + unregistered.length + " unregistered" : ""} &middot; click a guest to read their chat
-        </p>
-
-        <div style={table}>
-          <div style={headRow(inHouseCols)}>
-            <span>Room</span><span>Guest</span><span>Last request</span><span>Open</span><span>Last seen</span>
+      <div style={{ flex: 1, minWidth: 0, maxWidth: "100%", overflowX: "hidden", padding: isMobile ? "18px 14px 48px" : "28px 36px 64px" }}>
+        
+        {/* Grandoria Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 14, marginBottom: 24 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+              <span style={{ color: "#B08A4F", fontSize: 11, letterSpacing: 2 }}>★★★★★</span>
+              <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Guest Registry &middot; In-House</span>
+            </div>
+            <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 32, fontWeight: 700, color: ink, margin: 0, letterSpacing: "-0.01em" }}>
+              {hotelName || "Grandoria Resort"} &middot; Guests
+            </h1>
           </div>
-          {guests.length === 0 ? (
-            <div style={{ padding: 40, textAlign: "center", color: faint, fontSize: 14 }}>No guests checked in yet. Check someone in at Reception and they appear here.</div>
-          ) : guests.map((g) => (
-            <Link key={g.room} href={chatHref(g.phone)} style={bodyRow(inHouseCols)}>
-              <span style={{ fontFamily: serif, fontSize: 18, fontWeight: 600, color: ink }}>{g.room}</span>
-              <span style={{ color: ink }}>{g.name || "Guest"}</span>
-              <span style={{ color: body, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{g.lastDetail || "No requests yet"}</span>
-              <span>{openBadge(g.openCount)}</span>
-              <span style={{ color: faint, fontSize: 13 }}>{timeAgo(g.lastAt)}</span>
-            </Link>
-          ))}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#4A5D56", background: "#FFFFFF", border: "1px solid #E2EBE7", borderRadius: 999, padding: "7px 16px", boxShadow: "0 2px 8px rgba(47,93,80,.05)" }}>
+            <span style={{ width: 8, height: 8, borderRadius: 999, background: connected ? "#2ECC71" : "#F0B429", boxShadow: connected ? "0 0 0 3px rgba(46,204,113,.2)" : "none" }} />
+            {connected ? "Live &middot; " + guests.length + " in house" : "Connecting..."}
+          </div>
+        </div>
+
+        <div style={{ overflowX: "auto", borderRadius: 18 }}>
+          <div style={table}>
+            <div style={headRow(inHouseCols)}>
+              <span>Suite</span><span>Guest</span><span>Last interaction</span><span>Status</span><span>Active</span>
+            </div>
+            {guests.length === 0 ? (
+              <div style={{ padding: 48, textAlign: "center", color: faint, fontSize: 14 }}>No guests currently checked in. Check someone in at Reception to see them here.</div>
+            ) : guests.map((g) => (
+              <Link key={g.room} href={chatHref(g.phone)} style={bodyRow(inHouseCols)}>
+                <span style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: 15, fontWeight: 700, color: "#2F5D50" }}>Suite {g.room}</span>
+                <span style={{ color: ink, fontWeight: 600 }}>{g.name || "Guest"}</span>
+                <span style={{ color: body, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{g.lastDetail || "No requests submitted yet"}</span>
+                <span>{openBadge(g.openCount)}</span>
+                <span style={{ color: faint, fontSize: 12.5 }}>{timeAgo(g.lastAt)}</span>
+              </Link>
+            ))}
+          </div>
         </div>
 
         {unregistered.length > 0 && (
-          <div style={{ marginTop: 32 }}>
-            <h2 style={{ fontFamily: serif, fontSize: 20, fontWeight: 600, color: ink, margin: 0 }}>Messaged but not registered</h2>
+          <div style={{ marginTop: 36 }}>
+            <div style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".14em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif", marginBottom: 4 }}>Unassigned Contacts</div>
+            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, color: ink, margin: 0 }}>Messaged but not verified</h2>
             <p style={{ fontSize: 13, color: muted, marginTop: 4, maxWidth: 720 }}>
-              These numbers wrote to the hotel but were never added at check-in, so Aria asks them to see reception. Any room shown is what they claimed, not a confirmed stay. Register the number on the Reception board to let them chat.
+              These numbers messaged the hotel concierge but have not been formally linked at check-in. Register their key at Reception to authorize full concierge services.
             </p>
-            <div style={table}>
-              <div style={headRow(unregCols)}>
-                <span>Guest</span><span>WhatsApp number</span><span>Claims room</span><span>Open</span><span>Last seen</span>
+            <div style={{ overflowX: "auto", borderRadius: 18, marginTop: 14 }}>
+              <div style={table}>
+                <div style={headRow(unregCols)}>
+                  <span>Guest</span><span>WhatsApp</span><span>Claims Suite</span><span>Status</span><span>Last seen</span>
+                </div>
+                {unregistered.map((u) => (
+                  <Link key={u.phone} href={chatHref(u.phone)} style={bodyRow(unregCols)}>
+                    <span style={{ color: ink, fontWeight: 600 }}>{u.name || "Unknown"}</span>
+                    <span style={{ color: body, fontFamily: "monospace", fontSize: 13 }}>{u.phone}</span>
+                    <span style={{ color: u.claimedRoom ? "#B08A4F" : faint, fontWeight: u.claimedRoom ? 600 : 400 }}>{u.claimedRoom ? "Suite " + u.claimedRoom : "Unspecified"}</span>
+                    <span>{openBadge(u.openCount)}</span>
+                    <span style={{ color: faint, fontSize: 12.5 }}>{timeAgo(u.lastAt)}</span>
+                  </Link>
+                ))}
               </div>
-              {unregistered.map((u) => (
-                <Link key={u.phone} href={chatHref(u.phone)} style={bodyRow(unregCols)}>
-                  <span style={{ color: ink }}>{u.name || "Unknown"}</span>
-                  <span style={{ color: body }}>{u.phone}</span>
-                  <span style={{ color: u.claimedRoom ? "#9A6B12" : faint }}>{u.claimedRoom || "None"}</span>
-                  <span>{openBadge(u.openCount)}</span>
-                  <span style={{ color: faint, fontSize: 13 }}>{timeAgo(u.lastAt)}</span>
-                </Link>
-              ))}
             </div>
           </div>
         )}

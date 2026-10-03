@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 const INK = "#1B2621";
 
@@ -23,40 +23,41 @@ export type Kpi = { key: keyof typeof KPI_TONES | string; label: string; value: 
 
 export default function GMKpiCards({ items, columns }: { items: Kpi[]; columns: string }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: columns, gap: 13 }}>
+    <div style={{ display: "grid", gridTemplateColumns: columns, gap: 14 }}>
       {items.map((k) => {
         const t = KPI_TONES[k.key] ?? KPI_TONES.open;
         const live = k.value > 0;
         const share = Math.max(0, Math.min(1, k.share ?? 0));
         return (
           <div key={k.label} className="kpi-card" style={{
-            position: "relative", overflow: "hidden", borderRadius: 16, padding: "17px 17px 15px",
-            background: "linear-gradient(155deg,#FFFFFF 0%,#FEFDFC 42%," + t.tint + " 100%)",
-            border: "1px solid " + (live ? t.accent + "2E" : "#EDEAE2"),
-            transition: "transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s",
+            position: "relative", overflow: "hidden", borderRadius: 18, padding: "18px 18px 16px",
+            background: "linear-gradient(165deg, #FFFFFF 0%, #FAFCFB 50%, " + t.tint + " 100%)",
+            border: "1px solid " + (live ? t.accent + "33" : "#E2EBE7"),
+            boxShadow: "0 4px 18px rgba(47,93,80,0.05), 0 1px 3px rgba(0,0,0,0.02)",
+            transition: "transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s ease",
           }}>
             {/* colour bloom */}
-            <span aria-hidden style={{ position: "absolute", top: -34, right: -24, width: 108, height: 108, borderRadius: 999, background: "radial-gradient(circle," + t.bloom + " 0%, transparent 68%)", pointerEvents: "none" }} />
+            <span aria-hidden style={{ position: "absolute", top: -34, right: -24, width: 110, height: 110, borderRadius: 999, background: "radial-gradient(circle," + t.bloom + " 0%, transparent 70%)", pointerEvents: "none" }} />
 
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
-              <span style={{ fontSize: 9.5, textTransform: "uppercase", letterSpacing: ".11em", fontWeight: 700, color: live ? t.accent : "#A8A395", lineHeight: 1.4, maxWidth: 92 }}>{k.label}</span>
-              <span style={{ width: 30, height: 30, borderRadius: 9, background: live ? t.tint : "#F5F4EF", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "1px solid " + (live ? t.accent + "26" : "#EDEAE2") }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={live ? t.accent : "#C4C0B6"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d={GLYPH[k.key] ?? GLYPH.open} /></svg>
+              <span style={{ fontFamily: "'Josefin Sans', sans-serif", fontSize: 10.5, textTransform: "uppercase", letterSpacing: ".12em", fontWeight: 700, color: live ? t.accent : "#8A9490", lineHeight: 1.35, maxWidth: 110 }}>{k.label}</span>
+              <span style={{ width: 34, height: 34, borderRadius: 10, background: live ? t.tint : "#F2F5F4", display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "1px solid " + (live ? t.accent + "2A" : "#E2EBE7"), boxShadow: "0 2px 6px rgba(0,0,0,0.03)" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={live ? t.accent : "#A0ABA6"} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d={GLYPH[k.key] ?? GLYPH.open} /></svg>
               </span>
             </div>
 
-            <div style={{ fontFamily: "Georgia, serif", fontSize: 34, fontWeight: 700, color: live ? INK : "#C8CCC6", lineHeight: 1, marginTop: 12, letterSpacing: "-.5px" }}>{k.value}</div>
-            <div style={{ fontSize: 11, color: "#9AA09A", marginTop: 5 }}>{k.caption}</div>
+            <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 36, fontWeight: 700, color: live ? INK : "#C8CCC6", lineHeight: 1.05, marginTop: 12, letterSpacing: "-.5px" }}>{k.value}</div>
+            <div style={{ fontSize: 11.5, color: "#7B8782", marginTop: 6, fontWeight: 400 }}>{k.caption}</div>
 
             {/* share of the board along the bottom edge */}
-            <span aria-hidden style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 3, background: "#F2F0EA" }}>
-              <span style={{ display: "block", height: "100%", width: (share * 100) + "%", background: t.accent, opacity: .85, transition: "width .6s cubic-bezier(.16,1,.3,1)" }} />
+            <span aria-hidden style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 3.5, background: "#E8EFEA" }}>
+              <span style={{ display: "block", height: "100%", width: (share * 100) + "%", background: "linear-gradient(90deg, " + t.accent + ", #B08A4F)", opacity: .9, transition: "width .6s cubic-bezier(.16,1,.3,1)" }} />
             </span>
           </div>
         );
       })}
       <style>{`
-        .kpi-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(27,38,33,.08); }
+        .kpi-card:hover { transform: translateY(-4px); box-shadow: 0 14px 32px rgba(47,93,80,.12); border-color: rgba(47,93,80,0.3) !important; }
         @media (prefers-reduced-motion: reduce) { .kpi-card { transition: none !important; } }
       `}</style>
     </div>
