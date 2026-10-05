@@ -79,102 +79,105 @@ export function SkeletonCard({
   );
 }
 
-/** Dashboard Overview Skeleton matching Grandoria Luxury Resort layout */
+/** Dashboard Overview Skeleton matching Aria Luxury Resort 5-section layout */
 export function DashboardSkeleton() {
   return (
-    <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 24, padding: "8px 0" }}>
-      {/* Luxury Hero Banner Skeleton */}
-      <div
-        style={{
-          background: "linear-gradient(135deg, #1A3E34 0%, #2F5D50 55%, #3B7262 100%)",
-          borderRadius: 20,
-          padding: "28px 32px",
-          color: "#FFFFFF",
-          boxShadow: "0 12px 34px -4px rgba(47,93,80,0.22)",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
-          <div style={{ flex: 1, minWidth: 260 }}>
-            <Skeleton width={160} height={14} variant="dark" borderRadius={999} style={{ marginBottom: 12 }} />
-            <Skeleton width={280} height={36} variant="dark" borderRadius={8} style={{ marginBottom: 12 }} />
-            <Skeleton width="70%" height={16} variant="dark" borderRadius={6} />
+    <div className="w-full flex flex-col gap-14 py-2">
+      {/* 1. Luxury Hero Banner Skeleton (~180px) */}
+      <div className="bg-gradient-to-br from-emerald to-emerald-lo rounded-luxury p-6 md:px-8 text-white shadow-luxury min-h-[180px] flex flex-col justify-between relative overflow-hidden">
+        <div className="flex justify-between flex-wrap gap-4">
+          <div className="flex-1 min-w-[260px]">
+            <Skeleton width={180} height={12} variant="dark" borderRadius={999} style={{ marginBottom: 10 }} />
+            <Skeleton width={320} height={36} variant="dark" borderRadius={8} style={{ marginBottom: 8 }} />
+            <Skeleton width={220} height={14} variant="dark" borderRadius={6} />
           </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
-            <Skeleton width={140} height={32} variant="dark" borderRadius={999} />
-            <Skeleton width={180} height={14} variant="dark" borderRadius={6} />
+          <div className="flex flex-col items-end gap-2">
+            <Skeleton width={140} height={30} variant="dark" borderRadius={999} />
+            <Skeleton width={160} height={12} variant="dark" borderRadius={6} />
           </div>
         </div>
 
         {/* Quick action bar placeholders */}
-        <div style={{ display: "flex", gap: 10, marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(255,255,255,0.15)", flexWrap: "wrap" }}>
-          {[120, 110, 130, 115, 125].map((w, i) => (
-            <Skeleton key={i} width={w} height={32} variant="dark" borderRadius={999} />
+        <div className="flex gap-2.5 mt-4 pt-3.5 border-t border-white/15 flex-wrap">
+          {[130, 110, 130, 115, 125].map((w, i) => (
+            <Skeleton key={i} width={w} height={30} variant="dark" borderRadius={999} />
           ))}
         </div>
       </div>
 
-      {/* KPI Cards Row Skeleton */}
+      {/* 2. KPI Cards Row Skeleton (5 cards) */}
       <div>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-          <Skeleton width={180} height={16} />
-          <Skeleton width={120} height={14} />
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 14 }}>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <SkeletonCard key={i} height={120} />
+            <div
+              key={i}
+              className="bg-card border border-line rounded-luxury p-5 md:p-6 shadow-luxury flex flex-col justify-between min-h-[140px]"
+            >
+              <div className="flex justify-between items-center">
+                <Skeleton width="50%" height={11} />
+                <Skeleton width={32} height={32} borderRadius={999} />
+              </div>
+              <Skeleton width="60%" height={40} borderRadius={6} style={{ margin: "14px 0 6px" }} />
+              <Skeleton width="40%" height={12} />
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Trajectory & Channel Mix Skeletons */}
-      <div>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-          <Skeleton width={240} height={18} />
-          <Skeleton width={140} height={14} />
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16 }}>
-          {/* Area chart skeleton */}
-          <div style={{ background: "#FFFFFF", border: "1px solid #E2EBE7", borderRadius: 18, padding: 24, boxShadow: "0 4px 20px -2px rgba(47,93,80,0.04)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
-              <Skeleton width={180} height={16} />
-              <Skeleton width={90} height={16} borderRadius={999} />
-            </div>
-            <Skeleton width="100%" height={180} borderRadius={12} />
+      {/* 3. Live Feed + Rooms 60/40 Skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6">
+        <div className="bg-card border border-line rounded-luxury p-6 md:p-7 shadow-luxury min-h-[380px]">
+          <div className="flex justify-between mb-5">
+            <Skeleton width={180} height={18} />
+            <Skeleton width={70} height={22} borderRadius={999} />
           </div>
-
-          {/* Donut chart skeleton */}
-          <div style={{ background: "#FFFFFF", border: "1px solid #E2EBE7", borderRadius: 18, padding: 24, boxShadow: "0 4px 20px -2px rgba(47,93,80,0.04)" }}>
-            <Skeleton width={140} height={16} style={{ marginBottom: 18 }} />
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: 140 }}>
-              <Skeleton width={130} height={130} borderRadius={999} />
-            </div>
-            <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 16 }}>
-              <Skeleton width={70} height={14} />
-              <Skeleton width={70} height={14} />
-              <Skeleton width={70} height={14} />
-            </div>
+          <div className="flex flex-col gap-2.5">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} width="100%" height={52} borderRadius={10} />
+            ))}
+          </div>
+        </div>
+        <div className="bg-card border border-line rounded-luxury p-6 md:p-7 shadow-luxury min-h-[380px]">
+          <div className="flex justify-between mb-5">
+            <Skeleton width={160} height={18} />
+            <Skeleton width={100} height={14} />
+          </div>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(48px,48px))] gap-2">
+            {Array.from({ length: 12 }).map((_, j) => (
+              <Skeleton key={j} width={48} height={48} borderRadius={8} />
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Feed / Table row skeletons */}
-      <div style={{ background: "#FFFFFF", border: "1px solid #E2EBE7", borderRadius: 18, padding: 24, boxShadow: "0 4px 20px -2px rgba(47,93,80,0.04)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 18 }}>
-          <Skeleton width={200} height={18} />
-          <Skeleton width={80} height={14} />
+      {/* 4. Department Board Skeleton (6 rows) */}
+      <div className="bg-card border border-line rounded-luxury p-6 md:p-7 shadow-luxury">
+        <div className="flex justify-between mb-5">
+          <Skeleton width={220} height={18} />
+          <Skeleton width={110} height={14} />
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: "1px solid #F1F6F4" }}>
-              <Skeleton width={42} height={42} borderRadius={10} />
-              <div style={{ flex: 1 }}>
-                <Skeleton width="40%" height={14} style={{ marginBottom: 6 }} />
-                <Skeleton width="70%" height={12} />
-              </div>
-              <Skeleton width={60} height={20} borderRadius={999} />
+        <div className="flex flex-col gap-4">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="grid grid-cols-[180px_1fr_80px_90px_60px] gap-4 items-center">
+              <Skeleton width={140} height={14} />
+              <Skeleton width="100%" height={6} borderRadius={3} />
+              <Skeleton width={50} height={14} />
+              <Skeleton width={60} height={14} />
+              <Skeleton width={45} height={14} />
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 5. Heatmap Skeleton */}
+      <div className="bg-card border border-line rounded-luxury p-6 md:p-7 shadow-luxury">
+        <div className="flex justify-between mb-5">
+          <Skeleton width={260} height={18} />
+          <Skeleton width={120} height={12} />
+        </div>
+        <div className="flex flex-col gap-1">
+          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+            <Skeleton key={i} width="100%" height={26} borderRadius={3} />
           ))}
         </div>
       </div>

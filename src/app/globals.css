@@ -1,32 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Inter:wght@300;400;500;600;700&family=Josefin+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   color-scheme: light;
-  --background: #F8FAF9;
+  --background: #F7F5F0;
   --foreground: #0D1F1A;
-  --font-heading: 'Josefin Sans', Georgia, serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-body: 'Poppins', system-ui, -apple-system, sans-serif;
-  --grandoria-emerald: #2F5D50;
-  --grandoria-emerald-dark: #1A3E34;
+
+  /* Spec Design Tokens */
+  --ink: #0D1F1A;
+  --emerald: #12433A;
+  --emerald-lo: #1B5C50;
+  --champagne: #C9A227;
+  --champagne-lo: #E8D9A8;
+  --bone: #F7F5F0;
+  --card: #FFFFFF;
+  --line: rgba(13, 31, 26, 0.08);
+  --muted: #6B7A75;
+
+  --font-serif: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+
+  --grandoria-emerald: #12433A;
+  --grandoria-emerald-dark: #0D1F1A;
   --grandoria-emerald-light: #EBF3F0;
-  --grandoria-gold: #B08A4F;
+  --grandoria-gold: #C9A227;
   --grandoria-gold-light: #FAF5EB;
   --grandoria-surface: #FFFFFF;
-  --grandoria-border: #E2EBE7;
+  --grandoria-border: rgba(13, 31, 26, 0.08);
   --grandoria-ink: #0D1F1A;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-body);
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bone);
+  color: var(--ink);
   font-family: var(--font-body);
 }
 
@@ -101,7 +111,7 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Grandoria Luxury Shimmer Skeleton Loaders */
+/* Luxury Shimmer Skeleton Loaders */
 @keyframes skeleton-shimmer {
   0% {
     background-position: 200% 0;
@@ -112,29 +122,101 @@ body {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #EAEFEA 25%, #F4F8F5 50%, #EAEFEA 75%);
+  background: linear-gradient(90deg, #EFEDE7 25%, #F7F5F0 50%, #EFEDE7 75%);
   background-size: 200% 100%;
-  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  animation: skeleton-shimmer 1.4s infinite linear;
   border-radius: 8px;
 }
 
 .skeleton-dark {
-  background: linear-gradient(90deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 75%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.06) 75%);
   background-size: 200% 100%;
-  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  animation: skeleton-shimmer 1.4s infinite linear;
   border-radius: 8px;
 }
 
 .skeleton-gold {
-  background: linear-gradient(90deg, #F5EEE2 25%, #FAF5EB 50%, #F5EEE2 75%);
+  background: linear-gradient(90deg, #F0EAD6 25%, #FAF5EB 50%, #F0EAD6 75%);
   background-size: 200% 100%;
-  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  animation: skeleton-shimmer 1.4s infinite linear;
   border-radius: 8px;
+}
+
+/* Animations defined in Spec */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(52, 199, 89, 0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes goldFlash {
+  0% {
+    background-color: rgba(201, 162, 39, 0.24);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes fadeCell {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.stagger-section {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+.luxury-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(13, 31, 26, 0.08);
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 1px 2px rgba(13, 31, 26, 0.04), 0 8px 24px rgba(13, 31, 26, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.luxury-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(13, 31, 26, 0.10);
 }
 
 /* Accessible focus ring */
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 2px solid #2F5D50;
+  outline: 2px solid #12433A;
   outline-offset: 2px;
 }
 
@@ -145,5 +227,13 @@ img, svg, video, canvas { max-width: 100%; }
 @media (max-width: 768px) {
   [style*="display: grid"] > *, [style*="display:grid"] > * { min-width: 0; }
   [style*="display: flex"] > *, [style*="display:flex"] > * { min-width: 0; }
+}
+
+/* Respect motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
