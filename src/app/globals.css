@@ -194,7 +194,51 @@ body {
   }
 }
 
+@keyframes navItemIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 @layer components {
+  /* Sidebar Nav Item Styling - High Contrast Luxury Spec */
+  .nav-item {
+    color: rgba(255, 255, 255, 0.72) !important;
+    text-decoration: none;
+    background-color: transparent;
+    transition: all 0.15s ease;
+  }
+  .nav-item svg {
+    color: rgba(255, 255, 255, 0.45) !important;
+    stroke: rgba(255, 255, 255, 0.45) !important;
+    stroke-width: 1.5 !important;
+    transition: all 0.18s ease;
+  }
+
+  .nav-item:hover {
+    color: #FFFFFF !important;
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+  .nav-item:hover svg {
+    color: rgba(255, 255, 255, 0.75) !important;
+    stroke: rgba(255, 255, 255, 0.75) !important;
+  }
+
+  .nav-item.active {
+    color: #C9A227 !important;
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    font-weight: 500 !important;
+  }
+  .nav-item.active svg {
+    color: #C9A227 !important;
+    stroke: #C9A227 !important;
+  }
+
   .luxury-card {
     @apply bg-card rounded-luxury p-6 md:p-7 shadow-luxury border border-line transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-luxury-hover hover:border-champagne/40 relative overflow-hidden;
   }

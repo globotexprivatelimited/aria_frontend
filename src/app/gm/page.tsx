@@ -122,7 +122,7 @@ export default function GMDashboard() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-bone text-ink font-sans">
-      <GMSidebar />
+      <GMSidebar requestsCount={open} alertsCount={urgent} />
 
       <div className="flex-1 min-w-0 max-w-full overflow-x-hidden px-4 py-5 md:px-10 md:py-8 pb-20">
         <VerifyEmailBanner />
