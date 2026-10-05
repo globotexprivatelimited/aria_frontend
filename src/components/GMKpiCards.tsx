@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useCountUp } from "../lib/useCountUp";
 
 export type KpiItem = {
   key: string;
   label: string;
   value: number;
   caption: string;
+  href?: string;
 };
 
 const GLYPHS: Record<string, string> = {
@@ -17,59 +19,89 @@ const GLYPHS: Record<string, string> = {
   urgent: "M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17v.5",
 };
 
-import { useCountUp } from "../lib/useCountUp";
 export { useCountUp };
+
+const DEFAULT_HREFS: Record<string, string> = {
+  guests: "/gm/guests",
+  open: "/gm/requests",
+  progress: "/gm/requests",
+  resolved: "/gm/requests",
+  urgent: "/gm/requests",
+};
 
 export function KpiCard({ item }: { item: KpiItem }) {
   const animatedValue = useCountUp(item.value, 900);
   const isUrgent = item.key === "urgent";
   const isResolved = item.key === "resolved";
+  const targetHref = item.href || DEFAULT_HREFS[item.key] || "/gm/requests";
 
-  let numClass = "text-ink";
+  let numClass = "text-ink group-hover:text-ink";
   if (isUrgent && item.value > 0) {
-    numClass = "text-urgent";
+    numClass = "text-urgent group-hover:text-red-700";
   } else if (isResolved && item.value > 0) {
-    numClass = "text-champagne";
+    numClass = "text-champagne group-hover:text-amber-600";
   }
 
   return (
-    <div
-      className={`relative flex flex-col justify-between min-h-[140px] bg-card rounded-luxury p-5 md:p-6 shadow-luxury transition-all duration-200 hover:-translate-y-0.5 hover:shadow-luxury-hover border ${
-        isUrgent ? "border-line border-l-[3px] border-l-urgent" : "border-line"
+    <Link
+      href={targetHref}
+      title={`Navigate to ${item.label}`}
+      className={`group relative flex flex-col justify-between min-h-[142px] bg-card rounded-luxury p-5 md:p-6 shadow-luxury transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-luxury-hover active:scale-[0.98] border luxury-card-sheen cursor-pointer no-underline ${
+        isUrgent
+          ? "border-line border-l-[3px] border-l-urgent hover:border-l-urgent hover:border-urgent/30 hover:shadow-[0_12px_32px_rgba(180,69,58,0.12)]"
+          : "border-line hover:border-champagne/40"
       }`}
     >
-      <div className="flex items-start justify-between gap-2">
-        <span className="text-[11px] uppercase tracking-[0.18em] text-muted font-semibold leading-tight font-sans">
+      <div className="flex items-start justify-between gap-2 relative z-10">
+        <span className="text-[11px] uppercase tracking-[0.18em] text-muted font-semibold leading-tight font-sans transition-colors group-hover:text-ink">
           {item.label}
         </span>
-        <span
-          className="w-8 h-8 rounded-full bg-bone inline-flex items-center justify-center shrink-0"
-          aria-hidden="true"
-        >
+        <div className="flex items-center gap-1.5">
+          {/* Subtle click indicator arrow that appears on hover */}
           <svg
-            width="15"
-            height="15"
+            className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200 text-champagne"
             viewBox="0 0 24 24"
             fill="none"
-            stroke={isUrgent && item.value > 0 ? "#B4453A" : "#6B7A75"}
-            strokeWidth="1.8"
+            stroke="currentColor"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d={GLYPHS[item.key] ?? GLYPHS.open} />
+            <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
-        </span>
+          <span
+            className="w-8 h-8 rounded-full bg-bone inline-flex items-center justify-center shrink-0 transition-all duration-200 group-hover:bg-champagne/15 group-hover:scale-105"
+            aria-hidden="true"
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={isUrgent && item.value > 0 ? "#B4453A" : "#6B7A75"}
+              className="transition-colors group-hover:stroke-champagne"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d={GLYPHS[item.key] ?? GLYPHS.open} />
+            </svg>
+          </span>
+        </div>
       </div>
 
-      <div className="mt-3.5">
-        <div className={`font-sans text-[44px] font-semibold leading-none tracking-tight tabular-nums ${numClass}`}>
+      <div className="mt-3.5 relative z-10">
+        <div className={`font-sans text-[44px] font-semibold leading-none tracking-tight tabular-nums transition-transform duration-200 group-hover:translate-x-0.5 ${numClass}`}>
           {animatedValue}
         </div>
-        <div className="text-xs text-muted mt-1.5 font-normal font-sans">
-          {item.caption}
+        <div className="text-xs text-muted mt-1.5 font-normal font-sans group-hover:text-ink/75 transition-colors flex items-center justify-between">
+          <span>{item.caption}</span>
+          <span className="text-[10px] text-champagne font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+            View &rarr;
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

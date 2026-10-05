@@ -196,7 +196,26 @@ body {
 
 @layer components {
   .luxury-card {
-    @apply bg-card rounded-luxury p-6 md:p-7 shadow-luxury border border-line transition-all duration-200 hover:-translate-y-0.5 hover:shadow-luxury-hover;
+    @apply bg-card rounded-luxury p-6 md:p-7 shadow-luxury border border-line transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-luxury-hover hover:border-champagne/40 relative overflow-hidden;
+  }
+
+  .luxury-card-sheen {
+    @apply relative overflow-hidden;
+  }
+  .luxury-card-sheen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.08), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  .luxury-card-sheen:hover::after {
+    left: 140%;
   }
 
   .luxury-eyebrow {
@@ -208,7 +227,7 @@ body {
   }
 
   .luxury-pill {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium text-white border border-white/25 bg-transparent hover:bg-white/10 transition-colors;
+    @apply inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium text-white border border-white/25 bg-transparent hover:bg-white/15 hover:border-champagne/50 hover:shadow-gold-glow hover:scale-[1.02] transition-all duration-200;
   }
 
   .stagger-section {
@@ -216,6 +235,19 @@ body {
     transform: translateY(16px);
     animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     animation-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  /* Scroll reveal animation styles */
+  .scroll-section {
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .scroll-hidden {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .scroll-visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

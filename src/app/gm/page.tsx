@@ -9,6 +9,7 @@ import { LuxuryStars } from "../../components/LuxuryStars";
 import { useBreakpoint } from "../../lib/useBreakpoint";
 import { useMyHotel } from "../../lib/useMyHotel";
 import { formatLuxuryDate } from "../../lib/format";
+import { useInView } from "../../lib/useInView";
 import VerifyEmailBanner from "../../components/VerifyEmailBanner";
 import {
   GMKpiCards,
@@ -19,7 +20,7 @@ import {
 } from "../../components/gm";
 import { DashboardSkeleton } from "../../components/Skeleton";
 
-/** Reusable quick action button */
+/** Reusable quick action button with luxury hover states */
 function QuickActionPill({
   href,
   label,
@@ -34,12 +35,34 @@ function QuickActionPill({
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium text-white border border-white/25 bg-transparent hover:bg-white/10 transition-colors"
+      className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium text-white border border-white/25 bg-transparent hover:bg-white/15 hover:border-champagne/60 hover:shadow-gold-glow hover:scale-[1.02] transition-all duration-200"
     >
       {icon}
       <span>{label}</span>
       {badge}
     </Link>
+  );
+}
+
+/** Reusable Scroll-Reveal Container */
+function ScrollSection({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.1 });
+  return (
+    <div
+      ref={ref}
+      className={`scroll-section ${inView ? "scroll-visible" : "scroll-hidden"} ${className}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -90,11 +113,11 @@ export default function GMDashboard() {
   ).length;
 
   const kpis: KpiItem[] = [
-    { key: "guests", label: "Guests in house", value: guests, caption: "rooms occupied" },
-    { key: "open", label: "Open requests", value: open, caption: "awaiting action" },
-    { key: "progress", label: "In progress", value: inProgress, caption: "being handled" },
-    { key: "resolved", label: "Resolved today", value: resolvedToday, caption: "completed" },
-    { key: "urgent", label: "Urgent", value: urgent, caption: "need attention" },
+    { key: "guests", label: "Guests in house", value: guests, caption: "rooms occupied", href: "/gm/guests" },
+    { key: "open", label: "Open requests", value: open, caption: "awaiting action", href: "/gm/requests" },
+    { key: "progress", label: "In progress", value: inProgress, caption: "being handled", href: "/gm/requests" },
+    { key: "resolved", label: "Resolved today", value: resolvedToday, caption: "completed", href: "/gm/requests" },
+    { key: "urgent", label: "Urgent", value: urgent, caption: "need attention", href: "/gm/requests" },
   ];
 
   return (
@@ -112,14 +135,14 @@ export default function GMDashboard() {
                 SECTION 1: HERO BAR (property + live status + quick actions)
                ========================================================================= */}
             <section
-              className="stagger-section relative overflow-hidden rounded-luxury p-5 md:py-6 md:px-8 text-white shadow-luxury min-h-[180px] flex flex-col justify-between bg-gradient-to-br from-emerald to-emerald-lo"
+              className="stagger-section relative overflow-hidden rounded-luxury p-5 md:py-6 md:px-8 text-white shadow-luxury min-h-[180px] flex flex-col justify-between bg-gradient-to-br from-emerald to-emerald-lo border border-emerald-lo/50"
               style={{ "--i": 0 } as React.CSSProperties}
             >
-              {/* Subtle radial gold glow in upper-right corner */}
+              {/* Pulsing radial gold glow in upper-right corner */}
               <div
-                className="absolute inset-0 pointer-events-none"
+                className="absolute inset-0 pointer-events-none animate-glowPulse"
                 style={{
-                  background: "radial-gradient(circle at 85% 15%, rgba(201, 162, 39, 0.14), transparent 60%)",
+                  background: "radial-gradient(circle at 85% 15%, rgba(201, 162, 39, 0.22), transparent 60%)",
                 }}
               />
 
@@ -131,13 +154,13 @@ export default function GMDashboard() {
                       Luxury Hotel Intelligence
                     </span>
                   </div>
-                  <h1 className="font-serif text-3xl md:text-[44px] font-semibold m-0 tracking-tight text-white leading-tight">
+                  <h1 className="font-serif text-3xl md:text-[44px] font-semibold m-0 tracking-tight text-white leading-tight drop-shadow-sm">
                     {hotelName || "Aria Grand Resort"}
                   </h1>
                 </div>
 
                 <div className="flex flex-col items-start md:items-end gap-2">
-                  <div className="flex items-center gap-2 text-xs text-[#EBF3F0] bg-white/10 border border-white/20 rounded-full px-3.5 py-1.5 font-sans">
+                  <div className="flex items-center gap-2 text-xs text-[#EBF3F0] bg-white/10 border border-white/20 rounded-full px-3.5 py-1.5 font-sans backdrop-blur-sm shadow-sm transition-all hover:bg-white/15 hover:border-champagne/40">
                     <span className="w-2 h-2 rounded-full bg-[#34C759] animate-[pulse_2s_infinite]" />
                     Live &middot; Synced every 15s
                   </div>
@@ -175,7 +198,7 @@ export default function GMDashboard() {
                   }
                   badge={
                     open > 0 ? (
-                      <span className="bg-urgent text-white text-[11px] font-bold rounded-full px-2 py-0.5 ml-1">
+                      <span className="bg-urgent text-white text-[11px] font-bold rounded-full px-2 py-0.5 ml-1 shadow-sm">
                         {open} open
                       </span>
                     ) : null
@@ -222,30 +245,30 @@ export default function GMDashboard() {
             {/* =========================================================================
                 SECTION 2: KPI STRIP — 5 CARDS
                ========================================================================= */}
-            <section className="stagger-section" style={{ "--i": 1 } as React.CSSProperties}>
+            <ScrollSection delay={50}>
               <GMKpiCards items={kpis} />
-            </section>
+            </ScrollSection>
 
             {/* =========================================================================
                 SECTION 3: LIVE FEED + ROOMS WITH ACTIVITY (2-COL, 60/40)
                ========================================================================= */}
-            <section className="stagger-section" style={{ "--i": 2 } as React.CSSProperties}>
+            <ScrollSection delay={70}>
               <GMLiveFeedAndRooms requests={rows} isMobile={isMobile} />
-            </section>
+            </ScrollSection>
 
             {/* =========================================================================
                 SECTION 4: DEPARTMENT BOARD (UNIFIED)
                ========================================================================= */}
-            <section className="stagger-section" style={{ "--i": 3 } as React.CSSProperties}>
+            <ScrollSection delay={90}>
               <GMDeptBoard active={rows} week={history} />
-            </section>
+            </ScrollSection>
 
             {/* =========================================================================
                 SECTION 5: ACTIVITY HEATMAP 7D x 24H
                ========================================================================= */}
-            <section className="stagger-section" style={{ "--i": 4 } as React.CSSProperties}>
+            <ScrollSection delay={110}>
               <GMHeatmap week={history} />
-            </section>
+            </ScrollSection>
           </div>
         )}
       </div>

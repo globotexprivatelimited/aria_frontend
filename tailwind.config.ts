@@ -46,8 +46,10 @@ const config: Config = {
         sans: ["'Inter'", "system-ui", "-apple-system", "sans-serif"],
       },
       boxShadow: {
-        luxury: "0 1px 2px rgba(13,31,26,.04), 0 8px 24px rgba(13,31,26,.06)",
-        "luxury-hover": "0 12px 32px rgba(13,31,26,.10)",
+        luxury: "0 1px 3px rgba(13,31,26,.04), 0 8px 24px rgba(13,31,26,.06)",
+        "luxury-hover": "0 16px 36px -4px rgba(13,31,26,.12), 0 0 0 1px rgba(201,162,39,.25)",
+        "gold-glow": "0 0 20px -3px rgba(201,162,39,0.35)",
+        "emerald-glow": "0 0 20px -3px rgba(18,67,58,0.35)",
       },
       borderRadius: {
         luxury: "14px",
@@ -69,12 +71,22 @@ const config: Config = {
           from: { opacity: "0", transform: "scale(0.92)" },
           to: { opacity: "1", transform: "scale(1)" },
         },
+        glowPulse: {
+          "0%, 100%": { opacity: "0.14", transform: "scale(1)" },
+          "50%": { opacity: "0.26", transform: "scale(1.08)" },
+        },
+        subtleFloat: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" },
+        },
       },
       animation: {
         fadeUp: "fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         slideInLeft: "slideInLeft 0.4s ease-out forwards",
         goldFlash: "goldFlash 1.5s ease-out forwards",
         fadeCell: "fadeCell 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        glowPulse: "glowPulse 6s ease-in-out infinite",
+        subtleFloat: "subtleFloat 4s ease-in-out infinite",
       },
     },
   },

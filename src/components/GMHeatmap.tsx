@@ -1,12 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import type { Req as RequestRow } from "../app/_actions/requests";
-
-interface GMHeatmapProps {
-  week: RequestRow[];
-}
-
 import { formatHourShort } from "../lib/format";
 export { formatHourShort };
 
@@ -30,6 +26,10 @@ export function getGoldRampLevel(v: number, max: number): number {
   return 5;
 }
 
+export interface GMHeatmapProps {
+  week: RequestRow[];
+}
+
 interface HeatmapCellProps {
   value: number;
   max: number;
@@ -39,7 +39,7 @@ interface HeatmapCellProps {
   onHover: (info: { text: string; x: number; y: number } | null) => void;
 }
 
-/** Reusable Heatmap Cell component */
+/** Reusable Heatmap Cell component with luxury gold glow on hover and queue navigation */
 export function HeatmapCell({
   value,
   max,
@@ -52,11 +52,12 @@ export function HeatmapCell({
   const colorClass = GOLD_RAMP_CLASSES[level];
   const tooltipText = `${dayLabel} ${formatHourShort(hour)} \u00B7 ${value} ${
     value === 1 ? "request" : "requests"
-  }`;
+  }. Click to view queue.`;
 
   return (
-    <div
-      className={`flex-1 h-[26px] rounded-[3px] min-w-4 cursor-pointer transition-transform duration-150 hover:scale-125 hover:z-10 ${colorClass}`}
+    <Link
+      href="/gm/requests"
+      className={`flex-1 h-[26px] rounded-[3px] min-w-4 cursor-pointer transition-all duration-150 hover:scale-130 hover:z-20 hover:shadow-[0_0_12px_rgba(201,162,39,0.7)] hover:rounded-sm ${colorClass}`}
       title={tooltipText}
       onMouseEnter={(e) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -103,40 +104,64 @@ export default function GMHeatmap({ week }: GMHeatmapProps) {
   }, [week]);
 
   return (
-    <div className="bg-card rounded-luxury p-6 md:p-7 shadow-luxury border border-line relative transition-all duration-200 hover:-translate-y-0.5 hover:shadow-luxury-hover">
+    <div className="bg-card rounded-luxury p-6 md:p-7 shadow-luxury border border-line relative luxury-card-sheen transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-luxury-hover hover:border-champagne/40">
       {/* Header */}
-      <div className="flex justify-between items-baseline mb-5">
+      <div className="flex justify-between items-baseline mb-5 relative z-10">
         <div>
           <div className="text-[11px] uppercase tracking-[0.18em] text-champagne font-semibold font-sans mb-1">
             HOURLY CONCIERGE DENSITY
           </div>
-          <h3 className="font-serif text-xl font-semibold text-ink m-0 tracking-tight">
-            Activity Heatmap &middot; 7 Days &times; 24 Hours
-          </h3>
+          <Link
+            href="/gm/requests"
+            className="group/title inline-flex items-center gap-1.5 text-ink no-underline hover:text-emerald transition-colors"
+          >
+            <h3 className="font-serif text-xl font-semibold text-inherit m-0 tracking-tight">
+              Activity Heatmap &middot; 7 Days &times; 24 Hours
+            </h3>
+            <svg
+              className="w-4 h-4 opacity-0 -translate-x-1 group-hover/title:opacity-100 group-hover/title:translate-x-0 transition-all text-champagne"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center gap-1.5 text-xs text-muted font-sans">
-          <span>Less</span>
-          <div className="flex gap-0.5">
-            {[0, 1, 2, 3, 4, 5].map((level) => (
-              <span
-                key={level}
-                className={`w-2.5 h-2.5 rounded-[2px] ${GOLD_RAMP_CLASSES[level]}`}
-              />
-            ))}
+        <div className="flex items-center gap-4">
+          <Link
+            href="/gm/requests"
+            className="text-xs font-semibold text-champagne hover:text-emerald transition-colors flex items-center gap-1 no-underline"
+          >
+            <span>View Requests &rarr;</span>
+          </Link>
+          {/* Legend */}
+          <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted font-sans">
+            <span>Less</span>
+            <div className="flex gap-0.5">
+              {[0, 1, 2, 3, 4, 5].map((level) => (
+                <span
+                  key={level}
+                  className={`w-2.5 h-2.5 rounded-[2px] transition-transform hover:scale-125 ${GOLD_RAMP_CLASSES[level]}`}
+                />
+              ))}
+            </div>
+            <span>More</span>
           </div>
-          <span>More</span>
         </div>
       </div>
 
       {/* Grid container with internal horizontal scroll on small mobile */}
-      <div className="overflow-x-auto pb-1">
+      <div className="overflow-x-auto pb-1 relative z-10">
         <div className="min-w-[640px] flex flex-col gap-1">
           {grid.map((hours, di) => (
-            <div key={di} className="flex items-center gap-2">
+            <div key={di} className="group flex items-center gap-2">
               {/* Day label */}
-              <span className="w-8 text-xs font-medium text-muted text-right font-sans shrink-0">
+              <span className="w-8 text-xs font-medium text-muted text-right font-sans shrink-0 transition-colors group-hover:text-emerald group-hover:font-semibold">
                 {days[di]}
               </span>
 
@@ -178,7 +203,7 @@ export default function GMHeatmap({ week }: GMHeatmapProps) {
       {/* Floating luxury tooltip */}
       {tooltip && (
         <div
-          className="fixed pointer-events-none z-50 text-[11px] font-medium px-2.5 py-1 rounded-md whitespace-nowrap shadow-lg bg-ink text-white font-sans -translate-x-1/2 -translate-y-full"
+          className="fixed pointer-events-none z-50 text-[11px] font-medium px-2.5 py-1 rounded-md whitespace-nowrap shadow-xl bg-ink text-white font-sans -translate-x-1/2 -translate-y-full border border-champagne/30"
           style={{
             left: tooltip.x,
             top: tooltip.y,
