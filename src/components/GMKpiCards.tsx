@@ -17,23 +17,8 @@ const GLYPHS: Record<string, string> = {
   urgent: "M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17v.5",
 };
 
-export function useCountUp(target: number, duration: number = 900): number {
-  const [val, setVal] = useState(0);
-  useEffect(() => {
-    let raf = 0;
-    const start = performance.now();
-    const from = 0;
-    const easeOutExpo = (x: number) => (x === 1 ? 1 : 1 - Math.pow(2, -10 * x));
-    const tick = (t: number) => {
-      const k = Math.min(1, (t - start) / duration);
-      setVal(Math.round(from + (target - from) * easeOutExpo(k)));
-      if (k < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration]);
-  return val;
-}
+import { useCountUp } from "../lib/useCountUp";
+export { useCountUp };
 
 export function KpiCard({ item }: { item: KpiItem }) {
   const animatedValue = useCountUp(item.value, 900);

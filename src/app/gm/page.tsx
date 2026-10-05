@@ -8,11 +8,15 @@ import GMSidebar from "../../components/GMSidebar";
 import { LuxuryStars } from "../../components/LuxuryStars";
 import { useBreakpoint } from "../../lib/useBreakpoint";
 import { useMyHotel } from "../../lib/useMyHotel";
+import { formatLuxuryDate } from "../../lib/format";
 import VerifyEmailBanner from "../../components/VerifyEmailBanner";
-import GMKpiCards, { type KpiItem } from "../../components/GMKpiCards";
-import GMLiveFeedAndRooms from "../../components/GMLiveFeedAndRooms";
-import GMDeptBoard from "../../components/GMDeptBoard";
-import GMHeatmap from "../../components/GMHeatmap";
+import {
+  GMKpiCards,
+  GMLiveFeedAndRooms,
+  GMDeptBoard,
+  GMHeatmap,
+  type KpiItem,
+} from "../../components/gm";
 import { DashboardSkeleton } from "../../components/Skeleton";
 
 /** Reusable quick action button */
@@ -138,12 +142,7 @@ export default function GMDashboard() {
                     Live &middot; Synced every 15s
                   </div>
                   <div className="text-[11.5px] text-white/75 font-sans tracking-wide">
-                    {new Date().toLocaleDateString(undefined, {
-                      weekday: "long",
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {formatLuxuryDate()}
                   </div>
                 </div>
               </div>

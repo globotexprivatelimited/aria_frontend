@@ -2,16 +2,8 @@
 
 import { useMemo, useState, useEffect } from "react";
 import type { Req as RequestRow } from "../app/_actions/requests";
-import { DEPARTMENTS, type DeptConfig } from "../lib/departments";
-
-export const DEPT_BG_CLASSES: Record<string, string> = {
-  fb: "bg-dept-fb",
-  housekeeping: "bg-dept-housekeeping",
-  spa: "bg-dept-spa",
-  front_desk: "bg-dept-front_desk",
-  dining: "bg-dept-dining",
-  maintenance: "bg-dept-maintenance",
-};
+import { DEPARTMENTS, DEPT_BG_CLASSES, type DeptConfig } from "../lib/departments";
+export { DEPT_BG_CLASSES };
 
 export interface DeptRowData {
   dept: string;

@@ -7,12 +7,8 @@ interface GMHeatmapProps {
   week: RequestRow[];
 }
 
-function formatHourShort(h: number): string {
-  if (h === 0) return "12a";
-  if (h < 12) return `${h}a`;
-  if (h === 12) return "12p";
-  return `${h - 12}p`;
-}
+import { formatHourShort } from "../lib/format";
+export { formatHourShort };
 
 export const GOLD_RAMP_CLASSES: Record<number, string> = {
   0: "bg-goldramp-0",
