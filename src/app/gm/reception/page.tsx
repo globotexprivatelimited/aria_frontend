@@ -114,16 +114,16 @@ export default function ReceptionBoard() {
               <div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                   <LuxuryStars count={5} size={11} color="#B08A4F" gap={2} />
-                  <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Reception &middot; Room Inventory</span>
+                  <span style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: ".16em", color: "#B08A4F", fontWeight: 700, fontFamily: "'Josefin Sans', sans-serif" }}>Reception {'\u00B7'} Room Inventory</span>
                 </div>
                 <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: isMobile ? 26 : 32, fontWeight: 700, color: INK, margin: 0, letterSpacing: "-0.01em" }}>
-                  {hotelName} &middot; Room Board
+                  {hotelName} {'\u00B7'} Room Board
                 </h1>
               </div>
 
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "#4A5D56", background: "#FFFFFF", border: "1px solid #E2EBE7", borderRadius: 999, padding: "7px 14px", boxShadow: "0 2px 8px rgba(47,93,80,.05)" }}>
-                  <span style={{ width: 8, height: 8, borderRadius: 999, background: "#2ECC71", boxShadow: "0 0 0 3px rgba(46,204,113,.2)" }} />Live &middot; Synced 15s
+                  <span style={{ width: 8, height: 8, borderRadius: 999, background: "#2ECC71", boxShadow: "0 0 0 3px rgba(46,204,113,.2)" }} />Live {'\u00B7'} Synced 15s
                 </div>
                 <button onClick={() => setShowSetup((v) => !v)} style={{ borderRadius: 999, padding: "8px 18px", fontSize: 12.5, fontWeight: 600, cursor: "pointer", border: "1px solid " + (showSetup ? "#2F5D50" : "#D0DCD6"), background: showSetup ? "#2F5D50" : "#FFFFFF", color: showSetup ? "#FFFFFF" : "#2F5D50", boxShadow: "0 2px 8px rgba(47,93,80,.08)", transition: "all .18s" }}>
                   {showSetup ? "Close setup" : "+ Manage rooms"}
@@ -246,7 +246,7 @@ export default function ReceptionBoard() {
             <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 21, fontWeight: 700, color: INK }}>Suite {hover.room_number}</span>
             <span style={{ fontSize: 9.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em", color: (STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).c, background: (STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).bg, border: "1px solid " + (STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).border, borderRadius: 999, padding: "2px 8px" }}>{(STATUS[hover.status as keyof typeof STATUS] ?? STATUS.available).label}</span>
           </div>
-          <div style={{ fontSize: 12, color: "#8A9792", marginBottom: hover.status === "occupied" ? 8 : 0 }}>{hover.room_type} &middot; Floor {hover.floor}</div>
+          <div style={{ fontSize: 12, color: "#8A9792", marginBottom: hover.status === "occupied" ? 8 : 0 }}>{hover.room_type} {'\u00B7'} Floor {hover.floor}</div>
           {hover.status === "occupied" ? (
             <div style={{ borderTop: "1px solid #F1F6F4", paddingTop: 8 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: INK }}>{hover.guest_name || "Guest"}</div>

@@ -293,6 +293,22 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+
+  .checkin-input {
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: #FFFFFF;
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    color: var(--ink);
+    transition: all 0.2s;
+  }
+  .checkin-input:focus {
+    border-color: var(--champagne);
+    box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.12);
+  }
 }
 
 /* Accessible focus ring */
