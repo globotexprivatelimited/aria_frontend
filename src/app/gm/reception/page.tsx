@@ -60,7 +60,7 @@ export default function ReceptionBoard() {
     const r = await setupRooms(HOTEL_ID!, floors);
     if (r.ok) { flash("Created " + r.created + " rooms"); setShowSetup(false); load(); } else flash(r.message ?? "failed");
   }
-  async function doCheckIn(rm: string, guestName: string, guestPhone: string, partySize: number, checkOut: string) { const r = await checkInRoom(HOTEL_ID!, rm, guestName, guestPhone, partySize, checkOut); if (r.ok) { flash("Checked in to Room " + rm); setSelected(null); load(); } else flash(r.message ?? "failed"); }
+  async function doCheckIn(rm: string, guestName: string, guestPhone: string, partySize: number, checkOut: string, optIn: boolean) { const r = await checkInRoom(HOTEL_ID!, rm, guestName, guestPhone, partySize, checkOut, optIn); if (r.ok) { flash("Checked in to Room " + rm); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doCheckout(rm: string) { const r = await checkOutRoom(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " checked out"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doClean(rm: string) { const r = await markRoomClean(HOTEL_ID!, rm); if (r.ok) { flash("Room " + rm + " ready"); setSelected(null); load(); } else flash(r.message ?? "failed"); }
   async function doEdit(rm: string, changes: { room_type?: string; floor?: number; newNumber?: string }) { const r = await editRoom(HOTEL_ID!, rm, changes); if (r.ok) { flash("Room updated"); setSelected(null); load(); } else flash(r.message ?? "failed"); }

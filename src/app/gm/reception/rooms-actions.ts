@@ -17,13 +17,13 @@ export async function getRoomStats(hotelId: string): Promise<RoomStats> {
   if (!hotelId) return z;
   try { const r = await apiGet<{ ok: boolean; data?: RoomStats }>("/api/rooms/stats?hotelId=" + encodeURIComponent(hotelId)); return r.ok && r.data ? r.data : z; } catch { return z; }
 }
-export async function checkInRoom(hotelId: string, roomNumber: string, guestName: string, guestPhone: string, partySize: number, checkOut: string): Promise<{ ok: boolean; message?: string }> {
-  try { const r = await apiPost<{ ok: boolean; error?: string }>("/api/rooms/checkin", { hotelId, roomNumber, guestName, guestPhone, partySize, checkOut }); return r.ok ? { ok: true } : { ok: false, message: r.error }; } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "failed" }; }
+export async function checkInRoom(hotelId: string, roomNumber: string, guestName: string, guestPhone: string, partySize: number, checkOut: string, optIn = false): Promise<{ ok: boolean; message?: string }> {
+  try { const r = await apiPost<{ ok: boolean; error?: string }>("/api/rooms/checkin", { hotelId, roomNumber, guestName, guestPhone, partySize, checkOut, optIn }); return r.ok ? { ok: true } : { ok: false, message: r.error }; } catch (e) { return { ok: false, message: e instanceof Error ? e.message : "failed" }; }
 }
 /** Object form - safer to extend, used by the reception check-in panel. */
 export async function checkInGuest(args: {
   hotelId: string; roomNumber: string; guestName?: string; guestPhone?: string;
-  partySize?: number; checkIn?: string; checkOut?: string; notes?: string;
+  partySize?: number; checkIn?: string; checkOut?: string; notes?: string; optIn?: boolean;
 }): Promise<{ ok: boolean; message?: string }> {
   try {
     const r = await apiPost<{ ok: boolean; error?: string }>("/api/rooms/checkin", args);

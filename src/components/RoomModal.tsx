@@ -36,7 +36,7 @@ function defaultCheckout(): string {
 }
 
 type Handlers = {
-  onCheckIn: (roomNumber: string, guestName: string, guestPhone: string, partySize: number, checkOut: string) => Promise<void>;
+  onCheckIn: (roomNumber: string, guestName: string, guestPhone: string, partySize: number, checkOut: string, optIn: boolean) => Promise<void>;
   onCheckOut: (roomNumber: string) => Promise<void>;
   onClean: (roomNumber: string) => Promise<void>;
   onEdit: (roomNumber: string, changes: { room_type?: string; floor?: number; newNumber?: string }) => Promise<void>;
@@ -48,6 +48,7 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
   const [guestName, setGuestName] = useState("");
   const [dial, setDial] = useState("+91");
   const [guestPhone, setGuestPhone] = useState("");
+  const [optIn, setOptIn] = useState(false);
   const [partySize, setPartySize] = useState(1);
   const [checkOut, setCheckOut] = useState(defaultCheckout());
   const [busy, setBusy] = useState(false);
@@ -77,8 +78,8 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
     const iso = new Date(checkOut).toISOString();
     const digits = guestPhone.replace(/[^0-9]/g, "");
     if (digits && dial === "+91" && digits.length !== 10) { alert("An Indian mobile number has 10 digits - please check " + dial + " " + digits + "."); return; }
-    if (!confirm("Check " + guestName.trim() + " into room " + room.room_number + (digits ? " and send the WhatsApp welcome to " + dial + " " + digits : " (no phone, so no WhatsApp welcome)") + "?")) return;
-    await handlers.onCheckIn(room.room_number, guestName.trim(), guestPhone.trim() ? dial + guestPhone.replace(/[^0-9]/g, "") : "", partySize, iso);
+    if (!confirm("Check " + guestName.trim() + " into room " + room.room_number + (digits ? (optIn ? " and send the WhatsApp welcome to " + dial + " " + digits : " - NO WhatsApp opt-in ticked, so nothing is sent to " + dial + " " + digits + " until the guest writes first") : " (no phone, so no WhatsApp welcome)") + "?")) return;
+    await handlers.onCheckIn(room.room_number, guestName.trim(), guestPhone.trim() ? dial + guestPhone.replace(/[^0-9]/g, "") : "", partySize, iso, optIn);
     setBusy(false);
   }
   async function act(fn: () => Promise<void>) { setBusy(true); await fn(); setBusy(false); }
@@ -156,6 +157,7 @@ export default function RoomModal({ room, handlers }: { room: Room; handlers: Ha
                   <input value={guestPhone} onChange={(e) => setGuestPhone(e.target.value.replace(/[^0-9]/g, ""))} placeholder="Number only" inputMode="numeric" style={{ ...field, flex: 1 }} />
                 </div>
               </div>
+              <label style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 12, color: "#1B2621", margin: "2px 0 12px", cursor: "pointer", lineHeight: 1.4 }}><input type="checkbox" checked={optIn} onChange={(e) => setOptIn(e.target.checked)} style={{ marginTop: 2 }} /><span>The guest ticked <b>&quot;The hotel may message me on WhatsApp about my stay&quot;</b> on the registration card. Without this, nothing is sent to the number until the guest writes first.</span></label>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12, marginBottom: 18 }}>
                 <div><label style={lbl}>Checkout</label><input type="datetime-local" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} style={field} /></div>
               </div>

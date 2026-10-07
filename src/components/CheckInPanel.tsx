@@ -21,6 +21,7 @@ export default function CheckInPanel({ hotelId, rooms, onDone }: { hotelId: stri
   const [name, setName] = useState("");
   const [dial, setDial] = useState("+91");
   const [phone, setPhone] = useState("");
+  const [optIn, setOptIn] = useState(false);
   const [checkOut, setCheckOut] = useState(tomorrow());
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
@@ -38,17 +39,18 @@ export default function CheckInPanel({ hotelId, rooms, onDone }: { hotelId: stri
     if (!name.trim()) { setErr("Enter the guest name."); return; }
     const digits = phone.replace(/[^0-9]/g, "");
     if (digits && dial === "+91" && digits.length !== 10) { setErr("An Indian mobile number has 10 digits - please check " + dial + " " + digits + "."); return; }
-    if (!confirm("Check " + name.trim() + " into room " + match!.room_number + (digits ? " and send the WhatsApp welcome to " + dial + " " + digits : " (no phone, so no WhatsApp welcome)") + "?")) return;
+    if (!confirm("Check " + name.trim() + " into room " + match!.room_number + (digits ? (optIn ? " and send the WhatsApp welcome to " + dial + " " + digits : " - NO WhatsApp opt-in ticked, so nothing is sent to " + dial + " " + digits + " until the guest writes first") : " (no phone, so no WhatsApp welcome)") + "?")) return;
     setBusy(true); setErr(null); setMsg(null);
     const r = await checkInGuest({
       hotelId, roomNumber: match!.room_number, guestName: name.trim(),
       guestPhone: phone.trim() ? dial + phone.replace(/[^0-9]/g, "") : undefined,
       checkOut: checkOut || undefined,
+      optIn,
     });
     setBusy(false);
     if (r.ok) {
       setMsg(name.trim() + " is in room " + match!.room_number + ".");
-      setRoom(""); setName(""); setPhone(""); setCheckOut(tomorrow());
+      setRoom(""); setName(""); setPhone(""); setOptIn(false); setCheckOut(tomorrow());
       onDone();
       setTimeout(() => setMsg(null), 5000);
     } else setErr(r.message ?? "That did not go through.");
@@ -92,6 +94,7 @@ export default function CheckInPanel({ hotelId, rooms, onDone }: { hotelId: stri
                 <input value={phone} onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ""))} placeholder="Number only" inputMode="numeric" style={{ ...fld, flex: 1 }} />
               </div>
             </div>
+            <label style={{ display: "flex", gap: 8, alignItems: "flex-start", fontSize: 12, color: "#1B2621", margin: "2px 0 12px", cursor: "pointer", lineHeight: 1.4 }}><input type="checkbox" checked={optIn} onChange={(e) => setOptIn(e.target.checked)} style={{ marginTop: 2 }} /><span>The guest ticked <b>&quot;The hotel may message me on WhatsApp about my stay&quot;</b> on the registration card. Without this, nothing is sent to the number until the guest writes first.</span></label>
             <div><label style={lbl}>Checking out</label><input type="datetime-local" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} style={fld} /></div>
             <button onClick={submit} disabled={busy || blocked || !room.trim() || !name.trim()}
               style={{ borderRadius: 9, padding: "11px 24px", fontSize: 14, fontWeight: 600, color: "#fff", background: GREEN, border: 0, cursor: busy || blocked ? "default" : "pointer", opacity: busy || blocked || !room.trim() || !name.trim() ? .5 : 1, whiteSpace: "nowrap" }}>
