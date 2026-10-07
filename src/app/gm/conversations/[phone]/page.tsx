@@ -120,8 +120,9 @@ function DayMarker({ label }: { label: string }) {
     </div>
   );
 }
+function explainDeliveryError(e: string | null | undefined): string { const s = String(e ?? "").trim(); if (/131047|re-?engagement/i.test(s)) return "the guest has not written in 24 hours - held, and sent when they next write"; if (/131026|131049|131050|undeliverable|opted out/i.test(s)) return "this number cannot receive WhatsApp messages - check it with the guest"; if (/130429|rate limit/i.test(s)) return "WhatsApp rate limit - retried"; if (/\b190\b|access token|oauth/i.test(s)) return "the WhatsApp access token was refused - see the banner"; return s || "failed"; }
 function statusMark(s: string): string { return s === "read" || s === "delivered" ? "\u2713\u2713" : s === "sent" || s === "accepted" ? "\u2713" : s === "failed" || s === "rejected" || s === "not_sent" ? "!" : ""; }
-function statusTitle(s: string, e: string | null | undefined): string { return s === "read" ? "Read by the guest" : s === "delivered" ? "Delivered to the guest's phone" : s === "sent" ? "Sent by WhatsApp" : s === "accepted" ? "Accepted by WhatsApp - delivery pending" : s === "not_sent" ? "Not sent - WhatsApp is not configured" : "Not delivered" + (e ? " - " + e : ""); }
+function statusTitle(s: string, e: string | null | undefined): string { return s === "read" ? "Read by the guest" : s === "delivered" ? "Delivered to the guest's phone" : s === "sent" ? "Sent by WhatsApp" : s === "accepted" ? "Accepted by WhatsApp - delivery pending" : s === "not_sent" ? "Not sent - WhatsApp is not configured" : "Not delivered" + (e ? " - " + explainDeliveryError(e) : ""); }
 const failedStatus = (s: string | null | undefined) => s === "failed" || s === "rejected" || s === "not_sent";
 
 function Bubble({ m, compact }: { m: ThreadMessage; compact: boolean }) {
@@ -153,7 +154,7 @@ function Bubble({ m, compact }: { m: ThreadMessage; compact: boolean }) {
           <span>{fmtTime(m.at)}</span>
           {!inbound && m.status ? <span title={statusTitle(m.status, m.error)} style={{ fontSize: 12, letterSpacing: -2, color: m.status === "read" ? "#9BE7FF" : failedStatus(m.status) ? "#FFD1C9" : "rgba(255,255,255,0.85)" }}>{statusMark(m.status)}</span> : null}
         </div>
-        {!inbound && failedStatus(m.status) ? <div style={{ marginTop: 4, fontSize: 11, color: "#FFD1C9", textAlign: "right" }}>Not delivered{m.error ? " - " + m.error : ""}</div> : null}
+        {!inbound && failedStatus(m.status) ? <div style={{ marginTop: 4, fontSize: 11, color: "#FFD1C9", textAlign: "right" }}>Not delivered{m.error ? " - " + explainDeliveryError(m.error) : ""}</div> : null}
       </div>
     </div>
   );
