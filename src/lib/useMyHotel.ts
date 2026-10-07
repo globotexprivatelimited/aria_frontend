@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { getMyRole } from "./auth";
 
-const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
+const API = "/api/aria"; // the console route that adds the session token on the server - src/app/api/aria
 const TOKEN_KEY = "aria_token";
 
 // Returns the logged-in user's own hotel id + name, via the aria-api session (no Supabase).

@@ -1,4 +1,5 @@
 "use server";
+import { sessionToken } from "@/lib/session";
 
 const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
 
@@ -24,7 +25,7 @@ export async function getHotelDetail(token: string, hotelId: string): Promise<Ho
   if (!token || !hotelId) return null;
   try {
     const res = await fetch(API + "/api/founder/hotel?hotelId=" + encodeURIComponent(hotelId),
-      { headers: { authorization: "Bearer " + token }, cache: "no-store" });
+      { headers: { authorization: "Bearer " + (await sessionToken(token)) }, cache: "no-store" });
     const j = await res.json();
     return j?.ok && j.data ? j.data : null;
   } catch { return null; }

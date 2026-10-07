@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
+const API = "/api/aria"; // the console route that adds the session token on the server - src/app/api/aria
 const GOLD = "#B08A4F", INK = "#1B2621";
 
 /** Sits at the top of the GM portal until the hotel confirms its email. */

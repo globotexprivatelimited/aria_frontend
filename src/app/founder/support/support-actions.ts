@@ -1,5 +1,5 @@
 "use client";
-const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
+const API = "/api/aria"; // the console route that adds the session token on the server - src/app/api/aria
 
 export type TicketReply = { author: string; side: string; body: string; at: string };
 export type Ticket = {

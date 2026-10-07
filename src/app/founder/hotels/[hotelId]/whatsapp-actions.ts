@@ -1,5 +1,5 @@
 /** Self-serve WhatsApp setup for a hotel - the founder's session token goes straight to the API, as the other founder actions do. */
-const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
+const API = "/api/aria"; // the console route that adds the session token on the server - src/app/api/aria
 
 export type PhoneInfo = { phoneNumberId: string; number: string; verifiedName: string; quality: string; codeVerification: string; nameStatus: string; platform: string };
 export type HotelWhatsApp = { hotelId: string; connected: boolean; phoneNumberId: string | null; wabaId: string | null; number: string | null; live: PhoneInfo | null; liveError: string | null; platformDefault: boolean };

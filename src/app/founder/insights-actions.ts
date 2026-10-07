@@ -1,4 +1,5 @@
 ﻿"use server";
+import { sessionToken } from "@/lib/session";
 const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
 
 export type Insights = {
@@ -16,7 +17,7 @@ export type Insights = {
 export async function getInsights(token: string, days = 30): Promise<Insights | null> {
   if (!token) return null;
   try {
-    const res = await fetch(API + "/api/founder/insights?days=" + days, { headers: { authorization: "Bearer " + token }, cache: "no-store" });
+    const res = await fetch(API + "/api/founder/insights?days=" + days, { headers: { authorization: "Bearer " + (await sessionToken(token)) }, cache: "no-store" });
     const j = await res.json();
     return j?.ok && j.data ? j.data : null;
   } catch { return null; }

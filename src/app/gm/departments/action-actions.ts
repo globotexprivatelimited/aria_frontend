@@ -1,4 +1,5 @@
 ﻿"use server";
+import { sessionToken } from "@/lib/session";
 
 const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
 
@@ -6,7 +7,7 @@ export async function actOnRequest(args: { token: string; requestId: string; com
   try {
     const res = await fetch(API + "/api/staff/request-action", {
       method: "POST",
-      headers: { "Content-Type": "application/json", authorization: "Bearer " + args.token },
+      headers: { "Content-Type": "application/json", authorization: "Bearer " + (await sessionToken(args.token)) },
       body: JSON.stringify({ requestId: args.requestId, command: args.command }),
       cache: "no-store",
     });

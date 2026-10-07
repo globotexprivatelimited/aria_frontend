@@ -11,7 +11,7 @@ import MaintenanceManager from "../../components/MaintenanceManager";
 import DiningManager from "../../components/DiningManager";
 import { useBreakpoint } from "../../lib/useBreakpoint";
 
-const API = process.env.NEXT_PUBLIC_ARIA_API_URL ?? "http://localhost:4000";
+const API = "/api/aria"; // the console route that adds the session token on the server - src/app/api/aria
 type Tab = "dashboard" | "requests" | "history" | "manage";
 
 const DEPT_CFG: Record<string, { label: string; type: "auto" | "accept"; staffNumber: string; icon: string }> = {
@@ -116,7 +116,7 @@ export default function StaffDashboard() {
     if (!hotelId || myDepts.length === 0) return;
     setRows(await getActiveRequests(hotelId, myDepts));
     try {
-      const res = await fetch(API + "/api/dept-config?hotelId=" + encodeURIComponent(hotelId), { headers: { "x-admin-key": "dev-admin-key" } });
+      const res = await fetch(API + "/api/dept-config?hotelId=" + encodeURIComponent(hotelId), { cache: "no-store" });
       const j = await res.json();
       if (j?.ok && Array.isArray(j.data)) {
         const m: Record<string, string> = {};
