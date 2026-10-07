@@ -1,3 +1,4 @@
+import SystemBanner from "@/components/SystemBanner";
 ﻿import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="bg-slate-50 text-slate-900 antialiased">
+        <SystemBanner />
         {children}
       </body>
     </html>
