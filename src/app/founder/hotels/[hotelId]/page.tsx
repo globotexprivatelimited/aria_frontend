@@ -1,4 +1,5 @@
 "use client";
+import WhatsAppLink from "./WhatsAppLink";
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -83,6 +84,7 @@ export default function FounderHotelPage() {
           <div style={lbl}>Contact</div>
           <div style={{ fontSize: 13, color: INK, marginTop: 7, lineHeight: 1.75 }}>
             <div>WhatsApp <b>{d.hotel.whatsappNumber ?? "\u2014"}</b></div>
+            <WhatsAppLink />
             <div>Email <b>{d.hotel.contactEmail ?? "\u2014"}</b></div>
             <div>Check-in {d.hotel.checkInTime ?? "\u2014"} &middot; out {d.hotel.checkOutTime ?? "\u2014"}</div>
             <div>Share <b>{d.hotel.revenueSharePercent}%</b></div>
