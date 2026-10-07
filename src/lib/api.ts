@@ -6,6 +6,14 @@ export const hotelId = HOTEL;
 export const apiBase = BASE;
 export const apiKey = KEY;
 
+/**
+ * The platform key goes only to the few API routes that still accept nothing else - check-in and check-out, the
+ * dashboard feed, presence and privacy. Every other call is made as the signed-in person alone, and the API holds
+ * them to their own hotel and their role.
+ */
+const KEY_ONLY = /^\/api\/(checkin|checkout|dashboard|presence|privacy)\b/;
+const keyFor = (path: string): Record<string, string> => (KEY && KEY_ONLY.test(path) ? { "x-admin-key": KEY } : {});
+
 /** The reason the server gave when it refuses a call ("Floor 1 has occupied rooms..."), not a bare status code. */
 async function apiError(res: Response, path: string): Promise<Error> {
   try {
@@ -39,7 +47,7 @@ export async function apiGet<T>(path: string): Promise<T> {
   // only append the default hotelId when the caller has not already specified one
   const url = path.includes("hotelId=") ? BASE + path : BASE + path + (path.includes("?") ? "&" : "?") + "hotelId=" + HOTEL;
   const res = await fetch(url, {
-    headers: { "x-admin-key": KEY, ...(await session(path)) },
+    headers: { ...keyFor(path), ...(await session(path)) },
     cache: "no-store",
   });
   if (!res.ok) throw await apiError(res, path);
@@ -49,7 +57,7 @@ export async function apiGet<T>(path: string): Promise<T> {
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(BASE + path, {
     method: "POST",
-    headers: { "x-admin-key": KEY, "Content-Type": "application/json", ...(await session(path)) },
+    headers: { ...keyFor(path), "Content-Type": "application/json", ...(await session(path)) },
     body: JSON.stringify(body),
     cache: "no-store",
   });
