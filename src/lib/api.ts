@@ -1,18 +1,13 @@
 const BASE = process.env.ARIA_API_URL ?? "http://localhost:4000";
-const KEY = process.env.ARIA_ADMIN_KEY ?? "";
 const HOTEL = process.env.ARIA_HOTEL_ID ?? "demo";
 
 export const hotelId = HOTEL;
 export const apiBase = BASE;
-export const apiKey = KEY;
 
-/**
- * The platform key goes only to the few API routes that still accept nothing else - check-in and check-out, the
- * dashboard feed, presence and privacy. Every other call is made as the signed-in person alone, and the API holds
- * them to their own hotel and their role.
+/*
+ * The console holds no platform key: every call is made as the signed-in person, and the API holds them to their own
+ * hotel and their role (item 11). ARIA_ADMIN_KEY is no longer read anywhere in the console and can be removed from Vercel.
  */
-const KEY_ONLY = /^\/api\/(checkin|checkout|dashboard|presence|privacy)\b/;
-const keyFor = (path: string): Record<string, string> => (KEY && KEY_ONLY.test(path) ? { "x-admin-key": KEY } : {});
 
 /** The reason the server gave when it refuses a call ("Floor 1 has occupied rooms..."), not a bare status code. */
 async function apiError(res: Response, path: string): Promise<Error> {
@@ -33,6 +28,21 @@ async function bearer(): Promise<Record<string, string>> {
   } catch { return {}; }
 }
 
+/**
+ * The hotel in the signed-in person's own token, so a call that names no hotel asks for theirs and not the console's
+ * default. Founders have no single hotel and keep the default. This only picks what to ask for - the API verifies the
+ * token and refuses any other hotel.
+ */
+async function ownHotel(): Promise<string> {
+  try {
+    const { cookies } = await import("next/headers");
+    const part = ((await cookies()).get("aria_token")?.value ?? "").split(".")[1];
+    if (!part) return "";
+    const claims = JSON.parse(Buffer.from(part, "base64url").toString("utf8")) as { role?: unknown; hotelId?: unknown };
+    return claims.role !== "founder" && typeof claims.hotelId === "string" ? claims.hotelId : "";
+  } catch { return ""; }
+}
+
 
 /** Every console call is made as a signed-in person. No session, no call - the platform key alone must never act on a hotel. */
 async function session(path: string): Promise<Record<string, string>> {
@@ -44,10 +54,10 @@ async function session(path: string): Promise<Record<string, string>> {
 }
 
 export async function apiGet<T>(path: string): Promise<T> {
-  // only append the default hotelId when the caller has not already specified one
-  const url = path.includes("hotelId=") ? BASE + path : BASE + path + (path.includes("?") ? "&" : "?") + "hotelId=" + HOTEL;
+  // a call that names no hotel asks for the signed-in person's own; founders, who have no single hotel, get the console's default
+  const url = path.includes("hotelId=") ? BASE + path : BASE + path + (path.includes("?") ? "&" : "?") + "hotelId=" + encodeURIComponent((await ownHotel()) || HOTEL);
   const res = await fetch(url, {
-    headers: { ...keyFor(path), ...(await session(path)) },
+    headers: { ...(await session(path)) },
     cache: "no-store",
   });
   if (!res.ok) throw await apiError(res, path);
@@ -57,7 +67,7 @@ export async function apiGet<T>(path: string): Promise<T> {
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(BASE + path, {
     method: "POST",
-    headers: { ...keyFor(path), "Content-Type": "application/json", ...(await session(path)) },
+    headers: { "Content-Type": "application/json", ...(await session(path)) },
     body: JSON.stringify(body),
     cache: "no-store",
   });
