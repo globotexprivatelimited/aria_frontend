@@ -38,6 +38,9 @@
   ],
   "exclude": [
     "node_modules",
-    "web"
+    "web",
+    "e2e",
+    "playwright.config.ts",
+    "test-results"
   ]
 }
